@@ -79,8 +79,10 @@ pe6 = abs (sumOfSquares [1..100] - squareOfSum [1..100])
 -- 7
 -- What is the 10 001st prime number?
 -- Answer: 104759  (0.72 secs, 357600072 bytes)
+-- Answer: 104743  (1.20 laptop secs, 199001748 bytes) 
 -- uses primesTo from pe3
-pe7 = primesTo 105000 !! 10001
+-- 1st prime is at index 0; nth is at index n-1
+pe7 = primesTo 105000 !! (10001-1)
 
 
 -- 8
