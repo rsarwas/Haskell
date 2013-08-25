@@ -37,7 +37,10 @@ pe2 = sum $ filter even smallFibs
 -- Answer: 6857  (9.42 secs, 4638462768 bytes)
 pe3data = 600851475143
 -- reasonably fast prime generator. Algorithm stolen from http://www.haskell.org/haskellwiki/Prime_numbers
-primesTo m = 2 : sieve [3,5..m]  where
+primesTo :: (Integral a) => a -> [a]
+primesTo m
+  | m < 2 = []
+  | otherwise = 2 : sieve [3,5..m]  where
     sieve []     = []
     sieve (p:xs) = p : sieve (xs `minus` [p*p, p*p+2*p..m])
     minus (x:xs) (y:ys) = case (compare x y) of 
@@ -182,6 +185,15 @@ triangleNumbersFrom n = scanl (+) x [(n+1)..] where x = triangleNumber n
 
 smallestNumberWith500Divisors = foldl1 lcm [1..500]  -- from pe5
 -- = 73239622318952846593863874519042298829761338251289259046349190034596307420803713394327759819891326985268312606648408875713314013313623337094312440663659803352061415560955398316253892220738945585450197206138869521568000
+primeFactors n = primeFactors' n (primesTo (isqrt n))
+primeFactors' n possiblePrimes
+  | n < 2               = []
+  | null possiblePrimes = [n]
+  | r == 0              = nextPrime:(primeFactors' q possiblePrimes)
+  | otherwise           = primeFactors' n (tail possiblePrimes)
+  where nextPrime = head possiblePrimes
+        (q,r) = n `quotRem` nextPrime 
+
 --pe12 = take 4 (dropWhile (<smallestNumberWith500Divisors) triangleNumbers)
 
 
@@ -439,11 +451,5 @@ pe19 = sum [1 | y <- [1901..2000], d <- [1..daysInYear y], isFirstDayOfMonth y d
 pe20 = sum $ digits $ product [1..100]
 
 
-pf n primes
-  | n < 2 = []
-  | sr < ph = [n]
-  | n `mod` ph == 0 = ph:(pf (n `div` ph) primes)
-  | otherwise          = pf n (tail primes)
-  where sr = isqrt n
-        ph = head primes
+
             
