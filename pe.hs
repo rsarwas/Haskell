@@ -451,5 +451,33 @@ pe19 = sum [1 | y <- [1901..2000], d <- [1..daysInYear y], isFirstDayOfMonth y d
 pe20 = sum $ digits $ product [1..100]
 
 
+-- 21
+-- Evaluate the sum of all the amicable numbers under 10000
+-- Answer: 
 
+
+-- 22
+-- What is the total of all the name scores in the file?
+-- See pe22.hs
+-- Answer: 
+
+
+-- 23
+-- Find the sum of all the positive integers which cannot be written as the sum of two abundant numbers.
+-- Answer: 
+
+
+-- 24
+-- What is the millionth lexicographic permutation of the digits 0, 1, 2, 3, 4, 5, 6, 7, 8 and 9?
+-- Answer: 
+
+
+-- 25
+-- What is the first term in the Fibonacci sequence to contain 1000 digits?
+-- Answer: 4782 (0.03 secs, 14315648 byte)
+fibWithDigits :: Int -> Int
+fibWithDigits n = 1 + (length (takeWhile lessDigitsThan fibs))
+  where lessDigitsThan = (>) (10^(n-1))
+        fibs = 1 : scanl (+) 1 fibs 
+pe25 = fibWithDigits 1000
             
