@@ -194,7 +194,31 @@ primeFactors' n possiblePrimes
   where nextPrime = head possiblePrimes
         (q,r) = n `quotRem` nextPrime 
 
---pe12 = take 4 (dropWhile (<smallestNumberWith500Divisors) triangleNumbers)
+powerSet [] = [[]]
+powerSet (x:xs) = tailps ++ map m tailps where
+  tailps = powerSet xs
+  m = (:) x
+
+quicksort :: (Ord a) => [a] -> [a]    
+quicksort [] = []    
+quicksort (x:xs) =     
+    let smallerSorted = quicksort (filter (<=x) xs)  
+        biggerSorted = quicksort (filter (>x) xs)   
+    in  smallerSorted ++ [x] ++ biggerSorted
+
+--assumes that the list is already sorted
+unique [] = []
+unique [a] = [a]
+unique (x:xs)
+  | x == head xs = unique xs
+  | otherwise    = x:(unique xs)
+   
+divisors :: (Integral a) => a -> [a]
+divisors n = unique $ quicksort $ map product (powerSet (primeFactors n))
+
+pe12 = head [x | x <- triangleNumbers, moreThan10pf x, 100 <= divisorCount x]
+  where moreThan10pf x = (<) 10 (length $ primeFactors x)
+        divisorCount x = length $ divisors x
 
 
 -- 13
@@ -453,8 +477,20 @@ pe20 = sum $ digits $ product [1..100]
 
 -- 21
 -- Evaluate the sum of all the amicable numbers under 10000
--- Answer: 
-
+-- Answer: 31626  (11.05 laptop secs, 1074372488 bytes)
+-- would be much faster if I used a hash lookup for the list of potential Ammicables
+-- uses divisors from pe12
+properDivisors = init . divisors
+amicableNumbersTo n = fst $ foldl finder ([],[]) [1..n] where
+  finder acc x
+    | dx < x && (dx,x) `elem` potentialAmmicables =
+               (dx:x:ammicables,potentialAmmicables)
+    | x < dx = (ammicables, (x,dx):potentialAmmicables)
+    | otherwise = acc
+    where dx = sum $ properDivisors x
+          ammicables = fst acc
+          potentialAmmicables = snd acc
+pe21 = sum $ amicableNumbersTo 9999
 
 -- 22
 -- What is the total of all the name scores in the file?
