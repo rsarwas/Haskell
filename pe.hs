@@ -8,8 +8,6 @@
 -- 3. From the ghci prompt, load this file with ':l pe'
 -- 4. To get the solution to the first problem, just enter pe1 at the ghci prompt
 
--- 12) divisors
-
 -- foldl  f acc [a1, a2,     ... an]  = f (... (f (f acc a1) a2) ...) an
 -- foldl1 f acc [a1, a2, a3, ... an]  = f (... (f (f  a1 a2) a3) ...) an
 -- foldr  f acc [a1, ...       an-1, an] = f a1 (... (f an-1 (f an  acc)) ...)
@@ -478,8 +476,9 @@ pe20 = sum $ digits $ product [1..100]
 -- 21
 -- Evaluate the sum of all the amicable numbers under 10000
 -- Answer: 31626  (11.05 laptop secs, 1074372488 bytes)
--- would be much faster if I used a hash lookup for the list of potential Ammicables
+-- I thought it would be faster using Data.Map instead of an association list, but the time was the same
 -- uses divisors from pe12
+
 properDivisors = init . divisors
 amicableNumbersTo n = fst $ foldl finder ([],[]) [1..n] where
   finder acc x
@@ -501,7 +500,9 @@ pe21 = sum $ amicableNumbersTo 9999
 -- 23
 -- Find the sum of all the positive integers which cannot be written as the sum of two abundant numbers.
 -- Answer: 
-
+abundant n = n < (sum $ properDivisors n)
+abundantNumbers = [x | x <- [1..], abundant x]
+pe23 = takeWhile (<10000) abundantNumbers
 
 -- 24
 -- What is the millionth lexicographic permutation of the digits 0, 1, 2, 3, 4, 5, 6, 7, 8 and 9?
