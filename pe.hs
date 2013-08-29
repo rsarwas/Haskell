@@ -14,6 +14,8 @@
 -- foldr1 f acc [a1, ... an-2, an-1, an] = f a1 (... (f an-2 (f an-1 an)) ...)
 -- scan[l|r|l1|r1] are similar to the fold functions, except they return a list with the value of the accumulator at each step
 
+--  FIXME improve time and space: 14, 27
+--  Finish: 12, 23, 24, 26, 28..
 
 -- 1
 -- Find the sum of all the multiples of 3 or 5 below 1000
@@ -332,8 +334,9 @@ pe13 = take 10 $ digits $ sum pe13data
 
 
 -- 14
+-- FIXME improve time and space
 -- Which starting number, under one million, produces the longest Collatz sequence chain?
--- Answer: (837799,525)  (347.67 secs, 97453747000 bytes)  FIXME improve time and space
+-- Answer: (837799,525)  (347.67 secs, 97453747000 bytes) 
 collatzChain :: (Integral a) => a -> [a]
 collatzChain 1 = [1]
 collatzChain n
