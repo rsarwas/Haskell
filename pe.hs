@@ -17,6 +17,8 @@
 --  FIXME improve time and space: 14, 27
 --  Finish: 12, 23, 24, 26, 28..
 
+import ProjectEuler
+
 -- 1
 -- Find the sum of all the multiples of 3 or 5 below 1000
 -- Answer: 233168  (0.01 secs, 2125904 bytes)
@@ -29,28 +31,13 @@ pe1 = sum $ filter multipleOf3or5 [1..999]
 -- Answer: 4613732  (0.00 secs, 1065392 bytes)
 pe2 = sum $ filter even smallFibs
       where smallFibs = takeWhile (<4000000) fibs
-            fibs = 1 : scanl (+) 1 fibs
+--            fibs = 1 : scanl (+) 1 fibs
 
 
 -- 3
 -- What is the largest prime factor of the number 600851475143
 -- Answer: 6857  (9.42 secs, 4638462768 bytes)
 pe3data = 600851475143
--- reasonably fast prime generator. Algorithm stolen from http://www.haskell.org/haskellwiki/Prime_numbers
-primesTo :: (Integral a) => a -> [a]
-primesTo m
-  | m < 2 = []
-  | otherwise = 2 : sieve [3,5..m]  where
-    sieve []     = []
-    sieve (p:xs) = p : sieve (xs `minus` [p*p, p*p+2*p..m])
-    minus (x:xs) (y:ys) = case (compare x y) of 
-               LT -> x : minus  xs  (y:ys)
-               EQ ->     minus  xs     ys 
-               GT ->     minus (x:xs)  ys
-    minus xs      _     = xs
---isqrt: integral square root, isqrt n returns the largest integer a such that a * a <= n
-isqrt :: (Integral a) => a -> a
-isqrt n = truncate (sqrt (fromIntegral n))
 pe3 = head [x | x <- reverse (primesTo (isqrt pe3data)), pe3data `mod` x == 0]
 
 
@@ -58,11 +45,10 @@ pe3 = head [x | x <- reverse (primesTo (isqrt pe3data)), pe3data `mod` x == 0]
 -- Find the largest palindrome made from the product of two 3-digit numbers
 -- Answer 906609 = 913 * 993  (0.01 secs, 13973056 bytes)
 pe4 = head $ filter has3DigitDivisor palindromes where
--- palindromes <= 997799 < 999 * 999 = 998001
    palindromes = [read (show x ++ (reverse $ show x)) :: Int | x <- [997,996..100]]
    has3DigitDivisor n
-     | n < 100000 || 999*999 < n = False
-     | otherwise                 = or [True | x <- [999,998..(n `div` 999)], n `mod` x == 0] 
+     | n < 100*100 || 999*999 < n = False
+     | otherwise                  = or [True | x <- [999,998..(n `div` 999)], n `mod` x == 0] 
 
 
 -- 5
@@ -81,9 +67,7 @@ pe6 = abs (sumOfSquares [1..100] - squareOfSum [1..100])
 
 -- 7
 -- What is the 10 001st prime number?
--- Answer: 104759  (0.72 secs, 357600072 bytes)
 -- Answer: 104743  (1.20 laptop secs, 199001748 bytes) 
--- uses primesTo from pe3
 -- 1st prime is at index 0; nth is at index n-1
 pe7 = primesTo 105000 !! (10001-1)
 
@@ -128,12 +112,17 @@ pe9 = head $ [(a, b, c, a*b*c) | c <- [500,499..3], b <- [c-1,c-2..2], let a = 1
 -- 10
 -- Find the sum of all the primes below two million
 -- Answer: 142913828922  (32.47 secs, 16029848200 bytes)
--- uses primesTo from pe3
 pe10 = sum $ primesTo 2000000
 
 
 -- 11
 -- What is the greatest product of four adjacent numbers in the same direction (up, down, left, right, or diagonally) in the 20×20 grid?
+-- for diagonals: add 1s at begining and end of rows to create a new matrix where diagonals are in columns
+-- i.e [[0,2,3]    [[0,2,3,1,1,]        [[1,1,0,2,3]
+--      [4,5,6]  -> [1,4,5,6,1,]   or    [1,4,5,6,1]
+--      [7,8,9]]    [1,1,7,8,9,]]        [7,8,9,1,1]
+-- then transpose and look for maximum adjacent products in each row
+-- so long as the solution is greater than 99*99*99 ~ 1,000,000 we can be sure that a diagonal of three or less is not the max.
 -- Answer: 70600674 = 87*97*94*89 from column 4, row 16 up to right  (0.01 secs, 6778152 bytes)
 pe11data = 
   ["08 02 22 97 38 15 00 40 00 75 04 05 07 78 52 12 50 77 91 08",
@@ -160,17 +149,8 @@ intGrid :: [[Int]]
 intGrid = [map read (words x)::[Int] | x <- pe11data]
 adjacentProduct :: (Num a, Ord a) => Int -> [a] -> a
 adjacentProduct n xs = maximum $ map product [take n (drop x xs) | x <- [0..length xs - n]]
-transpose :: [[a]]->[[a]]
-transpose ([]:_) = []
-transpose x = (map head x) : transpose (map tail x)
 horizontalMax = maximum $ map (adjacentProduct 4) intGrid
 verticalMax = maximum $ map (adjacentProduct 4) (transpose intGrid)
--- for diagonals: add 1s at begining and end of rows to create a new matrix where diagonals are in columns
--- i.e [[0,2,3]    [[0,2,3,1,1,]        [[1,1,0,2,3]
---      [4,5,6]  -> [1,4,5,6,1,]   or    [1,4,5,6,1]
---      [7,8,9]]    [1,1,7,8,9,]]        [7,8,9,1,1]
--- then transpose and look for maximum adjacent products in each row
--- so long as the solution is greater than 99*99*99 ~ 1,000,000 we can be sure that a diagonal of three or less is not the max.
 rightDiagonalMax = maximum $ map (adjacentProduct 4) (transpose [(replicate x 1) ++ (intGrid !! x) ++ (replicate (19-x) 1) | x <- [0..19]])
 leftDiagonalMax = maximum $ map (adjacentProduct 4) (transpose [(replicate (19-x) 1) ++ (intGrid !! x) ++ (replicate x 1) | x <- [0..19]])
 pe11 = maximum [horizontalMax, verticalMax, leftDiagonalMax, rightDiagonalMax]
@@ -182,39 +162,6 @@ pe11 = maximum [horizontalMax, verticalMax, leftDiagonalMax, rightDiagonalMax]
 triangleNumbers = scanl1 (+) [1..]
 triangleNumber n = n*(n+1) `div` 2
 triangleNumbersFrom n = scanl (+) x [(n+1)..] where x = triangleNumber n
-
-smallestNumberWith500Divisors = foldl1 lcm [1..500]  -- from pe5
--- = 73239622318952846593863874519042298829761338251289259046349190034596307420803713394327759819891326985268312606648408875713314013313623337094312440663659803352061415560955398316253892220738945585450197206138869521568000
-primeFactors n = primeFactors' n (primesTo (isqrt n))
-primeFactors' n possiblePrimes
-  | n < 2               = []
-  | null possiblePrimes = [n]
-  | r == 0              = nextPrime:(primeFactors' q possiblePrimes)
-  | otherwise           = primeFactors' n (tail possiblePrimes)
-  where nextPrime = head possiblePrimes
-        (q,r) = n `quotRem` nextPrime 
-
-powerSet [] = [[]]
-powerSet (x:xs) = tailps ++ map m tailps where
-  tailps = powerSet xs
-  m = (:) x
-
-quicksort :: (Ord a) => [a] -> [a]    
-quicksort [] = []    
-quicksort (x:xs) =     
-    let smallerSorted = quicksort (filter (<=x) xs)  
-        biggerSorted = quicksort (filter (>x) xs)   
-    in  smallerSorted ++ [x] ++ biggerSorted
-
---assumes that the list is already sorted
-unique [] = []
-unique [a] = [a]
-unique (x:xs)
-  | x == head xs = unique xs
-  | otherwise    = x:(unique xs)
-   
-divisors :: (Integral a) => a -> [a]
-divisors n = unique $ quicksort $ map product (powerSet (primeFactors n))
 
 pe12 = head [x | x <- triangleNumbers, moreThan10pf x, 100 <= divisorCount x]
   where moreThan10pf x = (<) 10 (length $ primeFactors x)
@@ -325,11 +272,6 @@ pe13data =
    72107838435069186155435662884062257473692284509516,
    20849603980134001723930671666823555245252804609722,
    53503534226472524250874054075591789781264330331690]
-digits :: Integral a => a -> [a]
-digits x
-     | x < 0     = digits (-x)
-     | x < 10    = [x]
-     | otherwise = digits (x `div` 10) ++ [(x `mod` 10)]
 pe13 = take 10 $ digits $ sum pe13data
 
 
@@ -369,7 +311,6 @@ pe15 = pascalTriangleRow (pe15data * 2 + 1) !! pe15data
 -- 16
 -- What is the sum of the digits of the number 2^1000?
 -- Answer = 1366  (0.00 secs, 4217344 bytes)
--- uses digits from pe13
 pe16 = sum $ digits $ 2^1000
 
 

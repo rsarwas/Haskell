@@ -1,5 +1,6 @@
 module ProjectEuler
-( divisors  
+( digits
+, divisors  
 , fibs  
 , isPrime  
 , isqrt  
@@ -7,8 +8,17 @@ module ProjectEuler
 , primeFactors
 , primesTo
 , quicksort
+, transpose
 , unique  
 ) where 
+
+-- Returns a list of decimal digits from an integral 
+digits :: Integral a => a -> [a]
+digits x
+     | x < 0     = digits (-x)
+     | x < 10    = [x]
+     | otherwise = digits (x `div` 10) ++ [(x `mod` 10)]
+
 
 divisors :: (Integral a) => a -> [a]
 divisors n = unique $ quicksort $ map product (powerSet (primeFactors n))
@@ -67,6 +77,12 @@ quicksort (x:xs) =
     let smallerSorted = quicksort (filter (<=x) xs)  
         biggerSorted = quicksort (filter (>x) xs)   
     in  smallerSorted ++ [x] ++ biggerSorted
+
+-- transpose a matrix (list of lists)
+transpose :: [[a]]->[[a]]
+transpose ([]:_) = []
+transpose x = (map head x) : transpose (map tail x)
+
 
 -- a list of unique items; the input list must be sorted.
 unique :: (Eq a) => [a] -> [a]
