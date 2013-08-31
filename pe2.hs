@@ -11,3 +11,15 @@ import ProjectEuler
 pe27 = 
  let consecutivePrimes a b = length $ takeWhile (\n -> isPrime (n*n + a*n + b)) [0..]
   in maximum [((consecutivePrimes a b),a,b) | a <- [(-999)..999], b <- primesTo 999]
+
+-- 28
+-- What is the sum of the numbers on the diagonals in a 1001 by 1001 spiral formed with the number 1 and moving to the right in a clockwise direction
+-- Answer: 669171001 (0.01 laptop secs, 1053000 bytes)
+pe28 = sum [ring n | n <- [0..500]] where
+       ring 0 = 1
+       ring n = sum $ take 4 [largestCorner,largestCorner-delta..] where
+                largestCorner = (2*n+1)^2
+                delta = 2*n
+
+
+-- 29
