@@ -383,11 +383,6 @@ pe18data =
    [91, 71, 52, 38, 17, 14, 91, 43, 58, 50, 27, 29, 48],
    [63, 66, 04, 68, 89, 53, 67, 30, 73, 16, 69, 87, 40, 31],
    [04, 62, 98, 27, 23, 09, 70, 98, 73, 93, 38, 53, 60, 04, 23]]
-zip3With :: (a -> b -> c -> d) -> [a] -> [b] -> [c] -> [d]
-zip3With _ [] _ _ = []
-zip3With _ _ [] _ = []
-zip3With _ _ _ [] = []
-zip3With f (x:xs) (y:ys) (z:zs) = (f x y z) : (zip3With f xs ys zs)
 maxTriSum t = head $ foldr1 sumAdjacent t 
   where sumAdjacent x y = zip3With maxSum x y (tail y)
         maxSum x y z

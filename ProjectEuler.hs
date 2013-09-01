@@ -9,7 +9,8 @@ module ProjectEuler
 , primesTo
 , quicksort
 , transpose
-, unique  
+, unique
+, zip3With  
 ) where 
 
 -- Returns a list of decimal digits from an integral 
@@ -91,3 +92,10 @@ unique [a] = [a]
 unique (x:xs)
   | x == head xs = unique xs
   | otherwise    = x:(unique xs)
+
+-- zip 3 lists together with your own function
+zip3With :: (a -> b -> c -> d) -> [a] -> [b] -> [c] -> [d]
+zip3With _ [] _ _ = []
+zip3With _ _ [] _ = []
+zip3With _ _ _ [] = []
+zip3With f (x:xs) (y:ys) (z:zs) = (f x y z) : (zip3With f xs ys zs)
