@@ -24,8 +24,14 @@ pe28 = sum [ring n | n <- [0..500]] where
 
 -- 29
 
+-- 30
+-- Digit fifth powers:  Find the sum of all the numbers that can be written as the sum of fifth powers of their digits.
+-- Answer: 443839 (4.46 laptop secs, 721162300 bytes)
+-- upper limit is about 200,000 because 5*9^5 = 295245, 6*9^5 = 354294 so the largest possible sum less than itself will be at 199999
+equalSumOfPowers x = x == sum (map (^5) (digits x))
+pe30 = sum [x | x <- [10..200000], equalSumOfPowers x]
 
 -- 48
 -- Self Powers: Find the last ten digits of the series, 1^1 + 2^2 + 3^3 + ... + 1000^1000.
 -- Answer: 9110846700 (0.04 secs, 5809448 bytes)
-(sum [x^x | x <- [1..999]]) `mod` 10^10
+pe48 = (sum [x^x | x <- [1..999]]) `mod` 10^10
