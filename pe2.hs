@@ -23,3 +23,9 @@ pe28 = sum [ring n | n <- [0..500]] where
 
 
 -- 29
+
+
+-- 48
+-- Self Powers: Find the last ten digits of the series, 1^1 + 2^2 + 3^3 + ... + 1000^1000.
+-- Answer: 9110846700 (0.04 secs, 5809448 bytes)
+(sum [x^x | x <- [1..999]]) `mod` 10^10
