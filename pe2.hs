@@ -1,5 +1,9 @@
 import ProjectEuler
 
+--  FIXME improve time and space: 27
+--  Finish: 26, 31..
+
+
 -- 26
 -- Reciprocal cycles: Find the value of d < 1000 for which 1/d contains the longest recurring cycle in its decimal fraction part.
 -- Answer: 

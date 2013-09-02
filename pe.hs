@@ -14,8 +14,8 @@
 -- foldr1 f acc [a1, ... an-2, an-1, an] = f a1 (... (f an-2 (f an-1 an)) ...)
 -- scan[l|r|l1|r1] are similar to the fold functions, except they return a list with the value of the accumulator at each step
 
---  FIXME improve time and space: 14, 27
---  Finish: 12, 23, 24, 26, 28..
+--  FIXME improve time and space: 12, 14
+--  Finish: 23
 
 import ProjectEuler
 
@@ -31,7 +31,6 @@ pe1 = sum $ filter multipleOf3or5 [1..999]
 -- Answer: 4613732  (0.00 secs, 1065392 bytes)
 pe2 = sum $ filter even smallFibs
       where smallFibs = takeWhile (<4000000) fibs
---            fibs = 1 : scanl (+) 1 fibs
 
 
 -- 3
@@ -117,13 +116,13 @@ pe10 = sum $ primesTo 2000000
 
 -- 11
 -- What is the greatest product of four adjacent numbers in the same direction (up, down, left, right, or diagonally) in the 20×20 grid?
+-- Answer: 70600674 = 87*97*94*89 from column 4, row 16 up to right  (0.01 secs, 6778152 bytes)
 -- for diagonals: add 1s at begining and end of rows to create a new matrix where diagonals are in columns
 -- i.e [[0,2,3]    [[0,2,3,1,1,]        [[1,1,0,2,3]
 --      [4,5,6]  -> [1,4,5,6,1,]   or    [1,4,5,6,1]
 --      [7,8,9]]    [1,1,7,8,9,]]        [7,8,9,1,1]
 -- then transpose and look for maximum adjacent products in each row
 -- so long as the solution is greater than 99*99*99 ~ 1,000,000 we can be sure that a diagonal of three or less is not the max.
--- Answer: 70600674 = 87*97*94*89 from column 4, row 16 up to right  (0.01 secs, 6778152 bytes)
 pe11data = 
   ["08 02 22 97 38 15 00 40 00 75 04 05 07 78 52 12 50 77 91 08",
    "49 49 99 40 17 81 18 57 60 87 17 40 98 43 69 48 04 56 62 00",
@@ -156,21 +155,16 @@ leftDiagonalMax = maximum $ map (adjacentProduct 4) (transpose [(replicate (19-x
 pe11 = maximum [horizontalMax, verticalMax, leftDiagonalMax, rightDiagonalMax]
 
 
--- 12 (slow and undone)
+-- 12
 -- What is the value of the first triangle number to have over five hundred divisors?
--- Answer:
-triangleNumbers = scanl1 (+) [1..]
-triangleNumber n = n*(n+1) `div` 2
-triangleNumbersFrom n = scanl (+) x [(n+1)..] where x = triangleNumber n
-
-pe12 = head [x | x <- triangleNumbers, moreThan10pf x, 100 <= divisorCount x]
-  where moreThan10pf x = (<) 10 (length $ primeFactors x)
-        divisorCount x = length $ divisors x
+-- Answer: 76576500 (134.29 secs, 18814711340 bytes)
+-- FIXME: Can be improved by starting out Triangle number search with the first highly composite number with 500 divisors
+pe12 = head [x | x <- triangleNumbers, 500 <= divisorCount x]
 
 
 -- 13
 -- Work out the first ten digits of the sum of the following one-hundred 50-digit numbers
--- Answer: [5,5,3,7,3,7,6,2,3,0]  (0.00 secs, 1615288 bytes)
+-- Answer: [5,5,3,7,3,7,6,2,3,0] aka 5537376230 (0.00 secs, 1615288 bytes)
 pe13data =
   [37107287533902102798797998220837590246510135740250,
    46376937677490009712648124896970078050417018260538,
@@ -276,9 +270,9 @@ pe13 = take 10 $ digits $ sum pe13data
 
 
 -- 14
--- FIXME improve time and space
 -- Which starting number, under one million, produces the longest Collatz sequence chain?
 -- Answer: (837799,525)  (347.67 secs, 97453747000 bytes) 
+-- FIXME improve time and space
 collatzChain :: (Integral a) => a -> [a]
 collatzChain 1 = [1]
 collatzChain n
@@ -302,10 +296,7 @@ pe14 = max' [(x,length $ collatzChain x) | x <- [1..999999]]
 -- by summing the two nodes above it you will see that the values of the nodes of the lattice is the central
 -- portion of pascal's triangle. all we need is the middle value of the last row. 
 pe15data = 20
-pascalTriangleRow 1 = [1]
-pascalTriangleRow n = zipWith (+) (0:previousRow) (previousRow++[0])
-  where previousRow = pascalTriangleRow (n-1)
-pe15 = pascalTriangleRow (pe15data * 2 + 1) !! pe15data
+pe15 = pascalsTriangleRow (pe15data * 2 + 1) !! pe15data
 
 
 -- 16
@@ -352,13 +343,6 @@ intWords x
         where lastDigit x = if x `mod` 10 == 0 then "" else "-" ++ intWords (x `mod` 10)
               bigNumber n s x = intWords (x `div` 10^n) ++ " " ++ s ++ lastNdigits n x
               lastNdigits n x =  if x `mod` 1000 == 0 then "" else ((if x `mod` 1000 < 100 then " and " else " ") ++ intWords (x `mod` 10^n))
-replace :: String -> String -> String -> String
-replace _ _ [] = []
-replace old new haystack
-  | haystack == old = new
-  | take l haystack == old = new ++ replace old new (drop l haystack)
-  | otherwise = head haystack : replace old new (tail haystack)
-  where l = length old
 intWordLength :: Int -> Int
 intWordLength n = length (replace " and " "" (replace " " "" (replace "-" "" (intWords n))))
 pe17 = sum $ map intWordLength [1..1000]  
@@ -408,7 +392,6 @@ pe19 = sum [1 | y <- [1901..2000], d <- [1..daysInYear y], isFirstDayOfMonth y d
 -- 20
 -- Find the sum of the digits in the number 100!
 -- Answer: 648  (0.00 secs, 2129736 bytes)
--- uses digits from pe16
 pe20 = sum $ digits $ product [1..100]
 
 
@@ -416,7 +399,6 @@ pe20 = sum $ digits $ product [1..100]
 -- Evaluate the sum of all the amicable numbers under 10000
 -- Answer: 31626  (11.05 laptop secs, 1074372488 bytes)
 -- I thought it would be faster using Data.Map instead of an association list, but the time was the same
--- uses divisors from pe12
 
 properDivisors = init . divisors
 amicableNumbersTo n = fst $ foldl finder ([],[]) [1..n] where
@@ -430,10 +412,9 @@ amicableNumbersTo n = fst $ foldl finder ([],[]) [1..n] where
           potentialAmmicables = snd acc
 pe21 = sum $ amicableNumbersTo 9999
 
+
 -- 22
--- What is the total of all the name scores in the file?
 -- See pe22.hs
--- Answer: 
 
 
 -- 23
@@ -471,4 +452,4 @@ fibWithDigits n = 1 + (length (takeWhile lessDigitsThan fibs))
   where lessDigitsThan = (>) (10^(n-1))
         fibs = 1 : scanl (+) 1 fibs 
 pe25 = fibWithDigits 1000
-            
+
