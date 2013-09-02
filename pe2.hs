@@ -39,7 +39,15 @@ pe30 = sum [x | x <- [10..200000], equalSumOfPowers x]
 
 -- 36
 -- Double-base palindromes: Find the sum of all numbers, less than one million, which are palindromic in base 10 and base 2
--- Answer: 
+-- Answer: 872187 (0.07 laptop secs, 18396560 bytes)
+palindromes = [read (show x ++ (reverse $ show x)) :: Int | x <- [999,998..1]] ++ 
+              [read (show x ++ show y ++ (reverse $ show x)) :: Int | x <- [99,98..1], y <- [9,8..0]] ++
+              [10,9..0]
+-- since the binary number must start with 1 (not 0), it must end with 1, so all the base 10 numbers are odd
+pe36 = sum $ filter base2palindrome (filter odd palindromes)
+       where base2palindrome x = let b = decToBin x in reverse b == b
+             decToBin 0 = []
+             decToBin y = let (a,b) = quotRem y 2 in decToBin a ++ [b]
 
 
 -- 48
