@@ -1,7 +1,65 @@
+-- Project Euler in Haskell problems 21..40
+
 import ProjectEuler
 
---  FIXME improve time and space: 27
---  Finish: 26, 31..
+
+-- 21
+-- Evaluate the sum of all the amicable numbers under 10000
+-- Answer: 31626  (11.05 laptop secs, 1074372488 bytes)
+-- I thought it would be faster using Data.Map instead of an association list, but the time was the same
+
+properDivisors = init . divisors
+amicableNumbersTo n = fst $ foldl finder ([],[]) [1..n] where
+  finder acc x
+    | dx < x && (dx,x) `elem` potentialAmmicables =
+               (dx:x:ammicables,potentialAmmicables)
+    | x < dx = (ammicables, (x,dx):potentialAmmicables)
+    | otherwise = acc
+    where dx = sum $ properDivisors x
+          ammicables = fst acc
+          potentialAmmicables = snd acc
+pe21 = sum $ amicableNumbersTo 9999
+
+
+-- 22
+-- See pe2_22.hs
+
+
+-- 23
+-- Find the sum of all the positive integers which cannot be written as the sum of two abundant numbers.
+-- Answer: 
+abundant n = n < (sum $ properDivisors n)
+abundantNumbers = [x | x <- [1..], abundant x]
+pe23 = takeWhile (<10000) abundantNumbers
+
+
+-- 24
+-- What is the millionth lexicographic permutation of the digits 0, 1, 2, 3, 4, 5, 6, 7, 8 and 9?
+-- Answer: [2,7,8,3,9,1,5,4,6,0] (0.00 secs, 523500 bytes)
+lexiPerm :: (Eq t) => Int -> [t] -> [t]
+lexiPerm _ [] = error "Empty list"
+lexiPerm 0 items = items
+lexiPerm i items  
+    | i <  0 = error "The permutation index must be a positive number"
+    | i >= m2 = error "There are not that many permutations for these items"
+    | otherwise = d:(lexiPerm r [x | x <- items, x /= d])
+        where
+            (q,r) = i `quotRem` m1
+            m1 = product [1..(l-1)]
+            m2 = m1*l
+            l =  length items
+            d = items !! q
+pe24 = lexiPerm (10^6-1) [0..9]
+
+
+-- 25
+-- What is the first term in the Fibonacci sequence to contain 1000 digits?
+-- Answer: 4782 (0.03 secs, 14315648 byte)
+fibWithDigits :: Int -> Int
+fibWithDigits n = 1 + (length (takeWhile lessDigitsThan fibs))
+  where lessDigitsThan = (>) (10^(n-1))
+        fibs = 1 : scanl (+) 1 fibs 
+pe25 = fibWithDigits 1000
 
 
 -- 26
@@ -52,9 +110,3 @@ pe36 = sum $ filter base2palindrome (filter odd palindromes)
        where base2palindrome x = let b = decToBin x in reverse b == b
              decToBin 0 = []
              decToBin y = let (a,b) = quotRem y 2 in decToBin a ++ [b]
-
-
--- 48
--- Self Powers: Find the last ten digits of the series, 1^1 + 2^2 + 3^3 + ... + 1000^1000.
--- Answer: 9110846700 (0.04 secs, 5809448 bytes)
-pe48 = (sum [x^x | x <- [1..999]]) `mod` 10^10

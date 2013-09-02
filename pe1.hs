@@ -1,21 +1,4 @@
--- Project Euler in Haskell
--- By Regan Sarwas August 2013 to ...
--- Although some of these problems can be simplified by loading a standard or third party module,
---  I am limiting myself to just the functions available in the Prelude module loaded by GHCi.
--- It is intended that this code be run with the Haskell interpreter (GHCi)
--- 1. Download the Haskell platform from http://www.haskell.org/platform/
--- 2. Launch ghci in a terminal window
--- 3. From the ghci prompt, load this file with ':l pe'
--- 4. To get the solution to the first problem, just enter pe1 at the ghci prompt
-
--- foldl  f acc [a1, a2,     ... an]  = f (... (f (f acc a1) a2) ...) an
--- foldl1 f acc [a1, a2, a3, ... an]  = f (... (f (f  a1 a2) a3) ...) an
--- foldr  f acc [a1, ...       an-1, an] = f a1 (... (f an-1 (f an  acc)) ...)
--- foldr1 f acc [a1, ... an-2, an-1, an] = f a1 (... (f an-2 (f an-1 an)) ...)
--- scan[l|r|l1|r1] are similar to the fold functions, except they return a list with the value of the accumulator at each step
-
---  FIXME improve time and space: 12, 14
---  Finish: 23
+-- Project Euler in Haskell problems 1..20
 
 import ProjectEuler
 
@@ -36,18 +19,18 @@ pe2 = sum $ filter even smallFibs
 -- 3
 -- What is the largest prime factor of the number 600851475143
 -- Answer: 6857  (9.42 secs, 4638462768 bytes)
-pe3data = 600851475143
 pe3 = head [x | x <- reverse (primesTo (isqrt pe3data)), pe3data `mod` x == 0]
+      where pe3data = 600851475143
 
 
 -- 4
 -- Find the largest palindrome made from the product of two 3-digit numbers
 -- Answer 906609 = 913 * 993  (0.01 secs, 13973056 bytes)
 pe4 = head $ filter has3DigitDivisor palindromes where
-   palindromes = [read (show x ++ (reverse $ show x)) :: Int | x <- [997,996..100]]
-   has3DigitDivisor n
-     | n < 100*100 || 999*999 < n = False
-     | otherwise                  = or [True | x <- [999,998..(n `div` 999)], n `mod` x == 0] 
+      palindromes = [read (show x ++ (reverse $ show x)) :: Int | x <- [997,996..100]]
+      has3DigitDivisor n
+        | n < 100*100 || 999*999 < n = False
+        | otherwise                  = or [True | x <- [999,998..(n `div` 999)], n `mod` x == 0] 
 
 
 -- 5
@@ -96,9 +79,9 @@ pe8data =
   "05886116467109405077541002256983155200055935729725" ++
   "71636269561882670428252483600823257530420752963450"
 pe8 = maximum ([productDigits x | x <- consecutive 5 pe8data]) where
-  productDigits s = product (map charToInt s)
-  charToInt c = fromEnum c - 48
-  consecutive n cs = [take n (drop x cs) | x <- [0..length cs - n]]
+      productDigits s = product (map charToInt s)
+      charToInt c = fromEnum c - 48
+      consecutive n cs = [take n (drop x cs) | x <- [0..length cs - n]]
 
 
 
@@ -295,8 +278,8 @@ pe14 = max' [(x,length $ collatzChain x) | x <- [1..999999]]
 --   1   2   1
 -- by summing the two nodes above it you will see that the values of the nodes of the lattice is the central
 -- portion of pascal's triangle. all we need is the middle value of the last row. 
-pe15data = 20
 pe15 = pascalsTriangleRow (pe15data * 2 + 1) !! pe15data
+       where pe15data = 20
 
 
 -- 16
@@ -343,9 +326,8 @@ intWords x
         where lastDigit x = if x `mod` 10 == 0 then "" else "-" ++ intWords (x `mod` 10)
               bigNumber n s x = intWords (x `div` 10^n) ++ " " ++ s ++ lastNdigits n x
               lastNdigits n x =  if x `mod` 1000 == 0 then "" else ((if x `mod` 1000 < 100 then " and " else " ") ++ intWords (x `mod` 10^n))
-intWordLength :: Int -> Int
-intWordLength n = length (replace " and " "" (replace " " "" (replace "-" "" (intWords n))))
-pe17 = sum $ map intWordLength [1..1000]  
+pe17 = sum $ map intWordLength [1..1000] where
+       intWordLength n = length (replace " and " "" (replace " " "" (replace "-" "" (intWords n))))
 
 
 -- 18
@@ -393,63 +375,3 @@ pe19 = sum [1 | y <- [1901..2000], d <- [1..daysInYear y], isFirstDayOfMonth y d
 -- Find the sum of the digits in the number 100!
 -- Answer: 648  (0.00 secs, 2129736 bytes)
 pe20 = sum $ digits $ product [1..100]
-
-
--- 21
--- Evaluate the sum of all the amicable numbers under 10000
--- Answer: 31626  (11.05 laptop secs, 1074372488 bytes)
--- I thought it would be faster using Data.Map instead of an association list, but the time was the same
-
-properDivisors = init . divisors
-amicableNumbersTo n = fst $ foldl finder ([],[]) [1..n] where
-  finder acc x
-    | dx < x && (dx,x) `elem` potentialAmmicables =
-               (dx:x:ammicables,potentialAmmicables)
-    | x < dx = (ammicables, (x,dx):potentialAmmicables)
-    | otherwise = acc
-    where dx = sum $ properDivisors x
-          ammicables = fst acc
-          potentialAmmicables = snd acc
-pe21 = sum $ amicableNumbersTo 9999
-
-
--- 22
--- See pe22.hs
-
-
--- 23
--- Find the sum of all the positive integers which cannot be written as the sum of two abundant numbers.
--- Answer: 
-abundant n = n < (sum $ properDivisors n)
-abundantNumbers = [x | x <- [1..], abundant x]
-pe23 = takeWhile (<10000) abundantNumbers
-
-
--- 24
--- What is the millionth lexicographic permutation of the digits 0, 1, 2, 3, 4, 5, 6, 7, 8 and 9?
--- Answer: [2,7,8,3,9,1,5,4,6,0] (0.00 secs, 523500 bytes)
-lexiPerm :: (Eq t) => Int -> [t] -> [t]
-lexiPerm _ [] = error "Empty list"
-lexiPerm 0 items = items
-lexiPerm i items  
-    | i <  0 = error "The permutation index must be a positive number"
-    | i >= m2 = error "There are not that many permutations for these items"
-    | otherwise = d:(lexiPerm r [x | x <- items, x /= d])
-        where
-            (q,r) = i `quotRem` m1
-            m1 = product [1..(l-1)]
-            m2 = m1*l
-            l =  length items
-            d = items !! q
-pe24 = lexiPerm (10^6-1) [0..9]
-
-
--- 25
--- What is the first term in the Fibonacci sequence to contain 1000 digits?
--- Answer: 4782 (0.03 secs, 14315648 byte)
-fibWithDigits :: Int -> Int
-fibWithDigits n = 1 + (length (takeWhile lessDigitsThan fibs))
-  where lessDigitsThan = (>) (10^(n-1))
-        fibs = 1 : scanl (+) 1 fibs 
-pe25 = fibWithDigits 1000
-

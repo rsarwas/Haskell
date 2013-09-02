@@ -28,7 +28,6 @@ digits x
      | x < 10    = [x]
      | otherwise = digits (x `div` 10) ++ [(x `mod` 10)]
 
-
 -- Returns a list of all the divisors of a number
 divisors :: (Integral a) => a -> [a]
 divisors n = unique $ quicksort $ map product (powerSet (primeFactors n))
@@ -60,7 +59,7 @@ isqrt :: (Integral a) => a -> a
 isqrt n = truncate (sqrt (fromIntegral n))
 
 -- Returns pascals Triangle, it is an infinite triangle
---pascalsTriangle :: [[Integer]]
+pascalsTriangle :: [[Integer]]
 pascalsTriangle = map pascalsTriangleRow [1..]
 
 -- Returns the nth row of pascals triangle, the first row is 1, not 0
@@ -69,8 +68,7 @@ pascalsTriangleRow 1 = [1]
 pascalsTriangleRow n = zipWith (+) (0:previousRow) (previousRow++[0])
   where previousRow = pascalsTriangleRow (n-1)
 
--- Retuns the power sets (set of all combinations) for a set
--- i.e. [1,2] => [[], [1], [2], [1,2]]
+-- Retuns the power sets (set of all combinations) for a set, i.e. [1,2] => [[], [1], [2], [1,2]]
 powerSet :: [a] -> [[a]]
 powerSet [] = [[]]
 powerSet (x:xs) = tailps ++ map m tailps where
