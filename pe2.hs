@@ -110,3 +110,21 @@ pe36 = sum $ filter base2palindrome (filter odd palindromes)
        where base2palindrome x = let b = decToBin x in reverse b == b
              decToBin 0 = []
              decToBin y = let (a,b) = quotRem y 2 in decToBin a ++ [b]
+
+
+-- 38
+-- Pandigital multiples: What is the largest 1 to 9 pandigital 9-digit number that can be formed as the concatenated product of an integer with (1,2, ... , n) where n  1?
+-- Answer: 932718654 (0.04 secs, 5308316 bytes)
+-- Since we were already given 9 * [1..5] = 918273645, this is a lower bounds for a solution
+-- A better two digit integer must be in the range [92..98], but this would result in a 8 (2+3+3) or 12 (2+3+3+3) digit answer. NG
+-- Similarly, a three digit integer [921..987] would result in a 7 or 11 digit solution. NG
+-- However, a 4 digit integer [9183..9876] would result in 4+5 digit solution
+-- A 5 or more digit integer is precluded since we need to multiply by 1..n where n>1, so [1,2] is minimal
+-- At this point we can brute force a solution.
+pe38 = head [(f a) | a <- [9876,9875..9183], isPandigital a, isPandigital (a*2), isPandigital (f a) ]
+       where f x = x*10^5+x*2 
+             isPandigital x = let digitsOfX = digits x
+                              in (not ( 0 `elem` digitsOfX))
+                                 && (length digitsOfX) == (length $ unique $ quicksort digitsOfX)
+
+       
