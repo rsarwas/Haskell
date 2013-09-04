@@ -128,6 +128,19 @@ pe36 = sum $ filter base2palindrome (filter odd palindromes)
              decToBin y = let (a,b) = quotRem y 2 in decToBin a ++ [b]
 
 
+-- 37
+-- Truncatable primes: Find the sum of the only eleven primes that are both truncatable from left to right and right to left.
+-- Answer: 748317 (18.59 laptop secs, 2339299960 bytes)
+-- Failed on first try, did not addjust list of candidates from problem 35
+pe37 = sum $ take 11 (filter isTruncateablePrime (filter isPrime candidates))
+       where candidates = concat (drop 1 (scanl f [1,2,3,5,7,9] [1..5]))
+                          where f acc n = [a*10^n + b | a <- [1,2,3,5,7,9], b <- acc]
+             isTruncateablePrime p = and (map isPrime (map truncateLeft [1..truncs] ++ (map truncateRight [1..truncs])))
+                                 where truncs = (length $ digits p) - 1
+                                       truncateLeft a = p `quot` (10^a)
+                                       truncateRight a = p `rem` (10^a)
+
+
 -- 38
 -- Pandigital multiples: What is the largest 1 to 9 pandigital 9-digit number that can be formed as the concatenated product of an integer with (1,2, ... , n) where n  1?
 -- Answer: 932718654 (0.04 secs, 5308316 bytes)
