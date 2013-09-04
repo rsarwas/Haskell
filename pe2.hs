@@ -99,6 +99,22 @@ equalSumOfPowers x = x == sum (map (^5) (digits x))
 pe30 = sum [x | x <- [10..200000], equalSumOfPowers x]
 
 
+-- 35
+-- Circular primes: How many circular primes are there below one million?
+-- Answer: 55 (5.91 laptop secs, 754384904 bytes)
+-- If any multi-digit prime has a 0,2,4,5,6, or 8, in it, then that digit will rotate to the last digit,
+-- and ensure that it fails. Therefore, we only have to check primes with only 1,3,7,9
+-- Skip checking all the 1 and two digit solutions, as they are provided in the problem statement
+pe35 = 13 + (length $ filter isCircularPrime candidates)
+       where candidates = concat (drop 2 (scanl f [1,3,7,9] [1..5]))
+                          where f acc n = [a*10^n + b | a <- [1,3,7,9], b <- acc]
+             isCircularPrime p = (isPrime p) && (and (map isPrime (map rotate [1..rots])))
+                                 where rots = (length $ digits p) - 1
+                                       rotate a =
+                                         let (q,r) = p `quotRem` (10^a)
+                                         in r*10^(rots+1-a) + q
+
+
 -- 36
 -- Double-base palindromes: Find the sum of all numbers, less than one million, which are palindromic in base 10 and base 2
 -- Answer: 872187 (0.07 laptop secs, 18396560 bytes)
