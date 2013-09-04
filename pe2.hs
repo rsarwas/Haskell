@@ -64,7 +64,13 @@ pe25 = fibWithDigits 1000
 
 -- 26
 -- Reciprocal cycles: Find the value of d < 1000 for which 1/d contains the longest recurring cycle in its decimal fraction part.
--- Answer: 
+-- Answer: d = 983 (982 digit cycle) (0.11 laptop secs, 13605860 bytes)
+-- I only need to check primes, because the divisor can always be reduced to a set of prime factors
+-- I am assuming a single prime factor will win, however I should check the multiple of two two digit primes
+-- I am basically doing long hand division, I start with 1/p which has a remainder of 1, when I get a remainder of 1 again,
+-- the cycle repeats  (if I get a remainder of 0, the cycle ends)
+pe26 = maximum [(length $ div' 10 p,p) | p <- (primesTo 999)]
+       where div' n x = let (q,r) = n `quotRem` x in if r < 2 then [q] else q:(div' (10*r) x)
 
 
 -- 27 (algorithm needs optimzation)
