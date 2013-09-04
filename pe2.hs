@@ -106,7 +106,7 @@ pe30 = sum [x | x <- [10..200000], equalSumOfPowers x]
 
 
 -- 31
--- Coin Sum
+-- Coin Sums:  How many different way can 2 pounds be made using any number of the 8 available coins
 -- Answer: 73682 (0.07 laptop secs, 10532560 bytes)
 --pe31 = [(l2,l1,p50,p20,p10,p5,p2,(200-l2-l1-p50-p20-p10-p5-p2)) | 
 pe31 = length [ 1 | 
@@ -117,6 +117,20 @@ pe31 = length [ 1 |
          p10 <- [0,10..(200-l2-l1-p50-p20)],
          p5 <- [0,5..(200-l2-l1-p50-p20-p10)],
          p2 <- [0,2..(200-l2-l1-p50-p20-p10-p5)]]
+
+
+-- 32
+-- Pandigital products : Find the sum of all products whose multiplicand/multiplier/product identity can be written as a 1 through 9 pandigital
+-- Answer: 45228 (1.03 laptop secs, 102910276 bytes)
+-- only possible identies with 9 digits are {1..9}x{1000..9999} = {1000..9999} and {10..99}x{100..999}={1000..9999}
+-- provide upper and lower limits which contain no duplicates or zeros
+-- skip 1 and 9 on single digit, because 1 is identity (results in duplicates), and 9 times 1234 > 9999
+isPandigital3 a b c = let digitsOfX = digits a ++ digits b ++ digits c
+                      in (not ( 0 `elem` digitsOfX))
+				         && (length digitsOfX) == (length $ unique $ quicksort digitsOfX)
+identities = [(m1,m2,p) | m1 <- [12..98], m2 <- [123..(9999 `div` m1)], p <-[m1*m2], isPandigital3 m1 m2 p] ++
+             [(m1,m2,p) | m1 <- [2..8], m2 <- [1234..(9999 `div` m1)], p <-[m1*m2], isPandigital3 m1 m2 p]
+pe32 = sum $ unique $ quicksort $ map (\(_,_,x) -> x) identities
 
 
 -- 35
@@ -176,4 +190,3 @@ pe38 = head [(f a) | a <- [9876,9875..9183], isPandigital a, isPandigital (a*2),
                               in (not ( 0 `elem` digitsOfX))
                                  && (length digitsOfX) == (length $ unique $ quicksort digitsOfX)
 
-       
