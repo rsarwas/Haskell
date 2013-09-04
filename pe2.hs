@@ -105,6 +105,20 @@ equalSumOfPowers x = x == sum (map (^5) (digits x))
 pe30 = sum [x | x <- [10..200000], equalSumOfPowers x]
 
 
+-- 31
+-- Coin Sum
+-- Answer: 73682 (0.07 laptop secs, 10532560 bytes)
+--pe31 = [(l2,l1,p50,p20,p10,p5,p2,(200-l2-l1-p50-p20-p10-p5-p2)) | 
+pe31 = length [ 1 | 
+         l2 <- [0,200],
+         l1 <- [0,100..(200-l2)],
+         p50 <- [0,50..(200-l2-l1)],
+         p20 <- [0,20..(200-l2-l1-p50)],
+         p10 <- [0,10..(200-l2-l1-p50-p20)],
+         p5 <- [0,5..(200-l2-l1-p50-p20-p10)],
+         p2 <- [0,2..(200-l2-l1-p50-p20-p10-p5)]]
+
+
 -- 35
 -- Circular primes: How many circular primes are there below one million?
 -- Answer: 55 (5.91 laptop secs, 754384904 bytes)
