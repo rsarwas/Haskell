@@ -190,3 +190,11 @@ pe38 = head [(f a) | a <- [9876,9875..9183], isPandigital a, isPandigital (a*2),
                               in (not ( 0 `elem` digitsOfX))
                                  && (length digitsOfX) == (length $ unique $ quicksort digitsOfX)
 
+
+-- 39
+-- Integer Right Triangles: For which perimeter p <= 1000 is there a maximum number of integer right triangles
+-- Answer: 840 (111.71 laptop secs, 14777564224 bytes)
+-- lots of permimeters have no integral right triangles, can we identify those and not check?
+pe39 = snd $ maximum [(length $ rightTriangles p,p) | p <- [12..1000]]
+       where rightTriangles p = 
+               [(a,b,c) | a <- [1..(p `div` 3)], b <- [(p `div` 3)..(p `div` 2)], c <- [p - a - b], c^2 == a^2 + b^2]
