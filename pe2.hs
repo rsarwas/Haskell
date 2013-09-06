@@ -133,6 +133,16 @@ identities = [(m1,m2,p) | m1 <- [12..98], m2 <- [123..(9999 `div` m1)], p <-[m1*
 pe32 = sum $ unique $ quicksort $ map (\(_,_,x) -> x) identities
 
 
+-- 33
+-- Digit Canceling Fractions: 
+-- Answer:
+
+
+-- 34
+-- 
+-- Answer: 
+
+
 -- 35
 -- Circular primes: How many circular primes are there below one million?
 -- Answer: 55 (5.91 laptop secs, 754384904 bytes)
@@ -198,3 +208,13 @@ pe38 = head [(f a) | a <- [9876,9875..9183], isPandigital a, isPandigital (a*2),
 pe39 = snd $ maximum [(length $ rightTriangles p,p) | p <- [12..1000]]
        where rightTriangles p = 
                [(a,b,c) | a <- [1..(p `div` 3)], b <- [(p `div` 3)..(p `div` 2)], c <- [p - a - b], c^2 == a^2 + b^2]
+
+
+-- 40
+-- Champernowne's constant: If dn represents the nth digit of the fractional part, find the value of d1 * d10 * ... * d10^6
+-- Answer: 210 (laptop 0.00 secs, 528920 bytes)
+champernowne n = (digits ((10^placeValue) + numberOffset)) !! digitOffset
+  where  (placeValue,start) = last $ takeWhile (\x -> (snd x) < n) (scanl step (0,1) [0..])
+            where step acc ele = (ele + 1, (snd acc) + (ele + 1) * 9 * 10^ele)
+         (numberOffset,digitOffset) = (n - start) `quotRem` (placeValue+1)
+pe40 = product [champernowne (10^x) | x <- [1..6]]
