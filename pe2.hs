@@ -1,7 +1,7 @@
 -- Project Euler in Haskell problems 21..40
 
 import ProjectEuler
-
+import Data.Ratio -- for probem 33
 
 -- 21
 -- Evaluate the sum of all the amicable numbers under 10000
@@ -134,8 +134,15 @@ pe32 = sum $ unique $ quicksort $ map (\(_,_,x) -> x) identities
 
 
 -- 33
--- Digit Canceling Fractions: 
--- Answer:
+-- Digit Canceling Fractions: If the lowest common denominator of the product of the four fractions where incorrect cancelling yields the correct result.
+-- Answer: 100 (0.00 laptop secs, 0 bytes)
+fracts = [ (n, d) | d <- [11..99], n <- [10..(d-1)],
+                    let (n1,n2) = n `quotRem` 10
+                        (d1,d2) = d `quotRem` 10
+                    in (n1 == d2 && (n2 * d) == (d1 * n)) || (n2 == d1 && (n1 * d) == (d2 * n))]
+-- using (%) and denominator from Data.Ratio to create a rational number, and get the denominator of a rational in lowest common form
+pe33 = denominator $ product $ (map makeRat fracts)
+       where makeRat x = (fst x) % (snd x)
 
 
 -- 34
