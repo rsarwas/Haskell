@@ -58,6 +58,14 @@ pe45 = head [((st-1) `div` 2, (sp+1) `div` 6, hn, h)
                        st*st == 1 + 8*h, sp*sp == 1 + 24*h]]
 
 
+-- 46
+-- Goldbach's other conjecture
+-- Answer: 5777 (0.93 laptop secs, 103750168 bytes)
+oddComposites = filter (not . isPrime) [3,5..]
+goldbachs = [(g,[(p,n) | n <- [1..isqrt((g-2) `div` 2)], let p = g -2*n*n, isPrime p]) | g <- oddComposites]
+pe46 = head $ filter (null . snd) goldbachs
+
+
 -- 48
 -- Self Powers: Find the last ten digits of the series, 1^1 + 2^2 + 3^3 + ... + 1000^1000.
 -- Answer: 9110846700 (0.04 secs, 5809448 bytes)
