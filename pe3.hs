@@ -28,6 +28,21 @@ pandigitals xs
 pe43 = sum $ map digitsToInt $ pandigitals pe43seeds
 
 
+-- 44
+-- Pentagon Numbers:
+-- Answer:
+pentagonNumbers = [(i,j,d `div`2) | i <- [1..10000], j <- [(i+1)..(i+1000)],
+                    let ti = i*(3*i-1)
+                        tj = j*(3*j-1)
+                        a  = tj + ti
+                        d  = tj - ti
+                        sa = isqrt (1 + 12*a)
+                        sd = isqrt (1 + 12*d),
+                     sd*sd == 1 + 12*d,
+                     (1 + sd) `mod` 6 == 0,
+                     sa*sa == 1 + 12*a,
+                     (1 + sa) `mod` 6 == 0]
+
 -- 45
 -- Triangular, pentagonal, and hexagonal: Given T285 = P165 = H143 = 40755, Find the next triangle number that is also pentagonal and hexagonal.
 -- Answer: 1533776805; (tn, pn, hn, t=p=h) = (55385,31977,27693,1533776805) (0.44 laptop secs, 65336868 bytes)
