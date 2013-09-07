@@ -51,4 +51,9 @@ pe48 = (sum [x^x | x <- [1..999]]) `mod` 10^10
 
 -- 52
 -- Permuted multiples: 
--- Answer:
+-- Answer: 142857 (1.49 laptop secs, 181350776 bytes)
+-- In order for x and 6x to have the same number of digits, x must begin with 1
+pe52domain = [136..166] ++ [1136..1666] ++ [11136..16666] ++ [111136..166666]
+pe52test x = and [all ((n `elem`) . digits) [2*x, 3*x, 4*x, 5*x, 6*x]  | n <- digits x] 
+pe52 = head $ filter pe52test pe52domain
+
