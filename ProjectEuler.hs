@@ -1,5 +1,6 @@
 module ProjectEuler
 ( digits
+, digitsToInt
 , divisors
 , divisorCount
 , fibs
@@ -27,6 +28,10 @@ digits x
      | x < 0     = digits (-x)
      | x < 10    = [x]
      | otherwise = digits (x `div` 10) ++ [(x `mod` 10)]
+
+-- converts a list of decimal digits into an Integer
+digitsToInt :: [Integer] -> Integer
+digitsToInt = foldl (\a d -> a*10+d) 0
 
 -- Returns a list of all the divisors of a number
 divisors :: (Integral a) => a -> [a]
