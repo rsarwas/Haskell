@@ -29,19 +29,24 @@ pe43 = sum $ map digitsToInt $ pandigitals pe43seeds
 
 
 -- 44
--- Pentagon Numbers:
+-- Pentagon Numbers: Find the pair of pentagonal numbers, Pj and Pk, for which their sum and difference are pentagonal and D = |Pk - Pj| is minimised; what is the value of D?
+-- A pentagon number, Pn=n(3n -1)/2 | n <- [1..] = [1, 5, 12, 22, 35, 51, 70, 92, 117, 145, ...]
+-- Since a pentagon number is always positive, we will require j<k, so the difference is always positive.
+-- rewriting the equation for pn, we get: 3n*n -n -2pn == 0; using the quadratic equation n =  (1 + sqrt(1+24pn))/6
+-- Therefore pn is a pentagonal number if n is a natural number.
 -- Answer:
-pentagonNumbers = [(i,j,d `div`2) | i <- [1..10000], j <- [(i+1)..(i+1000)],
-                    let ti = i*(3*i-1)
-                        tj = j*(3*j-1)
-                        a  = tj + ti
-                        d  = tj - ti
-                        sa = isqrt (1 + 12*a)
-                        sd = isqrt (1 + 12*d),
-                     sd*sd == 1 + 12*d,
-                     (1 + sd) `mod` 6 == 0,
-                     sa*sa == 1 + 12*a,
-                     (1 + sa) `mod` 6 == 0]
+pentagonNumbers = [(j,k,d) | j <- [1..100], k <- [(j+1)..(j+100000)],
+                    let tj = j*(3*j-1) `div` 2
+                        tk = k*(3*k-1) `div` 2
+                        a  = tj + tk
+                        d  = tk - tj
+                        sa = isqrt (1 + 24*a)
+                        sd = isqrt (1 + 24*d),
+                     sa*sa == 1 + 24*a,
+                     (1 + sa) `mod` 6 == 0,
+                     sd*sd == 1 + 24*d,
+                     (1 + sd) `mod` 6 == 0]
+
 
 -- 45
 -- Triangular, pentagonal, and hexagonal: Given T285 = P165 = H143 = 40755, Find the next triangle number that is also pentagonal and hexagonal.
