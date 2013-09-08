@@ -1,5 +1,6 @@
 module ProjectEuler
-( digits
+( nChooseR
+, digits
 , digitsToInt
 , divisors
 , divisorCount
@@ -21,6 +22,12 @@ module ProjectEuler
 , unique
 , zip3With
 ) where
+
+
+-- Returns the number of permutations in N choose R  n!/(r!(n−r)!) where r <= n; 0<=r; 1<=n
+-- nChooseR :: a -> a -> a
+nChooseR n r = (product [(r+1)..n]) `div` (product [1..(n-r)])
+
 
 -- Returns a list of decimal digits from an integral 
 digits :: Integral a => a -> [a]

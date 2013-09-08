@@ -123,5 +123,20 @@ pe52 = head $ filter pe52test pe52domain
 -- 53
 -- Combinatoric selections: How many, not necessarily distinct, values of  nCr, for 1 <= n <= 100, are greater than one-million?
 -- where n choose r nCr = n! / r!(n-r)! where r <= n;
--- it is not until n = 23 that a value 23C10 = 1144066, exceeds one-million. 
+-- Answer: 4075 (0.08 secs, 75544368 bytes)
+-- it is not until n = 23 that a value 23C10 = 1144066, exceeds one-million.
+-- when n = r, then nChooseR = 1, so we can always ignore that
+-- 5 choose r for r <- [1..5];  map (nChooseR 5) [1..4] = [5,10,10,5];
+-- 6 choose r for r <- [1..6];  map (nChooseR 6) [1..5] = [6,15,20,15,6]
+-- n choose r for r <- [1..n];  map (nChooseR 100) [1..99] = [100,4950,161700,3921225, ... ,3921225,161700,4950,100]
+-- Therefore I can always ignore the first and last three results for 8 <= n; map (nChooseR n) [4..(n-4)]
+-- if n is even, there are an odd number of results and largest value is at n `div` 2; results are symmetric about that index;
+-- if n is odd, there are an even number of results and the largest value is at n `div` 2 and 1 + n `div` 2; results are symmetric about these indexes
+-- I could optimize this by searching only half the r values, and stop at the first value that exceeds 1 000 000 (knowing the rest must exceed 1 000 000)
+-- however, this simple solution is still wicked fast
+pe53 = length $ filter (1000000<) $ concat [ map (nChooseR n) [4..(n-4)] | n <- [23..100]]
+
+
+-- 54
+-- 
 -- Answer:
