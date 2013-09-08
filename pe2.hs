@@ -27,10 +27,15 @@ pe21 = sum $ amicableNumbersTo 9999
 
 -- 23
 -- Find the sum of all the positive integers which cannot be written as the sum of two abundant numbers.
+-- A number is abundant if the sum of its proper divisors is greater than the number
+-- We are given that all integers greater than 28123 can be written as the sum of two abundant numbers.
+-- 12 is the first abundant number, and 24 is the first number that can be written as a sum of two abundant numbers
+-- 28123 could be written as 12 + 28111 (if 28111 is abundant), providing the limits of the abundant numbers to explore 
 -- Answer: 
 abundant n = n < (sum $ properDivisors n)
-abundantNumbers = [x | x <- [1..], abundant x]
-pe23 = takeWhile (<10000) abundantNumbers
+abundantNumbers = [x | x <- [12..28111], abundant x]
+notFromTwoAbundantSums x = True --FIXME
+pe23 = sum ([1..23] ++ (map notFromTwoAbundantSums [25..28123]))
 
 
 -- 24
