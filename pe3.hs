@@ -46,7 +46,7 @@ pentagonNumbers = [(j,k,d) | j <- [1..100], k <- [(j+1)..(j+100000)],
                      (1 + sa) `mod` 6 == 0,
                      sd*sd == 1 + 24*d,
                      (1 + sd) `mod` 6 == 0]
-
+-- Ive gotten empty sets with j <- [1..100], k <- j+[1..100000] and visa-versa, as well as 1000,1000 
 
 -- 45
 -- Triangular, pentagonal, and hexagonal: Given T285 = P165 = H143 = 40755, Find the next triangle number that is also pentagonal and hexagonal.
@@ -71,10 +71,44 @@ goldbachs = [(g,[(p,n) | n <- [1..isqrt((g-2) `div` 2)], let p = g -2*n*n, isPri
 pe46 = head $ filter (null . snd) goldbachs
 
 
+-- 47
+-- Distinct primes factors: Find the first four consecutive integers to have four distinct prime factors. What is the first of these numbers?
+-- The first three consecutive numbers to have three distinct prime factors are:
+--   644 = 2^2 * 7 * 23  (??);   645 = 3 * 5 * 43;   646 = 2 * 17 * 19
+-- Answer:
+
+
 -- 48
 -- Self Powers: Find the last ten digits of the series, 1^1 + 2^2 + 3^3 + ... + 1000^1000.
 -- Answer: 9110846700 (0.04 secs, 5809448 bytes)
 pe48 = (sum [x^x | x <- [1..999]]) `mod` 10^10
+
+
+-- 49
+-- Prime permutations: What 12-digit number do you form by concatenating the three terms in the sequence described below?
+-- The arithmetic sequence, 1487, 4817, 8147, in which each of the terms increases by 3330, is unusual in two ways:
+--  (i) each of the three terms are prime, and,
+--  (ii) each of the 4-digit numbers are permutations of one another.
+-- There are no arithmetic sequences made up of three 1-, 2-, or 3-digit primes, exhibiting this property,
+--  but there is one other 4-digit increasing sequence.
+-- Answer:
+
+
+-- 50
+-- Consecutive prime sum: Which prime, below one-million, can be written as the sum of the most consecutive primes?
+-- i.e. The prime 41, can be written as the sum of six consecutive primes: 2 + 3 + 5 + 7 + 11 + 13
+-- The longest sum of consecutive primes below one-thousand that adds to a prime, contains 21 terms, and is equal to 953.
+-- Answer:
+
+
+-- 51
+-- Prime digit replacements: Find the smallest prime which, by replacing part of the number (not necessarily adjacent digits) with the same digit, is part of an eight prime value family.
+-- By replacing the 1st digit of the 2-digit number *3, it turns out that six of the nine possible values:
+--   13, 23, 43, 53, 73, and 83, are all prime.
+-- By replacing the 3rd and 4th digits of 56**3 with the same digit, this 5-digit number is the first example having
+--   seven primes among the ten generated numbers, yielding the family: 56003, 56113, 56333, 56443, 56663, 56773, and 56993.
+--   Consequently 56003, being the first member of this family, is the smallest prime with this property.
+-- Answer:
 
 
 -- 52
@@ -85,3 +119,9 @@ pe52domain = [136..166] ++ [1136..1666] ++ [11136..16666] ++ [111136..166666]
 pe52test x = and [all ((n `elem`) . digits) [2*x, 3*x, 4*x, 5*x, 6*x]  | n <- digits x] 
 pe52 = head $ filter pe52test pe52domain
 
+
+-- 53
+-- Combinatoric selections: How many, not necessarily distinct, values of  nCr, for 1 <= n <= 100, are greater than one-million?
+-- where n choose r nCr = n! / r!(n-r)! where r <= n;
+-- it is not until n = 23 that a value 23C10 = 1144066, exceeds one-million. 
+-- Answer:
