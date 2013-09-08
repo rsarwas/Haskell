@@ -151,7 +151,13 @@ pe33 = denominator $ product $ (map makeRat fracts)
 
 
 -- 34
--- 
+-- Digit factorials: Find the sum of all numbers (>2) which are equal to the sum of the factorial of their digits.
+-- i.e. 1! + 4! + 5! = 1 + 24 + 120 = 145.
+-- [0!..9!] = [1,1,2,6,24,120,720,5040,40320,362880]   (scanl (*) 1 [1..9]
+-- for a two digit number:
+--   * no combination of {0!..3!} adds up to 10 (first two digit number), therefore any solution must have a 4 or greater.
+--   * Since 5! > 99, any digit greater than 5 is not allowed.
+--   * therefore, a two digit solution is a permutation of 4 and {0..4} => [14, 24, 34, 40, 41, 42, 43, 44]
 -- Answer: 
 
 
