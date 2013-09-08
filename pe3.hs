@@ -98,7 +98,22 @@ pe48 = (sum [x^x | x <- [1..999]]) `mod` 10^10
 -- Consecutive prime sum: Which prime, below one-million, can be written as the sum of the most consecutive primes?
 -- i.e. The prime 41, can be written as the sum of six consecutive primes: 2 + 3 + 5 + 7 + 11 + 13
 -- The longest sum of consecutive primes below one-thousand that adds to a prime, contains 21 terms, and is equal to 953.
--- Answer:
+-- Answer: (543,997651)  (2.88 secs, 1161946616 bytes)
+-- considering only the first 1000 primes, there is a list 163 long, with a max at 76099.
+-- if the list was only 163, then the largest prime could be 10^6/163 = 6135
+--  (since primes are at most every other number, we could divide by 2, but since the numbers are increasing, there average value is 1/2)
+-- considering only the first 3000 primes, there is a list 427 with a sum of 590819.
+-- As more primes are considered, the average value increases, making the lists shorter; this was confirmed by looking at more primes
+consecutiveSum :: Num a => [a] -> [a]
+consecutiveSum = scanl1 (+)
+partialLists :: [a] -> [[a]]
+partialLists = scanr (:) []
+consecutivePrimeSums n =
+  let primes = primesTo 6135
+  in [dropWhile (not . isPrime) $ sumsInRange p | p <- partialLists primes]
+     where sumsInRange = reverse . takeWhile (<n) . consecutiveSum
+info n = map (\x -> (length x, head x)) (consecutivePrimeSums n)
+pe50 = maximum $ map (\x -> (length x, head x)) (consecutivePrimeSums 1000000)
 
 
 -- 51

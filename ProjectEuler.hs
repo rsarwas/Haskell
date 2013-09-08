@@ -24,7 +24,7 @@ module ProjectEuler
 ) where
 
 
--- Returns the number of permutations in N choose R  n!/(r!(n−r)!) where r <= n; 0<=r; 1<=n
+-- Returns the number of permutations in N choose R  n!/(r!(n−r)!) where r <= n; 1<=r; 1<=n
 -- nChooseR :: a -> a -> a
 nChooseR n r = (product [(r+1)..n]) `div` (product [1..(n-r)])
 
