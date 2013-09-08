@@ -27,15 +27,21 @@ pe21 = sum $ amicableNumbersTo 9999
 
 -- 23
 -- Find the sum of all the positive integers which cannot be written as the sum of two abundant numbers.
+-- Answer: 4179871 (510.72 secs, 14030602024 bytes)
 -- A number is abundant if the sum of its proper divisors is greater than the number
 -- We are given that all integers greater than 28123 can be written as the sum of two abundant numbers.
 -- 12 is the first abundant number, and 24 is the first number that can be written as a sum of two abundant numbers
--- 28123 could be written as 12 + 28111 (if 28111 is abundant), providing the limits of the abundant numbers to explore 
--- Answer: 
+-- 28123 could be written as 12 + 28111 (if 28111 is abundant), providing the limits of the abundant numbers to explore
+-- There are 6961 abundant numbers in this range.
+-- Could be optimized by recognizing that there are no odd abundant numbers below 945, therefore all odd numbers below 945+12 are non abundant
+-- however this is less than 2% of the numbers to check, so the benefit wil be minimal
+-- generating all sums, i.e abundantSums = [a+b | a <- abundantNumbers, b <- takeWhile (<= (28123-a)) $ dropWhile (<=a) abundantNumbers]
+-- was a list of 12 million terms, which would need to be uniqued or searched, which was slower.
 abundant n = n < (sum $ properDivisors n)
 abundantNumbers = [x | x <- [12..28111], abundant x]
-notFromTwoAbundantSums x = True --FIXME
-pe23 = sum ([1..23] ++ (map notFromTwoAbundantSums [25..28123]))
+abundantSums = [a+b | a <- abundantNumbers, b <- takeWhile (<= (28123-a)) $ dropWhile (<=a) abundantNumbers]
+notFromTwoAbundantSums x = null [a | a <- (takeWhile (<=(x `div` 2)) abundantNumbers), (x - a) `elem` abundantNumbers]
+pe23 = sum ([1..23] ++ (filter notFromTwoAbundantSums [25..28123]))
 
 
 -- 24
