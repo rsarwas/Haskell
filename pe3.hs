@@ -35,18 +35,20 @@ pe43 = sum $ map digitsToInt $ pandigitals pe43seeds
 -- rewriting the equation for pn, we get: 3n*n -n -2pn == 0; using the quadratic equation n =  (1 + sqrt(1+24pn))/6
 -- Therefore pn is a pentagonal number if n is a natural number.
 -- Answer:
-pentagonNumbers = [(j,k,d) | j <- [1..100], k <- [(j+1)..(j+100000)],
+pentagonNumbers = [(j,k,a,d) | j <- [1..10000000], k <- [(j+1)..(j+100)],
                     let tj = j*(3*j-1) `div` 2
                         tk = k*(3*k-1) `div` 2
                         a  = tj + tk
                         d  = tk - tj
                         sa = isqrt (1 + 24*a)
                         sd = isqrt (1 + 24*d),
-                     sa*sa == 1 + 24*a,
-                     (1 + sa) `mod` 6 == 0,
-                     sd*sd == 1 + 24*d,
-                     (1 + sd) `mod` 6 == 0]
+                    sa*sa == 1 + 24*a,
+                    (1 + sa) `mod` 6 == 0,
+                    sd*sd == 1 + 24*d,
+                    (1 + sd) `mod` 6 == 0]
+-- I've checked with just a or just d, and I get plenty of hits, that are verifiably correct.
 -- Ive gotten empty sets with j <- [1..100], k <- j+[1..100000] and visa-versa, as well as 1000,1000 
+-- Nothing with j <- [1..10000000], k <- j+[1..100]
 
 -- 45
 -- Triangular, pentagonal, and hexagonal: Given T285 = P165 = H143 = 40755, Find the next triangle number that is also pentagonal and hexagonal.
@@ -99,6 +101,22 @@ pe48 = (sum [x^x | x <- [1..999]]) `mod` 10^10
 -- There are no arithmetic sequences made up of three 1-, 2-, or 3-digit primes, exhibiting this property,
 --  but there is one other 4-digit increasing sequence.
 -- Answer:
+perm :: (Eq t) => Int -> [t] -> [t]
+perm _ [] = error "Empty list"
+perm 0 items = items
+perm i items  
+    | i <  0 = error "The permutation index must be a positive number"
+    | i >= m2 = error "There are not that many permutations for these items"
+    | otherwise = d:(perm r (take q items ++ drop (q+1) items))
+        where
+            (q,r) = i `quotRem` m1
+            m1 = product [1..(l-1)]
+            m2 = m1*l
+            l =  length items
+            d = items !! q
+primes = dropWhile (<1000) $ primesTo 9999
+primePerms n = filter isPrime $ unique $ quicksort $ map digitsToInt [perm x $ digits n | x <- [0..23]]
+pe49 = [pp | p <- primes, let pp = primePerms p, length pp >= 3]
 
 
 -- 50
@@ -144,7 +162,7 @@ pe52 = head $ filter pe52test pe52domain
 
 -- 53
 -- Combinatoric selections: How many, not necessarily distinct, values of  nCr, for 1 <= n <= 100, are greater than one-million?
--- where n choose r nCr = n! / r!(n-r)! where r <= n;
+-- where n choose r = nCr = n! / r!(n-r)! where r <= n;
 -- Answer: 4075 (0.08 secs, 75544368 bytes)
 -- it is not until n = 23 that a value 23C10 = 1144066, exceeds one-million.
 -- when n = r, then nChooseR = 1, so we can always ignore that
