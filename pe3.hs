@@ -187,3 +187,11 @@ pe53 = length $ filter (1000000<) $ concat [ map (nChooseR n) [4..(n-4)] | n <- 
 -- 54
 -- 
 -- Answer:
+
+
+-- 56
+-- Powerful digit sum: Considering natural numbers of the form, ab, where a, b < 100, what is the maximum digital sum?
+-- Answer: 972 (0.38 secs, 437951160 bytes); to search the entire space [1..99] for both a and b took only 3.19 seconds
+-- Assume the maximum will be a number with a lot of digits (large exponent).  The answer 972/9 = 108, so the all possible
+-- solutions will have at least 108 digits, therefore 54 is the smallest exponent to check. to verify no better solution exists
+pe56 = maximum $ map (sum . digits) [a^b | a <- [1..99], b <- [1..99]]
