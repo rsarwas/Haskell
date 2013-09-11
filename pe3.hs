@@ -50,6 +50,7 @@ pentagonNumbers = [(j,k,a,d) | j <- [1..10000000], k <- [(j+1)..(j+100)],
 -- Ive gotten empty sets with j <- [1..100], k <- j+[1..100000] and visa-versa, as well as 1000,1000 
 -- Nothing with j <- [1..10000000], k <- j+[1..100]
 
+
 -- 45
 -- Triangular, pentagonal, and hexagonal: Given T285 = P165 = H143 = 40755, Find the next triangle number that is also pentagonal and hexagonal.
 -- Answer: 1533776805; (tn, pn, hn, t=p=h) = (55385,31977,27693,1533776805) (0.44 laptop secs, 65336868 bytes)
@@ -116,7 +117,13 @@ perm i items
             d = items !! q
 primes = dropWhile (<1000) $ primesTo 9999
 primePerms n = filter isPrime $ unique $ quicksort $ map digitsToInt [perm x $ digits n | x <- [0..23]]
-pe49 = [pp | p <- primes, let pp = primePerms p, length pp >= 3]
+primePermSets = [pp | p <- primes, let pp = primePerms p, length pp >= 3]
+nChoose3 :: [a] -> [(a,a,a)]
+nChoose3 x 
+  | length x < 3 = error "Must have 3 or more elements in a list to choose 3"
+  | otherwise    = findSets x
+  where findSets [a,b,c] = [(a,b,c)]
+        findSets (x1:x2:xs) = [(x1,x2,xn) | xn <- xs] ++ findSets (x2:xs)
 
 
 -- 50
