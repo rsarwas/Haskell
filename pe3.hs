@@ -185,8 +185,14 @@ pe53 = length $ filter (1000000<) $ concat [ map (nChooseR n) [4..(n-4)] | n <- 
 
 
 -- 54
--- 
+-- See pe3_54.hs
+
+
+-- 55
+-- Lychrel numbers: How many Lychrel numbers are there below ten-thousand?
 -- Answer:
+reverseInt x = read (reverse show x) :: Int
+lychrel x = 50 == length $ take 50 lychrelSequence x
 
 
 -- 56
