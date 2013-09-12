@@ -1,6 +1,7 @@
 -- Project Euler in Haskell problems 41..60
 
 import ProjectEuler
+import Data.Ratio -- for probem 57
 
 -- 41
 -- Pandigital prime: What is the largest n-digit pandigital (digits <- 1..n) prime that exists
@@ -191,8 +192,9 @@ pe53 = length $ filter (1000000<) $ concat [ map (nChooseR n) [4..(n-4)] | n <- 
 -- 55
 -- Lychrel numbers: How many Lychrel numbers are there below ten-thousand?
 -- Answer:
-reverseInt x = read (reverse show x) :: Int
-lychrel x = 50 == length $ take 50 lychrelSequence x
+reverseInt :: Integer -> Integer
+reverseInt = read . reverse . show
+--lychrel x = 50 == length $ take 50 lychrelSequence x
 
 
 -- 56
@@ -201,3 +203,13 @@ lychrel x = 50 == length $ take 50 lychrelSequence x
 -- Assume the maximum will be a number with a lot of digits (large exponent).  The answer 972/9 = 108, so the all possible
 -- solutions will have at least 108 digits, therefore 54 is the smallest exponent to check. to verify no better solution exists
 pe56 = maximum $ map (sum . digits) [a^b | a <- [1..99], b <- [1..99]]
+
+
+-- 57
+-- Square root convergents
+-- Answer: 153 (0.36 secs, 271796872 bytes)
+pe57 = length $ filter test (terms 1000)
+        where terms x = scanl step (1%1) [1..x]
+              step acc _ = 1 + (1 / (1 + acc))
+              test r = (length $ show $ numerator r) > (length $ show $ denominator r)
+
