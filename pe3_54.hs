@@ -33,14 +33,21 @@ instance Ord Hand where
     compare h1 h2 = compare (score h1) (score h2)
 
 score :: Hand -> Score
-score (Hand xs) = HighCard (toRankList (Hand xs))
+score (Hand xs) = HighCard (rankList (Hand xs))
 --FIXME FInish
 
+isStraight :: Hand -> Bool
+isStraight h = isMonotonic (rankList h) where
+   isMonotonic [r] = True
+   isMonotonic (r1:r2:rs) = (r1 == succ r2) && (isMonotonic (r2:rs))
 
+isFlush :: Hand -> Bool
+isFlush (Hand (c:cs)) = all $ map (\x -> (suit x) == (suit c)) cs
 
+  
 
-toRankList :: Hand -> [Rank]
-toRankList (Hand xs) = reverse $ unique $ quicksort $ map rank xs
+rankList :: Hand -> [Rank]
+rankList (Hand xs) = reverse $ unique $ quicksort $ map rank xs
 
 player1Score :: [(Hand,Hand)] -> Int
 player1Score xs = sum [1 | (h1,h2) <- xs, h1 > h2]
