@@ -1,6 +1,5 @@
 module ProjectEuler
-( nChooseR
-, digits
+( digits
 , digitsToInt
 , divisors
 , divisorCount
@@ -8,6 +7,8 @@ module ProjectEuler
 , group
 , isPrime
 , isqrt
+, nChooseR
+, nChoose
 , pascalsTriangle
 , pascalsTriangleRow
 , powerSet
@@ -22,11 +23,6 @@ module ProjectEuler
 , unique
 , zip3With
 ) where
-
-
--- Returns the number of permutations in N choose R  n!/(r!(n−r)!) where r <= n; 1<=r; 1<=n
--- nChooseR :: a -> a -> a
-nChooseR n r = (product [(r+1)..n]) `div` (product [1..(n-r)])
 
 
 -- Returns a list of decimal digits from an integral 
@@ -69,6 +65,22 @@ isPrime n
 --isqrt: integral square root, isqrt n returns the largest integer a such that a * a <= n
 isqrt :: (Integral a) => a -> a
 isqrt n = truncate (sqrt (fromIntegral n))
+
+-- Returns the number of permutations in N choose R  n!/(r!(n−r)!) where r <= n; 1<=r; 1<=n
+-- nChooseR :: a -> a -> a
+nChooseR n r = (product [(r+1)..n]) `div` (product [1..(n-r)])
+
+-- Returns a list of lists each sub list is r elements long, and contains all
+-- permutations of choosing r elements from an input list n long; 1 <= r <= n
+-- nChoose :: Int -> [a] -> [[a]]
+nChoose r xs
+  | r   <  1  = error "The number to choose must be a positive integer"
+  | len <  r  = error "The number to choose must be less than or equal to the list length"
+  | len == r  = [xs]
+  | r   == 1  = [[x] | x <- xs]
+  | otherwise = nChoose' r xs
+  where len = length xs
+        nChoose' r (x:xs) = map (x:) (nChoose (r-1) xs) ++ (nChoose r xs)
 
 -- Returns pascals Triangle, it is an infinite triangle
 pascalsTriangle :: [[Integer]]
