@@ -102,7 +102,7 @@ pe48 = (sum [x^x | x <- [1..999]]) `mod` 10^10
 --  (ii) each of the 4-digit numbers are permutations of one another.
 -- There are no arithmetic sequences made up of three 1-, 2-, or 3-digit primes, exhibiting this property,
 --  but there is one other 4-digit increasing sequence.
--- Answer:
+-- Answer: 296962999629 (2.23 secs, 695997576 bytes)
 perm :: (Eq t) => Int -> [t] -> [t]
 perm _ [] = error "Empty list"
 perm 0 items = items
@@ -119,12 +119,9 @@ perm i items
 primes = dropWhile (<1000) $ primesTo 9999
 primePerms n = filter isPrime $ unique $ quicksort $ map digitsToInt [perm x $ digits n | x <- [0..23]]
 primePermSets = [pp | p <- primes, let pp = primePerms p, length pp >= 3]
-nChoose3 :: [a] -> [(a,a,a)]
-nChoose3 x 
-  | length x < 3 = error "Must have 3 or more elements in a list to choose 3"
-  | otherwise    = findSets x
-  where findSets [a,b,c] = [(a,b,c)]
-        findSets (x1:x2:xs) = [(x1,x2,xn) | xn <- xs] ++ findSets (x2:xs)
+pe49 = filter monotonic (filter digit4 (concat $ map (nChoose 3) primePermSets))
+        where monotonic (a:b:[c]) = (b-a) == (c-b)
+              digit4 (a:b:[c]) = 999 < a && 999 < b && 999 < c
 
 
 -- 50
