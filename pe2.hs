@@ -46,21 +46,8 @@ pe23 = sum ([1..23] ++ (filter notFromTwoAbundantSums [25..28123]))
 
 -- 24
 -- What is the millionth lexicographic permutation of the digits 0, 1, 2, 3, 4, 5, 6, 7, 8 and 9?
--- Answer: [2,7,8,3,9,1,5,4,6,0] (0.00 secs, 523500 bytes)
-lexiPerm :: (Eq t) => Int -> [t] -> [t]
-lexiPerm _ [] = error "Empty list"
-lexiPerm 0 items = items
-lexiPerm i items  
-    | i <  0 = error "The permutation index must be a positive number"
-    | i >= m2 = error "There are not that many permutations for these items"
-    | otherwise = d:(lexiPerm r [x | x <- items, x /= d])
-        where
-            (q,r) = i `quotRem` m1
-            m1 = product [1..(l-1)]
-            m2 = m1*l
-            l =  length items
-            d = items !! q
-pe24 = lexiPerm (10^6-1) [0..9]
+-- Answer: 2783915460 (0.00 secs, 523500 bytes)
+pe24 = digitsToInt $ lexiPerm (10^6-1) [0..9]
 
 
 -- 25

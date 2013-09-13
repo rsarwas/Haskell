@@ -7,6 +7,7 @@ module ProjectEuler
 , group
 , isPrime
 , isqrt
+, lexiPerm
 , nChooseR
 , nChoose
 , pascalsTriangle
@@ -65,6 +66,22 @@ isPrime n
 --isqrt: integral square root, isqrt n returns the largest integer a such that a * a <= n
 isqrt :: (Integral a) => a -> a
 isqrt n = truncate (sqrt (fromIntegral n))
+
+-- Returns the nth lexigraphic permutation of a list of monotonically increasing elements
+-- n <- 0 .. (length of list)! -1
+lexiPerm :: (Eq t) => Int -> [t] -> [t]
+lexiPerm _ [] = error "Empty list"
+lexiPerm 0 items = items
+lexiPerm i items  
+    | i <  0 = error "The permutation index must be a positive number"
+    | i >= m2 = error "There are not that many permutations for these items"
+    | otherwise = d:(lexiPerm r [x | x <- items, x /= d])
+        where
+            (q,r) = i `quotRem` m1
+            m1 = product [1..(l-1)]
+            m2 = m1*l
+            l =  length items
+            d = items !! q
 
 -- Returns the number of permutations in N choose R  n!/(r!(n−r)!) where r <= n; 1<=r; 1<=n
 -- nChooseR :: a -> a -> a

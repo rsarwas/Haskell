@@ -5,8 +5,11 @@ import Data.Ratio -- for probem 57
 
 -- 41
 -- Pandigital prime: What is the largest n-digit pandigital (digits <- 1..n) prime that exists
--- Answer:
-
+-- Answer: 7652413 (27.03 secs, 8362092120 bytes)
+pe41 = digitsToInt $ head $ (filter (isPrime . digitsToInt) (filter (odd . last) (decreasingPandigitals [1..9])))
+       where decreasingPandigitals xs = (permutations xs) ++ (decreasingPandigitals (init xs))
+             permutations xs = let l = product [2..(length xs)] - 1 in [lexiPerm n xs | n <- [l,(l-1)..0]]
+             
 
 -- 42
 -- See pe3_42.hs
