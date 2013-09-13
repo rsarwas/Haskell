@@ -159,14 +159,23 @@ pe33 = denominator $ product $ (map makeRat fracts)
 -- 34
 -- Digit factorials: Find the sum of all numbers (>2) which are equal to the sum of the factorial of their digits.
 -- i.e. 1! + 4! + 5! = 1 + 24 + 120 = 145.
+-- Answer: 40730 (21.49 secs, 6935205616 bytes)
 -- [0!..9!] = [1,1,2,6,24,120,720,5040,40320,362880]   (scanl (*) 1 [1..9]
 -- for a two digit number:
 --   * no combination of {0!..3!} adds up to 10 (first two digit number), therefore any solution must have a 4 or greater.
 --   * Since 5! > 99, any digit greater than 5 is not allowed.
 --   * therefore, a two digit solution is a permutation of 4 and {0..4} => [14, 24, 34, 40, 41, 42, 43, 44]
--- Answer: 
-
-
+-- Similar analysis can generate the list of 3 digit numbers [125, 135, 145, 150, 151, 152, 153, 154]
+-- We can show that a 4 digit number must be greater than 1466
+-- and that there is no way to create a 7, 8 or more digit number.
+-- a huge optimization would be to limit the number of 5 and 6 digit number to check, eliminating most numbers below 1466 is insignificant.
+digits2 = [14, 24, 34, 40, 41, 42, 43, 44]
+digits3 = [125, 135, 145, 150, 151, 152, 153, 154]
+pe34 = sum $ filter magic (digits2 ++ digits3 ++ [1466..999999])
+    where magic x = x == (sum $ [factorials!!d | d <- digits x])
+          factorials = scanl (*) 1 [1..9]
+          
+          
 -- 35
 -- Circular primes: How many circular primes are there below one million?
 -- Answer: 55 (5.91 laptop secs, 754384904 bytes)
