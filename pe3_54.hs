@@ -6,7 +6,7 @@
 -- You can assume that all hands are valid (no invalid characters or repeated cards),
 -- each player's hand is in no specific order, and in each hand there is a clear winner.
 -- How many hands does Player 1 win?
--- Answer: xx  (0.0 real laptop seconds; with unix time)
+-- Answer: 376  (0.030 real seconds; with unix time)
 
 import ProjectEuler  -- for quicksort and unique
 
@@ -33,21 +33,35 @@ instance Ord Hand where
     compare h1 h2 = compare (score h1) (score h2)
 
 score :: Hand -> Score
-score (Hand xs) = HighCard (rankList (Hand xs))
---FIXME FInish
+score h
+  | flush && straight                   = StraightFlush (head ranks)
+  | straight                            = Straight (head ranks)
+  | uniqueRanks == 5 && flush           = Flush ranks
+  | uniqueRanks == 2 && (maxCount == 4) = FourOfAKind ranks
+  | uniqueRanks == 2 && (maxCount == 3) = FullHouse ranks
+  | uniqueRanks == 3 && (maxCount == 3) = ThreeOfAKind ranks
+  | uniqueRanks == 3 && (maxCount == 2) = TwoPair ranks
+  | uniqueRanks == 4 && (maxCount == 2) = OnePair ranks
+  | otherwise                           = HighCard ranks
+  where rankCounts  = ranksByCount h
+        ranks       = map snd rankCounts
+        uniqueRanks = length rankCounts
+        maxCount    = fst $ head $ rankCounts
+        flush       = isFlush h && (uniqueRanks == 5)
+        straight    = isStraight ranks && (uniqueRanks == 5)
 
-isStraight :: Hand -> Bool
-isStraight h = isMonotonic (rankList h) where
+isStraight :: [Rank] -> Bool
+isStraight rs = isMonotonic rs where
    isMonotonic [r] = True
-   isMonotonic (r1:r2:rs) = (r1 == succ r2) && (isMonotonic (r2:rs))
+   isMonotonic (r1:r2:rs) = if r2 == Ace then False else (r1 == succ r2) && (isMonotonic (r2:rs))
 
 isFlush :: Hand -> Bool
-isFlush (Hand (c:cs)) = all $ map (\x -> (suit x) == (suit c)) cs
-
+isFlush (Hand (c:cs)) = and $ map (\x -> (suit x) == (suit c)) cs
   
-
-rankList :: Hand -> [Rank]
-rankList (Hand xs) = reverse $ unique $ quicksort $ map rank xs
+ranksByCount :: Hand -> [(Int,Rank)]
+ranksByCount (Hand xs) = reverse $ unique $ quicksort $ rankCounts
+       where rankCounts = [(length $ filter (== rank) allRanks, rank) | rank <- allRanks]
+             allRanks = map rank xs
 
 player1Score :: [(Hand,Hand)] -> Int
 player1Score xs = sum [1 | (h1,h2) <- xs, h1 > h2]
