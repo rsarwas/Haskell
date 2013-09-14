@@ -196,6 +196,21 @@ reverseInt :: Integer -> Integer
 reverseInt = read . reverse . show
 --lychrel x = 50 == length $ take 50 lychrelSequence x
 
+pe55 = Lychrel 1 10000
+Lychrel :: Int -> Int -> [Int]
+LycTo n m -> [int]
+If n > m then []
+Else
+Let l = lyc n+1 m
+If check n O l then n:l else l
+
+lychrelCheck n acc attempts solutions fails
+  | acc >= 50 = (False, 
+  | 
+If n' in solutions or n' is palindrome = true
+Else check n' acc+1 solutions
+where n' = n + (reverseInt n)
+
 
 -- 56
 -- Powerful digit sum: Considering natural numbers of the form, ab, where a, b < 100, what is the maximum digital sum?
