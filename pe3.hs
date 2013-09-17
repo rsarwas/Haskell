@@ -191,7 +191,7 @@ pe53 = length $ filter (1000000<) $ concat [ map (nChooseR n) [4..(n-4)] | n <- 
 
 -- 55
 -- Lychrel numbers: How many Lychrel numbers are there below ten-thousand?
--- Answer: 247 (1.67 secs, 109690552 bytes)
+-- Answer: 235 (2.49 secs, 577999120 bytes)
 -- Oops reversed the definition of lychrel (one that never becomes a palindrome through reverse and add)
 reverseInt :: Integer -> Integer
 reverseInt = read . reverse . show
@@ -219,7 +219,11 @@ lychrelTo n = filter (<=n) (lychrelLoop 1 n [] []) where
     | otherwise = let (areLychrel,numbers) = lychrel i 0 [] winners losers
                    in if areLychrel then lychrelLoop (i+1) limit (numbers ++ winners) losers
                                     else lychrelLoop (i+1) limit winners (numbers ++ losers) 
-pe55 = length $ lychrelTo 9999
+-- some numbers ending in zero, like 1960 are non-lychrel, however,
+-- when reversed = 691 which is a lychrel, so it is incorrectly counted as a lychrel.
+-- this brute force method filters out the 12 false positives from the '247' suspected lychrels.
+realLychrels = [n | n <- (lychrelTo 9999), let (a,b) = (lychrel n 0 [] [] []), not a]
+pe55 = length $ realLychrels  
 
 
 -- 56
