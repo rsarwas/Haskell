@@ -12,6 +12,7 @@ module ProjectEuler
 , nChoose
 , pascalsTriangle
 , pascalsTriangleRow
+, powerMod
 , powerSet
 , primeFactors
 , primesTo
@@ -25,6 +26,7 @@ module ProjectEuler
 , zip3With
 ) where
 
+import Data.Bits -- for shiftR in powerMod
 
 -- Returns a list of decimal digits from an integral 
 digits :: Integral a => a -> [a]
@@ -108,6 +110,16 @@ pascalsTriangleRow :: (Integral a) => a -> [a]
 pascalsTriangleRow 1 = [1]
 pascalsTriangleRow n = zipWith (+) (0:previousRow) (previousRow++[0])
   where previousRow = pascalsTriangleRow (n-1)
+
+-- Returns b^e mod m   (see http://en.wikipedia.org/wiki/Modular_exponentiation)
+powerMod :: (Integral a) => a -> Int -> a -> a
+powerMod base exp modulo = pm_helper 1 base exp modulo where
+  pm_helper acc b e m
+    | e <= 0 = acc
+    | otherwise = let acc' = if (e `mod` 2 == 1) then ((acc * b) `mod` m) else acc
+                      exp' = e `shiftR` 1
+                      base' = (b * b) `mod` m
+                  in pm_helper acc' base' exp' m
 
 -- Retuns the power sets (set of all combinations) for a set, i.e. [1,2] => [[], [1], [2], [1,2]]
 powerSet :: [a] -> [[a]]
