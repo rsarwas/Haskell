@@ -21,3 +21,19 @@ pe63 = last $ takeWhile check [1..] where check x = x == (length $ digits (9^x))
 -- See pe4_67.hs
 
 
+-- 79
+-- Passcode derivation: Given that the three characters are always asked for in order, analyse the file
+-- so as to determine the shortest possible secret passcode of unknown length.
+-- Answer: 73162890 (solved manually)
+-- by scanning the list manually, we can gather the following relationship
+-- 1,2,3,6,7,8,9 < 0
+-- 3,7           < 1 < 0,2,6,8,9
+-- 1,3,6,7       < 2 < 0,8,9
+-- 7             < 3 < 0,1,2,6,8,9
+-- 1,3,7         < 6 < 0,2,8,9
+--                 7 < 0,1,2,3,6,8,9
+-- 1,2,3,6,7     < 8 < 0,9
+-- 1,2,3,6,7,8   < 9 < 0
+-- Therefore, 7 must be the first number, and 0 must be the last
+-- eliminating them from all the list, we are left with 3 being second, and 9 being penultimate.
+-- iterate thus twice more to get the answer.
