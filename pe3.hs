@@ -194,22 +194,31 @@ pe53 = length $ filter (1000000<) $ concat [ map (nChooseR n) [4..(n-4)] | n <- 
 -- Answer:
 reverseInt :: Integer -> Integer
 reverseInt = read . reverse . show
---lychrel x = 50 == length $ take 50 lychrelSequence x
+isPalindrome :: Integral a => a -> Bool
+isPalindrome n = n == (digitsToInt $ reverse $ digits n)
 
-pe55 = Lychrel 1 10000
-Lychrel :: Int -> Int -> [Int]
-LycTo n m -> [int]
-If n > m then []
-Else
-Let l = lyc n+1 m
-If check n O l then n:l else l
-
-lychrelCheck n acc attempts solutions fails
-  | acc >= 50 = (False, 
-  | 
-If n' in solutions or n' is palindrome = true
-Else check n' acc+1 solutions
-where n' = n + (reverseInt n)
+lychrel :: Integer -> Int -> [Integer] -> [Integer] -> [Integer] -> (Bool, [Integer])
+lychrel n trys path winners losers
+  | n `elem` winners = (True, path)
+  | n `elem` losers  = (False, path)
+  | trys == 50       = (False, path)
+  | otherwise  = let n' = reverseInt n
+                     n'' = n + n'
+                 in if (n' `elem` winners)
+                       then (True, n:path)
+                       else if (n' `elem` losers)
+                               then (False, n:path)
+                               else if (isPalindrome n'')
+                                       then (True, (if (n == n') then (n:path) else (n':n:path)))
+                                       else (lychrel n'' (trys+1) (if (n == n') then (n:path) else (n':n:path)) winners losers)
+lychrelTo :: Integer -> [Integer]
+lychrelTo n = filter (<=n) (lychrelLoop 1 n [] []) where
+  lychrelLoop i limit winners losers
+    | limit < i = winners
+    | otherwise = let (areLychrel,numbers) = lychrel i 0 [] winners losers
+                   in if areLychrel then lychrelLoop (i+1) limit (numbers ++ winners) losers
+                                    else lychrelLoop (i+1) limit winners (numbers ++ losers) 
+pe55 = length $ lychrelTo 9999
 
 
 -- 56
