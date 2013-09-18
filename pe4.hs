@@ -4,7 +4,7 @@ import ProjectEuler
 
 -- 62
 -- Cubic Permutations: Find the smallest cube for which exactly five permutations of its digits are cube.
--- Answer: 5027 (13.29 secs, 1381871616 bytes)
+-- Answer: 127035954683 (13.29 secs, 1381871616 bytes)
 find :: Int -> Int -> [([Int],[Int])] -> [Int]
 find m n found = 
   let sortedDigits = quicksort $ digits (n^3)
@@ -14,7 +14,7 @@ find m n found =
      then (n:matching)
      else (find m (n+1) ((sortedDigits, n:matching):found))
   where findMatch needle haystack = take 1 (filter (\a -> (fst a) == needle) haystack)
-pe62 = head $ quicksort (find 5 346 [])
+pe62 = (head $ quicksort (find 5 346 []))^3
 
 
 -- 63
