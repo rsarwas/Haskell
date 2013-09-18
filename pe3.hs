@@ -191,40 +191,22 @@ pe53 = length $ filter (1000000<) $ concat [ map (nChooseR n) [4..(n-4)] | n <- 
 
 -- 55
 -- Lychrel numbers: How many Lychrel numbers are there below ten-thousand?
--- Answer: 235 (2.49 secs, 577999120 bytes)
--- Oops reversed the definition of lychrel (one that never becomes a palindrome through reverse and add)
+-- Answer: 249 (1.89 secs, 1022091864 bytes)
 reverseInt :: Integer -> Integer
 reverseInt = read . reverse . show
 isPalindrome :: Integral a => a -> Bool
 isPalindrome n = n == (digitsToInt $ reverse $ digits n)
 
-lychrel :: Integer -> Int -> [Integer] -> [Integer] -> [Integer] -> (Bool, [Integer])
-lychrel n trys path winners losers
-  | n `elem` winners = (True, path)
-  | n `elem` losers  = (False, path)
-  | trys == 50       = (False, path)
+lychrel :: Integer -> Int -> Bool
+lychrel n trys
+  | trys == 50       = True
   | otherwise  = let n' = reverseInt n
                      n'' = n + n'
-                 in if (n' `elem` winners)
-                       then (True, n:path)
-                       else if (n' `elem` losers)
-                               then (False, n:path)
-                               else if (isPalindrome n'')
-                                       then (True, (if (n == n') then (n:path) else (n':n:path)))
-                                       else (lychrel n'' (trys+1) (if (n == n') then (n:path) else (n':n:path)) winners losers)
-lychrelTo :: Integer -> [Integer]
-lychrelTo n = filter (<=n) (lychrelLoop 1 n [] []) where
-  lychrelLoop i limit winners losers
-    | limit < i = losers
-    | otherwise = let (areLychrel,numbers) = lychrel i 0 [] winners losers
-                   in if areLychrel then lychrelLoop (i+1) limit (numbers ++ winners) losers
-                                    else lychrelLoop (i+1) limit winners (numbers ++ losers) 
--- some numbers ending in zero, like 1960 are non-lychrel, however,
--- when reversed = 691 which is a lychrel, so it is incorrectly counted as a lychrel.
--- this brute force method filters out the 12 false positives from the '247' suspected lychrels.
-realLychrels = [n | n <- (lychrelTo 9999), let (a,b) = (lychrel n 0 [] [] []), not a]
-pe55 = length $ realLychrels  
-
+                 in if (isPalindrome n'')
+                    then False
+                    else (lychrel n'' (trys+1))
+lychrels = [n | n <- [1..9999], lychrel n 0]
+pe55 = length $ lychrels 
 
 -- 56
 -- Powerful digit sum: Considering natural numbers of the form, ab, where a, b < 100, what is the maximum digital sum?
