@@ -191,7 +191,7 @@ pe53 = length $ filter (1000000<) $ concat [ map (nChooseR n) [4..(n-4)] | n <- 
 
 -- 55
 -- Lychrel numbers: How many Lychrel numbers are there below ten-thousand?
--- Answer: 249 (1.89 secs, 1022091864 bytes)
+-- Answer: 249 (1.87 secs, 1022091864 bytes)
 reverseInt :: Integer -> Integer
 reverseInt = read . reverse . show
 isPalindrome :: Integral a => a -> Bool
@@ -207,6 +207,7 @@ lychrel n trys
                     else (lychrel n'' (trys+1))
 lychrels = [n | n <- [1..9999], lychrel n 0]
 pe55 = length $ lychrels 
+
 
 -- 56
 -- Powerful digit sum: Considering natural numbers of the form, ab, where a, b < 100, what is the maximum digital sum?

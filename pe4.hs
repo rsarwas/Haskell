@@ -2,6 +2,21 @@
 
 import ProjectEuler
 
+-- 62
+-- Cubic Permutations: Find the smallest cube for which exactly five permutations of its digits are cube.
+-- Answer: 5027 (13.29 secs, 1381871616 bytes)
+find :: Int -> Int -> [([Int],[Int])] -> [Int]
+find m n found = 
+  let sortedDigits = quicksort $ digits (n^3)
+      matches = findMatch sortedDigits found
+      matching = if (null matches) then [] else (snd (head matches))
+  in if ((length matching) == (m-1))
+     then (n:matching)
+     else (find m (n+1) ((sortedDigits, n:matching):found))
+  where findMatch needle haystack = take 1 (filter (\a -> (fst a) == needle) haystack)
+pe62 = head $ quicksort (find 5 346 [])
+
+
 -- 63
 -- Powerful digit counts: How many n-digit positive integers exist which are also an nth power?
 -- Answer (wrong): 21 (0.01 secs, 3683256 bytes)
