@@ -35,24 +35,23 @@ pe43 = sum $ map digitsToInt $ pandigitals pe43seeds
 -- 44
 -- Pentagon Numbers: Find the pair of pentagonal numbers, Pj and Pk, for which their sum and difference are pentagonal and D = |Pk - Pj| is minimised; what is the value of D?
 -- A pentagon number, Pn=n(3n -1)/2 | n <- [1..] = [1, 5, 12, 22, 35, 51, 70, 92, 117, 145, ...]
+-- Answer: 5482660 (pj = 1020, pk = 2167, p2395 = pk + pj = 8602840, p1912 = pk - pj = 5482660) (15.94 secs, 6199697200 bytes)
 -- Since a pentagon number is always positive, we will require j<k, so the difference is always positive.
 -- rewriting the equation for pn, we get: 3n*n -n -2pn == 0; using the quadratic equation n =  (1 + sqrt(1+24pn))/6
 -- Therefore pn is a pentagonal number if n is a natural number.
--- Answer:
-pentagonNumbers = [(j,k,a,d) | j <- [1..10000000], k <- [(j+1)..(j+100)],
-                    let tj = j*(3*j-1) `div` 2
-                        tk = k*(3*k-1) `div` 2
-                        a  = tj + tk
-                        d  = tk - tj
+pentagonNumbers = [(j,k,(pjk, a, aIsP),(pkj,d, dIsP)) | k <- [2..], j <- [k-1,k-2..1],
+                    let pj = j*(3*j-1) `div` 2
+                        pk = k*(3*k-1) `div` 2
+                        a  = pj + pk
+                        d  = pk - pj
                         sa = isqrt (1 + 24*a)
-                        sd = isqrt (1 + 24*d),
-                    sa*sa == 1 + 24*a,
-                    (1 + sa) `mod` 6 == 0,
-                    sd*sd == 1 + 24*d,
-                    (1 + sd) `mod` 6 == 0]
--- I've checked with just a or just d, and I get plenty of hits, that are verifiably correct.
--- Ive gotten empty sets with j <- [1..100], k <- j+[1..100000] and visa-versa, as well as 1000,1000 
--- Nothing with j <- [1..10000000], k <- j+[1..100]
+                        sd = isqrt (1 + 24*d)
+                        (pjk, rjk) = (1 + sa) `divMod` 6
+                        (pkj, rkj) = (1 + sd) `divMod` 6
+                        aIsP = (rjk == 0) && (sa*sa == (1 + 24*a))
+                        dIsP = (rkj == 0) && (sd*sd == (1 + 24*d)),
+                     aIsP && dIsP]
+pe44 = head pentagonNumbers
 
 
 -- 45
