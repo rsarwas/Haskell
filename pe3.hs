@@ -236,3 +236,7 @@ counts =  scanl addPrimes (0,1,1) [3,5..] where
     in (p+n,d+4,side)
 percents = map (\(n,d,s) -> ((n*100) `div` d, s)) counts
 pe58 = snd $ head $ filter (\(p,s) -> (p < 10)) $ drop 1 percents
+
+
+-- 59
+-- See pe3_59.hs
