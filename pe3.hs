@@ -240,3 +240,24 @@ pe58 = snd $ head $ filter (\(p,s) -> (p < 10)) $ drop 1 percents
 
 -- 59
 -- See pe3_59.hs
+
+
+-- 60
+-- Prime pair sets: Find the lowest sum for a set of five primes for which any two primes concatenate to produce another prime.
+-- Answer:
+-- Given that the set [3,7,109,673] is the lowest sum of 4 primes where all concatenated pairs are prime.
+-- Any set of 4 from the set of 5 will need to be all pairs.  Therefore a good starting point is to look for a prime larger than 673
+-- that pairs with each of the existing numbers.  IF this search is fruitless (after a reasonable amount of search),
+-- try finding the next set of 4, bu replacing 673 with a larger prime, if this is fruitless,
+-- try replacing 109 with a larger prime, then search for #4 and and then #5.
+low4 = [3,7,109,673]
+set4 = zip low4 [10,10,1000,1000]
+isPrimePair p = (isPrime (p*10 + 3)) &&
+                (isPrime (p*10 + 7)) &&
+                (isPrime (p*1000 + 109)) &&
+                (isPrime (p*1000 + 673)) &&
+                (isPrime (3*10000 + p)) &&
+                (isPrime (7*10000 + p)) &&
+                (isPrime (109*10000 + p)) &&
+                (isPrime (673*10000 + p))
+pe60 = (sum low4) + (head $ filter isPrimePair (dropWhile (<999) (primesTo 9999)))         
