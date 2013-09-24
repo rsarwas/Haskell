@@ -31,6 +31,17 @@ pe63 = last $ takeWhile check [1..] where check x = x == (length $ digits (9^x))
 -- continuing thus, there are 3@6, 2@7..10, and 1@11, we already know 9^21 is the last 21 digit number
 -- Therefore the real Answer is 9+6+5+4+(3*2)+(2*4)+(1*11) = 49
 
+-- 65
+-- Convergants of e:  Find the sum of digits in the numerator of the 100th convergent of the continued fraction for e.
+-- Answer: 272 (0.01 secs, 4167024 bytes)
+-- Analysis, convertants of continued fractions are given by hn/kn, where hn = an*hn-1 + hn-2, and kn = an*kn-1 + kn-2
+-- where hn-2 = 0, hn-1 = 1. kn-2 = 1, hn-1 = 0.  the continued fraction of e is [2; 1,2,1, 1,4,1, 1,6,1 , ... , 1,2k,1, ...].
+-- starting with a0 = 2, a1 = 1, ...  the 100th convergant is at a99, but it is the 100th item in the continued fraction
+e = reverse $ foldl (\a e -> 1:(2*e):1:a) [2] [1..33]
+pe65 = sum $ digits $ eNumerator 100 where
+  eNumerator n = last $ foldl contFrac [0,1] (take n e)
+  contFrac [h2,h1] a = [h1,(a*h1+h2)]
+
 
 -- 67
 -- See pe4_67.hs
