@@ -250,14 +250,23 @@ pe58 = snd $ head $ filter (\(p,s) -> (p < 10)) $ drop 1 percents
 -- that pairs with each of the existing numbers.  IF this search is fruitless (after a reasonable amount of search),
 -- try finding the next set of 4, bu replacing 673 with a larger prime, if this is fruitless,
 -- try replacing 109 with a larger prime, then search for #4 and and then #5.
-low4 = [3,7,109,673]
-set4 = zip low4 [10,10,1000,1000]
-isPrimePair p = (isPrime (p*10 + 3)) &&
-                (isPrime (p*10 + 7)) &&
-                (isPrime (p*1000 + 109)) &&
-                (isPrime (p*1000 + 673)) &&
-                (isPrime (3*10000 + p)) &&
-                (isPrime (7*10000 + p)) &&
-                (isPrime (109*10000 + p)) &&
-                (isPrime (673*10000 + p))
-pe60 = (sum low4) + (head $ filter isPrimePair (dropWhile (<999) (primesTo 9999)))         
+--pe60 = (sum low4) + (head $ filter isPrimePair (dropWhile (<999) (primesTo 9999)))   
+
+mag n
+  | n < 10    = 10
+  | n < 100   = 100
+  | n < 1000  = 1000
+  | n < 10000 = 10000
+  | otherwise = 10 * (mag (n `div` 10))
+p = primesTo 1000
+primePairsTo n = [[a,b] | let p = primesTo n,  a <- p, b <- dropWhile (<= a) p, isPrimePair a b]
+isPrimePair p1 p2 = (isPrime (p1*(mag p2) + p2)) &&
+                    (isPrime (p2*(mag p1) + p1))
+primeTriplesTo n = [p1:b | let pp = primePairsTo n,
+                           [p1,p2] <- pp,
+                           b <- filter (\[a,b] -> a == p2 && (isPrimePair p1 b)) pp]
+primeQuadsTo n = [p1:b | let pt = primeTriplesTo n, 
+                         [p1,p2,p3] <- pt,
+                         b <- filter (\[a,b,c] -> p2 == a && p3 == b && (isPrimePair p1 c)) pt]
+
+     
