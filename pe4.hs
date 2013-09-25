@@ -47,6 +47,18 @@ pe65 = sum $ digits $ eNumerator 100 where
 -- See pe4_67.hs
 
 
+-- 69
+-- Totient Maximum:  Find the value of n ≤ 1,000,000 for which n/φ(n) is a maximum
+-- Answer: 510510 (0.01 secs, 3604432 bytes)
+-- Analysis: t(n) = n*(1-1/p1)(1-1/p2)...(1-1/pr) where p1..pr are the prime factors of n
+--   n/t(n) = p1/(p1-1) * p2/(p2-1) * ... * pr/(pr-1)
+-- 2, 2/1, 3 => 3/2, 5 => 5/4, as pn grows pn/(pn-1) approaches 1
+-- because duplicates of prime factors will result in a larger number without increasing the ratio n/t(n).
+-- If there is a gap, and a larger prime, then number will be smaller  i.e. 2 * 3/2 > 2 * 5/4
+-- therefore: The largest n/t(n) is the number with prime factors 2,3,5,7,11....
+-- find the list of primes whose multiple is less than 10^6 then calculate n/t(n)
+pe69 = head $ last $ takeWhile (\[n,d] -> n < 1000000) $ scanl (\[n,d] p -> [n*p,d*(p-1)]) [1,1] (primesTo 500)
+
 -- 79
 -- Passcode derivation: Given that the three characters are always asked for in order, analyse the file
 -- so as to determine the shortest possible secret passcode of unknown length.
@@ -63,3 +75,4 @@ pe65 = sum $ digits $ eNumerator 100 where
 -- Therefore, 7 must be the first number, and 0 must be the last
 -- eliminating them from all the list, we are left with 3 being second, and 9 being penultimate.
 -- iterate thus twice more to get the answer.
+
