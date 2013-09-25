@@ -35,3 +35,7 @@ pe92 = (10^7 - 1)  - (length $ filter chainEndsIn1 digitSums) where
 -- Note: (a  *b^c  +d) mod m == (a * (b^c mod m) + d) mod m 
 -- we can solve b^c mod m with Modular exponentiation which is much more efficient when c is large.
 pe97 = (28433 * (powerMod 2 7830457 (10^10)) + 1) `mod` 10^10
+
+
+-- 99
+-- See pe5_99.hs
