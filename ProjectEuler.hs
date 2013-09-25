@@ -23,6 +23,7 @@ module ProjectEuler
 , triangleNumber
 , triangleNumbersFrom
 , unique
+, wordsWhen
 , zip3With
 ) where
 
@@ -195,6 +196,13 @@ unique (x:xs)
   | x == head xs = unique xs
   | otherwise    = x:(unique xs)
 
+-- similar to words in Prelude, this will split on p instead of Char.isSpace
+wordsWhen :: (Char -> Bool) -> String -> [String]
+wordsWhen p s =  case dropWhile p s of
+                      "" -> []
+                      s' -> w : wordsWhen p s''
+                            where (w, s'') = break p s'
+                            
 -- zip 3 lists together with your own function
 zip3With :: (a -> b -> c -> d) -> [a] -> [b] -> [c] -> [d]
 zip3With _ [] _ _ = []

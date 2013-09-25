@@ -3,16 +3,11 @@
 -- Using a text file containing one thousand lines with a base/exponent pair on each line,
 -- determine which line number has the greatest numerical value.
 -- Answer: 709 (time: real	0m0.026s)
-Analysis: if a^b < b^d then log(a^b) < log(b^d).   log(a^b) = b*log(a)
+-- Analysis: if a^b < b^d then log(a^b) < log(b^d).   log(a^b) = b*log(a)
+
+import ProjectEuler ( wordsWhen )
 
 
--- similar to words in Prelude, this will split on p instead of Char.isSpace
-wordsWhen :: (Char -> Bool) -> [Char] -> [[Char]]
-wordsWhen p s =  case dropWhile p s of
-                      "" -> []
-                      s' -> w : wordsWhen p s''
-                            where (w, s'') = break p s'
-                            
 -- Calculate exp * log(base) for a line in the form "base,exp"
 makeValue :: [Char] -> Double
 makeValue line = let [b,e] = map (\s -> read s ::Double) $ wordsWhen (== ',') line

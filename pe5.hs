@@ -2,6 +2,8 @@
 
 import ProjectEuler
 
+-- 81
+-- See pe5_81.hs
 
 -- 92
 -- Square digit chains: How many starting numbers below ten million will arrive at 89?
