@@ -5,6 +5,32 @@ import ProjectEuler
 -- 81
 -- See pe5_81.hs
 
+
+-- 85
+-- Counting rectangles: Although there exists no rectangular grid that contains exactly two million rectangles, find the area of the grid with the nearest solution.
+-- Answer: 2772 (0.00 secs, 2059720 bytes)
+-- Analysis: a grid that is 1xn units, has 1 rect 1xn, 2 rects 1x(n-1).  ... n rects (1x1)
+--   therefore, there are 1+2+...+n rectangles, this is the nth triangle number t(n) = n(n+1)/2
+--   If the grid is 1 unit high, there is 1 collection with t(n), if the grid is 2 units high,
+--   there is 1 collection 2 units high, and 2 collections 1 unit high, or three total collections
+--   at this point it should be clear that there are t(m) collections in a grid m units high.
+--   therefore if the grid is n x m, there are t(n)*t(m) = n(n+1)m(m+1)/2/2 rectangles
+--   testing this with the 2x3 grid in the problem statement, we get 18 rectangles as shown.
+--   therefore, we are looking for m and n which minimize abs(2000000 - n(n+1)m(m+1)/2/2).
+--   at one extreme, m = 1 (or n = 1), and n(n+1) = sqrt 4000000 = 2000, so n = 1990 or 2000,
+--   1x1999 = 1999000 rectangles, and 1x2000 = 2001000 rectangle, both 1000 rectangles away.
+--   assuming that there is an unambiguous best answer, the long skinny solution is not the answer.
+--   at the other extreme, the grid is square (or nearly so) n ~ 4th root of 8000000 ~ 53.183
+--   53x53 = 2047761, or 47761 over, much further from the goal.
+--   if we have a width n, then the height m would be m(m+1) = 2 * 2 * 2000000 / n / (n+1)
+--   therefore, the if low = sqrt (2 * 2 * 2000000 / n / (n+1), the two options are low-0.5 and low+0.5
+--   if we look at the grids 1 to 53 high, we can calculate the two lengths on both sides of 2000000
+rectCount n m = n*(n+1)*m*(m+1) `div` 4
+widthOptions h = let h' = fromIntegral h in let low = truncate $ sqrt ((8000000 / h' / (h'+1)) - 0.5) in (low,low+1)
+rects = foldl (\rects h -> let (w1,w2) = widthOptions h in [h,w1]:[h,w2]:rects) [] [1..53]
+closest = minimum $ map (\[h,w] -> [(abs (2000000 - (rectCount w h))),h,w]) rects
+pe85 = let [diff,h,w] = closest in w*h
+
 -- 92
 -- Square digit chains: How many starting numbers below ten million will arrive at 89?
 -- Answer: 8581146 (32.57 secs, 6717408512 bytes)
