@@ -59,6 +59,27 @@ pe65 = sum $ digits $ eNumerator 100 where
 -- find the list of primes whose multiple is less than 10^6 then calculate n/t(n)
 pe69 = head $ last $ takeWhile (\[n,d] -> n < 1000000) $ scanl (\[n,d] p -> [n*p,d*(p-1)]) [1,1] (primesTo 500)
 
+
+-- 71
+-- Ordered Fractions: By listing the set of reduced proper fractions for d ≤ 1,000,000 in ascending order of size,
+--                    find the numerator of the fraction immediately to the left of 3/7
+-- Answer: 428571
+-- Analysis: let the denominator start at 1000000 and work smaller (the larger the denominator,
+--   the smaller the increments, therefore the closer it can get.  Then let the numerators start at the
+--   integer closest to but less than (truncate) 3/7 of the denominators.  let the numerator proceed downward
+--   until it gets to the last successful ratio of the denominator (starts with 2/5 of 1000000).
+--   a numerator denominator combination is a successful candidate requires that gcd n d == 1.
+--   The search can stop when the starting d and n is below the highest successful pair.
+-- In testing the following routine, I found that the first fraction it returned was also the closest possible.
+closeFraction :: Int -> (Int,Int) -> (Int,Int) -> (Int,Int)
+closeFraction d (n1,d1) (n2,d2) = let n1' = (d*n1) `div` d1 + 1
+                                      n2' = d*n2 `div` d2
+                                  in head [(n,d) | n <- [n2',(n2'-1)..n1'], gcd d n == 1]
+pe71 = fst $ closeFraction 1000000 (2,5) (3,7)
+ 
+
+
+
 -- 79
 -- Passcode derivation: Given that the three characters are always asked for in order, analyse the file
 -- so as to determine the shortest possible secret passcode of unknown length.
