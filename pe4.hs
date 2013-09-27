@@ -63,7 +63,7 @@ pe69 = head $ last $ takeWhile (\[n,d] -> n < 1000000) $ scanl (\[n,d] p -> [n*p
 -- 71
 -- Ordered Fractions: By listing the set of reduced proper fractions for d ≤ 1,000,000 in ascending order of size,
 --                    find the numerator of the fraction immediately to the left of 3/7
--- Answer: 428571
+-- Answer: 428571  (0.00 secs, 1543552 bytes)
 -- Analysis: let the denominator start at 1000000 and work smaller (the larger the denominator,
 --   the smaller the increments, therefore the closer it can get.  Then let the numerators start at the
 --   integer closest to but less than (truncate) 3/7 of the denominators.  let the numerator proceed downward
@@ -78,6 +78,17 @@ closeFraction d (n1,d1) (n2,d2) = let n1' = (d*n1) `div` d1 + 1
 pe71 = fst $ closeFraction 1000000 (2,5) (3,7)
  
 
+-- 76
+-- Counting Summations:
+-- Answer:
+-- After looking at the 
+sumOfSums n
+  | n < 2     = error "number must be 2 or greater to have parts to sum"
+  | n == 2    = 1
+  | n == 3    = 2
+  | otherwise = 2 + (sum (map sumOfSums' [2..(n-2)]))
+  where sumOfSums' 2 = 2
+        sumOfSums' n = 2 + (sum (map sumOfSums' [2..(n-1)]))
 
 
 -- 79
