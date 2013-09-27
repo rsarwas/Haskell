@@ -63,7 +63,7 @@ pe69 = head $ last $ takeWhile (\[n,d] -> n < 1000000) $ scanl (\[n,d] p -> [n*p
 -- 71
 -- Ordered Fractions: By listing the set of reduced proper fractions for d ≤ 1,000,000 in ascending order of size,
 --                    find the numerator of the fraction immediately to the left of 3/7
--- Answer: 428571  (0.00 secs, 1543552 bytes)
+-- Answer: 428570  (0.00 secs, 1543552 bytes)
 -- Analysis: let the denominator start at 1000000 and work smaller (the larger the denominator,
 --   the smaller the increments, therefore the closer it can get.  Then let the numerators start at the
 --   integer closest to but less than (truncate) 3/7 of the denominators.  let the numerator proceed downward
@@ -71,11 +71,19 @@ pe69 = head $ last $ takeWhile (\[n,d] -> n < 1000000) $ scanl (\[n,d] p -> [n*p
 --   a numerator denominator combination is a successful candidate requires that gcd n d == 1.
 --   The search can stop when the starting d and n is below the highest successful pair.
 -- In testing the following routine, I found that the first fraction it returned was also the closest possible.
+-- Wrong.  But in looking at all the other possible solutions, I found that the were lots of closer solutions,
+-- And they were increasing. upto 428570 / 999997
 closeFraction :: Int -> (Int,Int) -> (Int,Int) -> (Int,Int)
 closeFraction d (n1,d1) (n2,d2) = let n1' = (d*n1) `div` d1 + 1
                                       n2' = d*n2 `div` d2
                                   in head [(n,d) | n <- [n2',(n2'-1)..n1'], gcd d n == 1]
-pe71 = fst $ closeFraction 1000000 (2,5) (3,7)
+test :: Int -> Bool
+test d = let n = d*3 `div` 7
+         in gcd d n == 1 && ((fromIntegral n)/(fromIntegral d) > 0.428571)
+--pe71 = fst $ closeFraction 1000000 (2,5) (3,7)
+pe71' = take 10 $ map (\d -> ((d*3 `div` 7),d)) $ filter test [999999,999998..7]
+pe71'' = maximum (zip (map (\(n,d) -> (fromIntegral n)/(fromIntegral d)) pe71') [1..])
+
  
 
 -- 76
