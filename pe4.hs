@@ -2,6 +2,23 @@
 
 import ProjectEuler
 
+-- 61
+-- Cyclical figurate numbers: Find the sum of the only ordered set of six cyclic 4-digit numbers
+--   for which each polygonal type: triangle, square, pentagonal, hexagonal, heptagonal, and octagonal, 
+--   is represented by a different number in the set.
+-- Answer: 
+-- Analysis:
+oct n = n*(3*n - 2)
+hep n = n*(5*n - 3)/2	
+hex n = n*(2*n - 1)
+pen n = n*(3*n - 1)/2
+squ n = n*n
+tri n = n*(n+1)/2
+oct9999 =     (2 + (isqrt (4 + 4*3*9999))) `div` 6
+oct1000 = 1 + (2 + (isqrt (4 + 4*3*1000))) `div` 6
+octs = map (\x -> quotRem x 100) (map oct [oct1000..oct9999])
+
+
 -- 62
 -- Cubic Permutations: Find the smallest cube for which exactly five permutations of its digits are cube.
 -- Answer: 127035954683 (13.29 secs, 1381871616 bytes)
