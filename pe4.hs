@@ -85,6 +85,17 @@ pe71 = fst $ snd $ maximum $ take 10 $ map (\(n,d) -> ((fromIntegral n)/(fromInt
    where possible = map (\d -> ((d*3 `div` 7),d)) $ filter test [999999,999998..7]
 
 
+-- 73
+-- Counting fractions in a range: How many fractions lie between 1/3 and 1/2 in the sorted set of reduced proper fractions for d ≤ 12,000?
+-- Answer: 7295372 (22.21 secs, 11606982560 bytes)
+-- Analysis: similar to 71, We figure the min and max numerator for a denominator, then find which of those are proper reduced fractions
+count d (n1,d1) (n2,d2) =
+  let n'  = 1 + n1*d `div` d1
+      n'' =     n2*d `div` d2
+  in sum [1 | n <- [n'..n''], gcd n d == 1]
+pe73 = sum $ map (\x -> count x (1,3) (1,2)) [5..12000]
+
+
 -- 76
 -- Counting Summations:
 -- Answer:
