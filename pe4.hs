@@ -9,14 +9,31 @@ import ProjectEuler
 -- Answer: 
 -- Analysis:
 oct n = n*(3*n - 2)
-hep n = n*(5*n - 3)/2	
+hep n = n*(5*n - 3) `div` 2	
 hex n = n*(2*n - 1)
-pen n = n*(3*n - 1)/2
+pen n = n*(3*n - 1) `div` 2
 squ n = n*n
-tri n = n*(n+1)/2
-oct9999 =     (2 + (isqrt (4 + 4*3*9999))) `div` 6
-oct1000 = 1 + (2 + (isqrt (4 + 4*3*1000))) `div` 6
-octs = map (\x -> quotRem x 100) (map oct [oct1000..oct9999])
+tri n = n*(n+1) `div` 2
+makePairs = filter (\(a,b) -> b > 9) . map (\x -> quotRem x 100)
+oct9999 =     (2 + (isqrt (4 + 12*9999))) `div` 6
+oct1000 = 1 + (2 + (isqrt (4 + 12*1000))) `div` 6
+octs = makePairs (map oct [oct1000..oct9999])
+hep9999 =     (3 + (isqrt (9 + 40*9999))) `div` 10
+hep1000 = 1 + (3 + (isqrt (9 + 40*1000))) `div` 10
+heps = makePairs (map hep [hep1000..hep9999])
+hex9999 =     (1 + (isqrt (1 + 8*9999))) `div` 4
+hex1000 = 1 + (1 + (isqrt (1 + 8*1000))) `div` 4
+hexs = makePairs (map hex [hex1000..hex9999])
+pen9999 =     (1 + (isqrt (1 + 24*9999))) `div` 6
+pen1000 = 1 + (1 + (isqrt (1 + 24*1000))) `div` 6
+pens = makePairs (map pen [pen1000..pen9999])
+squ9999 =      isqrt 9999
+squ1000 = 1 + (isqrt 1000)
+squs = makePairs (map squ [squ1000..squ9999])
+tri9999 =     ((isqrt (1 + 8*9999)) - 1) `div` 2
+tri1000 = 1 + ((isqrt (1 + 8*1000)) - 1) `div` 2
+tris = makePairs (map tri [tri1000..tri9999])
+-- 30 octs, 40 heps, 44 hexs, 47 pens, 53 squs, 88 tris
 
 
 -- 62
