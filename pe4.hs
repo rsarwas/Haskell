@@ -6,15 +6,21 @@ import ProjectEuler
 -- Cyclical figurate numbers: Find the sum of the only ordered set of six cyclic 4-digit numbers
 --   for which each polygonal type: triangle, square, pentagonal, hexagonal, heptagonal, and octagonal, 
 --   is represented by a different number in the set.
--- Answer: 
--- Analysis:
+-- Answer: 28684 (0.02 secs, 6264000 bytes)
+-- Analysis:  I make list of the 4 digit figurate numbers,  then I look for cycles as follows
+--   for each oct number (the shortest list), I compare the last two digits against the first two digits
+--   in the other lists.  for each hit, I add the number to my potential solution, and then compare that
+-    with the remaining lists.  The implemtation is recursive.  The simple case is when there is only
+--   one list remaining - then there is a solution if a number in the list matches the last number, and
+--   then wraps around to match the first number.
 oct n = n*(3*n - 2)
 hep n = n*(5*n - 3) `div` 2	
 hex n = n*(2*n - 1)
 pen n = n*(3*n - 1) `div` 2
 squ n = n*n
 tri n = n*(n+1) `div` 2
-makePairs = filter (\(a,b) -> b > 9) . map (\x -> quotRem x 100)
+t2l (a,b) = [a,b]
+makePairs = map t2l . filter (\(a,b) -> b > 9) . map (\x -> quotRem x 100)
 oct9999 =     (2 + (isqrt (4 + 12*9999))) `div` 6
 oct1000 = 1 + (2 + (isqrt (4 + 12*1000))) `div` 6
 octs = makePairs (map oct [oct1000..oct9999])
@@ -33,7 +39,18 @@ squs = makePairs (map squ [squ1000..squ9999])
 tri9999 =     ((isqrt (1 + 8*9999)) - 1) `div` 2
 tri1000 = 1 + ((isqrt (1 + 8*1000)) - 1) `div` 2
 tris = makePairs (map tri [tri1000..tri9999])
--- 30 octs, 40 heps, 44 hexs, 47 pens, 53 squs, 88 tris
+
+cyclical (x:xs) [a] = 
+   let solution = [h:x:xs | [h,t] <- a, t == x, (last xs) == h]
+   in if (null solution) then [] else (head solution)
+cyclical (x:xs) as =
+   let solution = filter (not . null) [ cyclical (h:x:xs) (filter (/=a) as) | a <- as, [h,t] <- a, t == x]
+   in if (null solution) then [] else (head solution)
+
+pe61 = sum $ makeNums $ numberParts where
+   numberParts = head $ filter (not . null) [cyclical x [heps, hexs, pens, squs, tris] | x <- octs]
+   makeNums [h,t] = [(h*100+t)]
+   makeNums (h:t:xs) = (h*100+t):(makeNums (t:xs))
 
 
 -- 62
