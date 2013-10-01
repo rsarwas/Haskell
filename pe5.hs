@@ -31,6 +31,11 @@ rects = foldl (\rects h -> let (w1,w2) = widthOptions h in [h,w1]:[h,w2]:rects) 
 closest = minimum $ map (\[h,w] -> [(abs (2000000 - (rectCount w h))),h,w]) rects
 pe85 = let [diff,h,w] = closest in w*h
 
+
+-- 89
+-- See pe5_89.hs
+
+
 -- 92
 -- Square digit chains: How many starting numbers below ten million will arrive at 89?
 -- Answer: 8581146 (32.57 secs, 6717408512 bytes)
