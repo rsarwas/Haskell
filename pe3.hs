@@ -149,13 +149,32 @@ pe50 = maximum $ map (\x -> (length x, head x)) (consecutivePrimeSums 1000000)
 
 
 -- 51
--- Prime digit replacements: Find the smallest prime which, by replacing part of the number (not necessarily adjacent digits) with the same digit, is part of an eight prime value family.
+-- Prime digit replacements: Find the smallest prime which, by replacing part of the number (not necessarily adjacent digits) 
+--   with the same digit, is part of an eight prime value family.
 -- By replacing the 1st digit of the 2-digit number *3, it turns out that six of the nine possible values:
 --   13, 23, 43, 53, 73, and 83, are all prime.
 -- By replacing the 3rd and 4th digits of 56**3 with the same digit, this 5-digit number is the first example having
 --   seven primes among the ten generated numbers, yielding the family: 56003, 56113, 56333, 56443, 56663, 56773, and 56993.
 --   Consequently 56003, being the first member of this family, is the smallest prime with this property.
 -- Answer:
+
+--FIXME generalize this specific example of numbers
+numbers 5 [0,1,0,1] = [a:'*':b:'*':c:[] | a <- ['1'..'9'], b <- ['0'..'9'], c <- ['1','3','7','9']]
+
+-- FIXME generalize these specific examples of nchooser
+nchooser :: Int -> Int -> [[Int]]
+nchooser 3 1 = [[1,0,0],[0,1,0],[0,0,1]]
+nchooser 3 2 = [[1,1,0],[1,0,1],[0,1,1]]
+nchooser 3 3 = [[1,1,1]]
+--nchooser results must be ordered from smallest to largest
+
+eightPrimes ns = 
+   -- if number is below  lower limit ??, then return false??.  If two are not prime then return false, if last one is prime return true.
+   let possibles = [read (replace "*" [x] ns) ::Int | x <- ['0'..'9']]
+       notPrimes = take 3 $ filter (not . isPrime) possibles
+   in length notPrimes < 3
+
+pe51 = head [ ns | d <- [5..], f <- [1..d-1], xs <- (nchooser (d-1) f), ns <- numbers d xs, eightPrimes ns]
 
 
 -- 52
