@@ -164,6 +164,8 @@ sumOfSums k n = if n < 0 then 0 else (sumOfSums (k-1) n) + (sumOfSums k (n-k))
 -- However sumOfSums 99 100 generated the correct solution but it took almost 17 minutes.
 -- (note sumOfSums 100 100, includes a singleton 100 in the list, so it is 1 too many.)
 -- Then I found the algorithmic solution:
+-- Note that this solution includes the n, so the total for 5 is 7, because it includes the singleton of 5.
+-- for this problem, we just subtract 1 from the total.
 -- p(n) = p(n-1) + p(n-2) - p(n-5) - p(n-7) + p(n-12) + p(n-15) - ...
 -- or p(n) = ∑ k ∈ [1,n) q(k) p(n-k)
 -- q( i ) | i == (3k^2+5k)/2 = (-1) ^ k
