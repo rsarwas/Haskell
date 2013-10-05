@@ -10,7 +10,7 @@ import ProjectEuler
 -- Analysis:  I make list of the 4 digit figurate numbers,  then I look for cycles as follows
 --   for each oct number (the shortest list), I compare the last two digits against the first two digits
 --   in the other lists.  for each hit, I add the number to my potential solution, and then compare that
--    with the remaining lists.  The implemtation is recursive.  The simple case is when there is only
+--   with the remaining lists.  The implemtation is recursive.  The simple case is when there is only
 --   one list remaining - then there is a solution if a number in the list matches the last number, and
 --   then wraps around to match the first number.
 oct n = n*(3*n - 2)
@@ -149,15 +149,33 @@ pe73 = sum $ map (\x -> count x (1,3) (1,2)) [5..12000]
 
 -- 76
 -- Counting Summations:
--- Answer:
--- After looking at the 
-sumOfSums n
-  | n < 2     = error "number must be 2 or greater to have parts to sum"
-  | n == 2    = 1
-  | n == 3    = 2
-  | otherwise = 2 + (sum (map sumOfSums' [2..(n-2)]))
-  where sumOfSums' 2 = 2
-        sumOfSums' n = 2 + (sum (map sumOfSums' [2..(n-1)]))
+-- Answer: 190569291  (0.01 secs, 2230888 bytes) (recursive solution: 1009.07 secs, 237087938760 bytes)
+-- After studying the pattern 1,2,4,6,10,14,20,29,41,... and trying several failed attempts, I stumbled upon the following:
+-- (1) The number of partitions into k or fewer parts is equal to the number of partitions into exactly k parts plus
+--     the number of partitions into k-1 or fewer parts.
+-- (2) Given a partition of n into exactly k parts, we can  subtract 1 from each part, leaving a partition of n-k
+--     in k or fewer parts.  Thus there is a one-to-one correspondence between the partitions of n into exactly k
+--     parts and the partitions of n-k into k or fewer parts.
+-- Putting these two facts together, we have the simple recurrence relation A_k(n)  =  A_{k-1}(n)  +  A_k(n-k)
+sumOfSums _ 0 = 1
+sumOfSums _ 1 = 1
+sumOfSums 1 _ = 1
+sumOfSums k n = if n < 0 then 0 else (sumOfSums (k-1) n) + (sumOfSums k (n-k))
+-- However sumOfSums 99 100 generated the correct solution but it took almost 17 minutes.
+-- (note sumOfSums 100 100, includes a singleton 100 in the list, so it is 1 too many.)
+-- Then I found the algorithmic solution:
+-- p(n) = p(n-1) + p(n-2) - p(n-5) - p(n-7) + p(n-12) + p(n-15) - ...
+-- or p(n) = ∑ k ∈ [1,n) q(k) p(n-k)
+-- q( i ) | i == (3k^2+5k)/2 = (-1) ^ k
+--        | i == (3k^2+7k+2)/2 = (-1) ^ k
+--        | otherwise         = 0
+-- q = [1,1,0,0,-1,0,-1,0,0,0,0,1,0,0,1,0,0,0,0,0,0,-1,0,0,0,-1,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0..]
+-- 1, skip 0, 1 ,skip 2, -1, skip 1, -1, skip 4, 1, skip 2, 1, skip 6, -1, skip 3, -1, skip 8, 1, skip 4,...
+q = go id 1
+  where go zs c = zs . zs . (c:) . zs . (c:) $ go ((0:) . zs) (negate c)
+p = map head $ iterate next [1]
+   where next xs = sum (zipWith (*) q xs) : xs
+pe76 = p !! 100 - 1
 
 
 -- 79
