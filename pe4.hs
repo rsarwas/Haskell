@@ -150,7 +150,8 @@ pe73 = sum $ map (\x -> count x (1,3) (1,2)) [5..12000]
 -- 76
 -- Counting Summations:
 -- Answer: 190569291  (0.01 secs, 2230888 bytes) (recursive solution: 1009.07 secs, 237087938760 bytes)
--- After studying the pattern 1,2,4,6,10,14,20,29,41,... and trying several failed attempts, I stumbled upon the following:
+-- After studying the pattern 1,2,4,6,10,14,20,29,41,... and trying several failed attempts, I stumbled upon the
+-- following (from http://www.mathpages.com/home/kmath091.htm):
 -- (1) The number of partitions into k or fewer parts is equal to the number of partitions into exactly k parts plus
 --     the number of partitions into k-1 or fewer parts.
 -- (2) Given a partition of n into exactly k parts, we can  subtract 1 from each part, leaving a partition of n-k
@@ -168,6 +169,7 @@ sumOfSums k n = if n < 0 then 0 else (sumOfSums (k-1) n) + (sumOfSums k (n-k))
 -- for this problem, we just subtract 1 from the total.
 -- p(n) = p(n-1) + p(n-2) - p(n-5) - p(n-7) + p(n-12) + p(n-15) - ...
 -- or p(n) = ∑ k ∈ [1,n) q(k) p(n-k)
+-- This Haskell code was stolen from http://stackoverflow.com/questions/18157582/haskell-list-generator
 -- q( i ) | i == (3k^2+5k)/2 = (-1) ^ k
 --        | i == (3k^2+7k+2)/2 = (-1) ^ k
 --        | otherwise         = 0
