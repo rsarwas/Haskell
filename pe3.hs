@@ -157,6 +157,16 @@ pe50 = maximum $ map (\x -> (length x, head x)) (consecutivePrimeSums 1000000)
 --   seven primes among the ten generated numbers, yielding the family: 56003, 56113, 56333, 56443, 56663, 56773, and 56993.
 --   Consequently 56003, being the first member of this family, is the smallest prime with this property.
 -- Answer:
+-- Analysis: a family having 8 primes also has 7 primes, so the solution must be greater than 56003.  Any 5 digit number with
+--   eight primes must be in the configuration nn**n. The * can never be in the last spot, because it will be even in some cases.
+--   the last digit must always be in the set (1,3,7,9) if the number is prime.  If the ** is in one of the two leading spots,
+--   there will be a prime less than 56003, contradicting the problem statement.  I will try the remaining 5 digit numbers first.
+is5digit = not $ null [ ns | a <- [57..99], f <- ['1','3','7','9'], let ns = (show a) ++ "**" ++ [f], eightPrimes ns]
+eightPrimes ns = 
+   let possibles = [read (replace "*" [x] ns) ::Int | x <- ['0'..'9']]
+       notPrimes = take 3 $ filter (not . isPrime) possibles
+   in length notPrimes < 3
+-- This proved that the solution is not a 5 digit number.  Brute force all 6 digit numbers
 
 --FIXME generalize this specific example of numbers
 numbers 5 [0,1,0,1] = [a:'*':b:'*':c:[] | a <- ['1'..'9'], b <- ['0'..'9'], c <- ['1','3','7','9']]
@@ -168,13 +178,8 @@ nchooser 3 2 = [[1,1,0],[1,0,1],[0,1,1]]
 nchooser 3 3 = [[1,1,1]]
 --nchooser results must be ordered from smallest to largest
 
-eightPrimes ns = 
-   -- if number is below  lower limit ??, then return false??.  If two are not prime then return false, if last one is prime return true.
-   let possibles = [read (replace "*" [x] ns) ::Int | x <- ['0'..'9']]
-       notPrimes = take 3 $ filter (not . isPrime) possibles
-   in length notPrimes < 3
 
-pe51 = head [ ns | d <- [5..], f <- [1..d-1], xs <- (nchooser (d-1) f), ns <- numbers d xs, eightPrimes ns]
+pe51 = head [ ns | d <- [6..], f <- [1..d-1], xs <- (nchooser (d-1) f), ns <- numbers d xs, eightPrimes ns]
 
 
 -- 52
