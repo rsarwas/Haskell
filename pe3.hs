@@ -173,11 +173,13 @@ numbers 5 [0,1,0,1] = [a:'*':b:'*':c:[] | a <- ['1'..'9'], b <- ['0'..'9'], c <-
 
 -- FIXME generalize these specific examples of nchooser
 nchooser :: Int -> Int -> [[Int]]
-nchooser 3 1 = [[1,0,0],[0,1,0],[0,0,1]]
-nchooser 3 2 = [[1,1,0],[1,0,1],[0,1,1]]
-nchooser 3 3 = [[1,1,1]]
+nchooser 5 1 = [[1,0,0,0,0],[0,1,0,0,0],[0,0,1,0,0],[0,0,0,1,0],[0,0,0,0,1]]
+nchooser 5 2 = [[1,1,0,0,0],[1,0,1,0,0],[1,0,0,1,0],[1,0,0,0,1],[0,1,1,0,0],[0,1,0,1,0],[0,1,0,0,1],[0,0,1,1,0],[0,0,1,0,1],[0,0,0,1,1]]
+nchooser 5 3 = [[1,1,1,0,0],[1,1,0,1,0],[1,1,0,0,1],[1,0,1,1,0],[1,0,1,0,1],[1,0,0,1,1],[0,1,1,1,0],[0,1,1,0,1],[0,1,0,1,1],[0,0,1,1,1]]
+nchooser 5 4 = [[1,1,1,1,0],[1,1,1,0,1],[1,1,0,1,1],[1,0,1,1,1],[0,1,1,1,1]]
+nchooser 5 5 = [[1,1,1,1,1]]
 --nchooser results must be ordered from smallest to largest
-
+nchooser' 5 = quicksort ( (nchooser 5 1) ++ (nchooser 5 2) ++ (nchooser 5 3) ++ (nchooser 5 4) ++ (nchooser 5 5) )
 
 pe51 = head [ ns | d <- [6..], f <- [1..d-1], xs <- (nchooser (d-1) f), ns <- numbers d xs, eightPrimes ns]
 
@@ -282,15 +284,24 @@ mag n
   | n < 1000  = 1000
   | n < 10000 = 10000
   | otherwise = 10 * (mag (n `div` 10))
-p = primesTo 1000
 primePairsTo n = [[a,b] | let p = primesTo n,  a <- p, b <- dropWhile (<= a) p, isPrimePair a b]
 isPrimePair p1 p2 = (isPrime (p1*(mag p2) + p2)) &&
                     (isPrime (p2*(mag p1) + p1))
 primeTriplesTo n = [p1:b | let pp = primePairsTo n,
                            [p1,p2] <- pp,
-                           b <- filter (\[a,b] -> a == p2 && (isPrimePair p1 b)) pp]
+                           b <- filter (\[a,b] -> p2 == a && (isPrimePair p1 b)) pp]
 primeQuadsTo n = [p1:b | let pt = primeTriplesTo n, 
                          [p1,p2,p3] <- pt,
                          b <- filter (\[a,b,c] -> p2 == a && p3 == b && (isPrimePair p1 c)) pt]
+primeQuintsTo n = [p1:b | let pt = primeQuadsTo n, 
+                         [p1,p2,p3,p4] <- pt,
+                         b <- filter (\[a,b,c,d] -> p2 == a && p3 == b && p4 == c && (isPrimePair p1 d)) pt]
 
-     
+--primeQuadsTo 4000 => [[3,7,109,673],[3,11,2069,2297],[3,17,449,2069],[3,17,2069,2297],[3,37,67,2377],[7,19,97,3727],[7,19,1249,3727],[7,61,1693,3181],[7,433,1471,3613],[7,829,2671,3361],[7,1237,1549,3019],[7,2089,2953,3181],[11,23,743,1871],[11,239,1049,1847],[11,239,1091,1847],[23,311,677,827],[23,677,827,1871],[31,1123,2029,2281],[37,991,2269,3613],[37,1549,2707,3463],[79,967,1117,3511],[79,1801,3253,3547],[269,617,887,2741],[809,1361,2141,3947],[1451,2699,3413,3761],[1753,1951,3547,3643]]
+-- (340.16 secs, 140199718280 bytes) with no quints
+
+test = map (q3To 1000) $ primeTriplesTo 110
+test' = map (q3To 100000) $ primeTriplesTo 200
+pe60 = map (q4To 20000) $ primeQuadsTo 3000
+q3To n l@[a,b,c] = [p:l | p <- dropWhile (<c) $ primesTo n, isPrimePair a p && isPrimePair b p && isPrimePair c p]
+q4To n l@[a,b,c,d] = [p:l | p <- dropWhile (<d) $ primesTo n, isPrimePair a p && isPrimePair b p && isPrimePair c p && isPrimePair d p]
