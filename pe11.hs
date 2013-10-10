@@ -1,4 +1,4 @@
--- Project Euler in Haskell problems 201..200
+-- Project Euler in Haskell problems 201..220
 
 import ProjectEuler
 
