@@ -166,6 +166,42 @@ pe71 = fst $ snd $ maximum $ take 10 $ map (\(n,d) -> ((fromIntegral n)/(fromInt
    where possible = map (\d -> ((d*3 `div` 7),d)) $ filter test [999999,999998..7]
 
 
+-- 72
+-- Counting Fractions:  How many elements would be contained in the set of reduced proper fractions for d <= 1,000,000?
+-- Answer: 303963552391  (9727.18 secs, 316599214904 bytes) 2 hrs 42 minutes.
+-- Analysis: The number of fractions for each denominator is the Euler phi function,
+t :: (Integral a) => a -> a 
+t 1 = 1
+--t n = (fromIntegral n) * product [1 - 1/(fromIntegral p) | p <- (unique $ primeFactors n)]
+t n = n * (product [(p - 1) | p <- upf]) `div` (product upf)
+      where upf = unique $ primeFactors n
+sumTot :: (Integral a) => a -> a
+sumTot n = sum [t d | d <- [1..n]]
+
+-- Using the Totient Summatory Function from Wolfram
+--  As expected, this is no faster, since it still must get the prime factors for all 1,000,000 numbers
+--  Even with a dummy mu function it takes about 10 seconds to sum up to 10^6
+mu :: (Integral a) => a -> a
+mu x
+   | x == 1     = 1
+   | repeatedPF = 0
+   | otherwise  = (-1)^k
+   where
+      repeatedPF = k < length pf
+      k = length $ upf
+      upf = unique $ pf
+      pf = primeFactors x
+sumTot2 :: (Integral a) => a -> a
+sumTot2 n = sum [mu d * flr * (1+flr) | d <- [1..n], let flr = n `div` d] `div` 2
+
+-- Approximation from Wolfram 
+--   This is very fast, but off by 1464 -- error term is O(10^7)
+sumTot3 x = 3*x*x/pi/pi
+sumTot3Error x = x * (log x)**(2/3) * (log (log x))**(4/3)
+
+pe72 = sumTot (10^6) - 1
+
+
 -- 73
 -- Counting fractions in a range: How many fractions lie between 1/3 and 1/2 in the sorted set of reduced proper fractions for d ≤ 12,000?
 -- Answer: 7295372 (22.21 secs, 11606982560 bytes)
