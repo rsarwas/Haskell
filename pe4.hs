@@ -168,7 +168,7 @@ pe71 = fst $ snd $ maximum $ take 10 $ map (\(n,d) -> ((fromIntegral n)/(fromInt
 
 -- 72
 -- Counting Fractions:  How many elements would be contained in the set of reduced proper fractions for d <= 1,000,000?
--- Answer: 303963552391  (1932.20 secs, 48279508884 bytes)  32 minutes
+-- Answer: 303963552391 (929.59 secs, 19658268356 bytes)  15.5 minutes
 -- Analysis: The number of fractions for each denominator is the Euler phi function,
 t :: (Integral a) => a -> [a] -> a 
 t 1 _ = 1
@@ -179,27 +179,27 @@ sumTot :: (Integral a) => a -> a
 sumTot n = sum [t d ps | d <- [1..n]] where ps = primesTo (isqrt n)
 
 -- Using the Totient Summatory Function from Wolfram
---  As expected, this is no faster, since it still must get the prime factors for all 1,000,000 numbers
---  Even with a dummy mu function it takes about 10 seconds to sum up to 10^6
-mu :: (Integral a) => a -> a
-mu x
-   | x == 1     = 1
-   | repeatedPF = 0
-   | otherwise  = (-1)^k
-   where
-      repeatedPF = k < length pf
-      k = length $ upf
-      upf = unique $ pf
-      pf = primeFactors x
+-- Improved effiency, by short circuiting when I can, and using precomputed primes list
+mu :: (Integral a) => a -> [a] -> a
+mu x ps
+   | x == 1              = 1
+   | null ps || q' == 0 = -1
+   | r == 0  && r' == 0  = 0
+   | r == 0              = (-1)*(mu q (tail ps)) 
+   | otherwise           = mu x (tail ps) 
+   where nextPrime = head ps
+         (q,r) = x `quotRem` nextPrime 
+         (q',r') = q `quotRem` nextPrime 
 sumTot2 :: (Integral a) => a -> a
-sumTot2 n = sum [mu d * flr * (1+flr) | d <- [1..n], let flr = n `div` d] `div` 2
+sumTot2 n = sum [mu d ps * flr * (1+flr) | d <- [1..n], let flr = n `div` d] `div` 2
+            where ps = primesTo (isqrt n)
 
 -- Approximation from Wolfram 
 --   This is very fast, but off by 1464 -- error term is O(10^7)
 sumTot3 x = 3*x*x/pi/pi
 sumTot3Error x = x * (log x)**(2/3) * (log (log x))**(4/3)
 
-pe72 = sumTot (10^6) - 1
+pe72 = sumTot2 (10^6) - 1
 
 
 -- 73
