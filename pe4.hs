@@ -168,15 +168,15 @@ pe71 = fst $ snd $ maximum $ take 10 $ map (\(n,d) -> ((fromIntegral n)/(fromInt
 
 -- 72
 -- Counting Fractions:  How many elements would be contained in the set of reduced proper fractions for d <= 1,000,000?
--- Answer: 303963552391  (9727.18 secs, 316599214904 bytes) 2 hrs 42 minutes.
+-- Answer: 303963552391  (1932.20 secs, 48279508884 bytes)  32 minutes
 -- Analysis: The number of fractions for each denominator is the Euler phi function,
-t :: (Integral a) => a -> a 
-t 1 = 1
+t :: (Integral a) => a -> [a] -> a 
+t 1 _ = 1
 --t n = (fromIntegral n) * product [1 - 1/(fromIntegral p) | p <- (unique $ primeFactors n)]
-t n = n * (product [(p - 1) | p <- upf]) `div` (product upf)
-      where upf = unique $ primeFactors n
+t n ps = n * (product [(p - 1) | p <- upf]) `div` (product upf)
+        where upf = unique $ primeFactors' n ps
 sumTot :: (Integral a) => a -> a
-sumTot n = sum [t d | d <- [1..n]]
+sumTot n = sum [t d ps | d <- [1..n]] where ps = primesTo (isqrt n)
 
 -- Using the Totient Summatory Function from Wolfram
 --  As expected, this is no faster, since it still must get the prime factors for all 1,000,000 numbers

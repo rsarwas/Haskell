@@ -15,6 +15,7 @@ module ProjectEuler
 , powerMod
 , powerSet
 , primeFactors
+, primeFactors'
 , primesTo
 , quicksort
 , replace
