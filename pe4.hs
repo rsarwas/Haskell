@@ -111,6 +111,36 @@ pe65 = sum $ digits $ eNumerator 100 where
 pe69 = head $ last $ takeWhile (\[n,d] -> n < 1000000) $ scanl (\[n,d] p -> [n*p,d*(p-1)]) [1,1] (primesTo 500)
 
 
+-- 70
+--Totient permutation: Find the value of n, 1  n  10^7, for which φ(n) is a permutation of n and the ratio n/φ(n) produces a minimum.
+-- Answer: 8319823 (0.42 secs, 52987764 bytes)
+-- Analysis: the minimum ratio would be for the largest prime number since φ(n) = n-1 when n is prime.
+--   However, n-1 and n can never satisfy the permutation requirement, so ignore all primes.
+--   Otherwise, the minimum ratio is with two large prime factors. so look for primes close to sqrt (10^7)
+--   φ(n) = n(1 - 1/p1)(1 - 1/p2) .. (1 - 1/pn)  if there are no duplicate prime factors then φ(n) = (p1-1)(p2-1)..(pn-1)
+--   The smallest ratio I found was at 2609*2693.  at 215*215*215 (approx. three largest prime factors), the ratio is
+--   much larger than the solution, s we do not need to check solutions with 3 prime factors.
+-- This permutation check is simple but slow 
+permutation n1 n2 =
+  let n1s = quicksort $ show n1
+      n2s = quicksort $ show n2
+  in n1s == n2s
+perms = [(n,t) | let p = reverse $ primesTo 3162, a <- p, b <- dropWhile (>a) p,
+                 let n = a*b, let t = (a-1)*(b-1), permutation n t]
+-- This is empty, but I needed to check, because 3119^2 had a smaller ratio than the other winners
+perms' = [(n,t) | p <- reverse $ primesTo 3162, let n = p*p, let t = (p-1)*(p-1), permutation n t]
+-- 7026037 = 2609*2693 is not right, but I forgot to check prime factors larger than 3162.
+-- Since we know 10^7/2609 = 3832, we search in this range to find a solution with a better ratio.
+perms'' = [(n,t) | let p = reverse $ dropWhile (<2609) $ primesTo 3832, a <- p, b <- dropWhile (>a) p,
+                 let n = a*b, let t = (a-1)*(b-1), n < 10000000, permutation n t]
+-- That didn't help.  Solution must have a larger range, however if pf = 10^4 and 10^3, then ratio = 1.00101,
+-- but the ratio for 7026037 is 1.0007550490432913
+perms''' = [(n,t) | let p = reverse $ dropWhile (<2000) $ primesTo 4000, a <- p, b <- dropWhile (>a) p,
+                 let n = a*b, let t = (a-1)*(b-1), 7026037 < n, n < 10000000, permutation n t]
+--That did it.  It found the solution at 2339*3557 with a ratio of 1.0007090511248113
+pe70 = snd $ minimum $ map (\(n,t) -> ((fromIntegral n)/(fromIntegral t),n)) (perms''')
+
+
 -- 71
 -- Ordered Fractions: By listing the set of reduced proper fractions for d ≤ 1,000,000 in ascending order of size,
 --                    find the numerator of the fraction immediately to the left of 3/7
