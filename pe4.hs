@@ -93,6 +93,28 @@ pe65 = sum $ digits $ eNumerator 100 where
   eNumerator n = last $ foldl contFrac [0,1] (take n e)
   contFrac [h2,h1] a = [h1,(a*h1+h2)]
 
+-- 64
+-- Odd period square roots: How many continued fractions for sqrt(N) <= 10000 have an odd period?
+--   where N is not square, and period is the number of terms in the repeating part of the CF.
+-- Answer: 1322  (1.80 secs, 265677000 bytes)
+-- for fun, I practiced by creating a continued fraction generator for normal fractions.
+cf n 0 = []
+cf 0 d = [0]
+cf n 1 = [n]
+cf n d  | n < d     = 0:(cf d n)
+        | otherwise = q:(cf d r) where (q,r) = n `quotRem` d
+-- From Expressing square roots as continued fraction at 
+-- http://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Continued_fraction_expansion
+cfsq n = sq' 0 1 ao ao n where ao = isqrt n
+sq' m d ao a s = 
+  let m' = d*a - m
+      d' = (s - m'*m') `div` d
+      a' = (ao + m') `div` d'
+  in if a' == 2*ao then a:[a'] else a:(sq' m' d' ao a' s)
+-- These expansions include the first term, so if we subtract 1
+period n = [(length $ cfsq x) -1 | x <- [2..n], let xs = isqrt x, xs * xs /= x] 
+pe64 = length $ filter odd (period (10^4))
+
 
 -- 67
 -- See pe4_67.hs
