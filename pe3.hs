@@ -1,6 +1,7 @@
 -- Project Euler in Haskell problems 41..60
 
 import ProjectEuler
+import Data.Set (toList, fromList, size, member)  -- for problem 51
 import Data.Ratio -- for probem 57
 
 -- 41
@@ -161,27 +162,43 @@ pe50 = maximum $ map (\x -> (length x, head x)) (consecutivePrimeSums 1000000)
 --   eight primes must be in the configuration nn**n. The * can never be in the last spot, because it will be even in some cases.
 --   the last digit must always be in the set (1,3,7,9) if the number is prime.  If the ** is in one of the two leading spots,
 --   there will be a prime less than 56003, contradicting the problem statement.  I will try the remaining 5 digit numbers first.
-is5digit = not $ null [ ns | a <- [57..99], f <- ['1','3','7','9'], let ns = (show a) ++ "**" ++ [f], eightPrimes ns]
-eightPrimes ns = 
+is5digit = not $ null [ ns | a <- [57..99], f <- ['1','3','7','9'], let ns = (show a) ++ "**" ++ [f], primeCount 7 ns]
+primeCount n ns = 
    let possibles = [read (replace "*" [x] ns) ::Int | x <- ['0'..'9']]
-       notPrimes = take 3 $ filter (not . isPrime) possibles
-   in length notPrimes < 3
--- This proved that the solution is not a 5 digit number.  Brute force all 6 digit numbers
+       notPrimes = take (11-n)  $ filter (not . isPrime) possibles
+   in length notPrimes < (11-n)
+-- This took 0.3 seconds to prove that the solution is not a 5 digit number.  Try brute force all 6 digit numbers
 
---FIXME generalize this specific example of numbers
-numbers 5 [0,1,0,1] = [a:'*':b:'*':c:[] | a <- ['1'..'9'], b <- ['0'..'9'], c <- ['1','3','7','9']]
-
--- FIXME generalize these specific examples of nchooser
-nchooser :: Int -> Int -> [[Int]]
-nchooser 5 1 = [[1,0,0,0,0],[0,1,0,0,0],[0,0,1,0,0],[0,0,0,1,0],[0,0,0,0,1]]
-nchooser 5 2 = [[1,1,0,0,0],[1,0,1,0,0],[1,0,0,1,0],[1,0,0,0,1],[0,1,1,0,0],[0,1,0,1,0],[0,1,0,0,1],[0,0,1,1,0],[0,0,1,0,1],[0,0,0,1,1]]
-nchooser 5 3 = [[1,1,1,0,0],[1,1,0,1,0],[1,1,0,0,1],[1,0,1,1,0],[1,0,1,0,1],[1,0,0,1,1],[0,1,1,1,0],[0,1,1,0,1],[0,1,0,1,1],[0,0,1,1,1]]
-nchooser 5 4 = [[1,1,1,1,0],[1,1,1,0,1],[1,1,0,1,1],[1,0,1,1,1],[0,1,1,1,1]]
-nchooser 5 5 = [[1,1,1,1,1]]
---nchooser results must be ordered from smallest to largest
-nchooser' 5 = quicksort ( (nchooser 5 1) ++ (nchooser 5 2) ++ (nchooser 5 3) ++ (nchooser 5 4) ++ (nchooser 5 5) )
-
-pe51 = head [ ns | d <- [6..], f <- [1..d-1], xs <- (nchooser (d-1) f), ns <- numbers d xs, eightPrimes ns]
+-- Testing the 6 digit numbers in the same way seemed fraught with difficulties, and really slow.
+-- New Idea: Create an ordered list and a set, with fast lookup, of all 6 digit prime numbers.
+--   I can break this into 4 sets: primes ending in a 1, primes ending in a 3, ending in a 7 or 9.
+--   these four sets are mutually exclusive, and I only need to check for matches within each set.
+primes' = dropWhile (<99999) (primesTo 999999)
+pset1 = fromList $ filter (\x -> (x+9) `mod` 10 == 0) primes'
+pset3 = fromList $ filter (\x -> (x+7) `mod` 10 == 0) primes'
+pset7 = fromList $ filter (\x -> (x+3) `mod` 10 == 0) primes'
+pset9 = fromList $ filter (\x -> (x+1) `mod` 10 == 0) primes'
+--pe51 = (size pset1, size pset3, size pset7, size pset9)
+-- this takes 23 seconds to create 4 list of (17230,17263,17210,17203) primes, which should be small emough to check quickly.
+-- now I just need to figure out how....
+--   for each prime number with 1 or more zeros, test each combination of zeros by replacing the zeros in each combination
+--   with {1..9} testing the numbers against the set of primes. fail if 3 numbers are not prime.
+--   for each prime number with 1 or more ones, test each combo by replacing with {2..9}, fail with 2 non-primes
+--   for each prime number with 1 or more twos, test each combo by replacing with {3..9}, fail with 1 non-primes
+--   ignore all numbers without a zero, one, or two.
+--   This should test for all possibilities in order.  This may do some redundant work, i.e. testing 4561353, after 4560353
+--   had already been searched, however, it may be that 4560353 is not prime, so was never searched.  It is simpler to check
+--   4561353 than find a way to figure out if 4560353 has been done.
+-- I'm going to see if I get a match with a number in the form *-----
+filt x ps = takeWhile (<((x+1)*100000)) $ dropWhile (<(x*(100000))) ps
+testhead n p pset = filter (\p -> member p pset) [(n*100000) + p' | n <- [(n+1)..9], let p' = p `mod` 100000]
+--testhead 1 100151 pset1 => [300151,400151]
+ch pset = filter (test 1) (filt 1 ps) ++ (filter (test 2) (filt 2 ps))
+  where ps = toList pset
+        test n p = 7 <= (length $ filter (\p -> member p pset) [(n*100000) + p' | n <- [(n+1)..9], let p' = p `mod` 100000])
+--pe51 = take 1 ((ch pset1) ++ (ch pset3) ++ (ch pset7) ++ (ch pset9))
+--This returned an empty list, so there is no 8 digit families in the form *-----, however it did not check other variants
+--with the lead digit, like 100151 and 200251, etc., so I really haven't accomplished much of anything
 
 
 -- 52
