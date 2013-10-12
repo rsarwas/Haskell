@@ -36,6 +36,22 @@ closest = minimum $ map (\[h,w] -> [(abs (2000000 - (rectCount w h))),h,w]) rect
 pe85 = let [diff,h,w] = closest in w*h
 
 
+-- 87
+-- Prime power triples: How many numbers below fifty million can be expressed as the sum of a prime square, prime cube, and prime fourth power?
+-- Answer: 1097343 (non-unique solutions) (78.16 secs, 6867680132 bytes)
+-- Analysis: find the prime closest to square root of 50e6, the prime closest to cube root of 50e6, etc, and search
+--   for all permutations.  This will create some duplicates, which must found and removed;
+--   This brute force solution takes about 22 seconds to create all numbers, and then an additional 56 seconds to unique.
+--   There are much better uniquing solutions, and I can limit the permutations checked by calculating doing the forth roots
+--   first, and then calculating the upper limit on the cube root and the square root.
+--   there might be a better way to eliminate duplicates, before adding to the list (does this help?  4^2 = 2^4)
+primePowerTriples n = [p |  a <- primesTo max2, b <- primesTo max3, c <- primesTo max4, let p = a^2 + b^3 + c^4, p < n]
+   where max2 = floor ((fromIntegral n)**(1/2))
+         max3 = floor ((fromIntegral n)**(1/3))
+         max4 = floor ((fromIntegral n)**(1/4))
+pe87 = length $ unique $ quicksort $ primePowerTriples 50000000
+
+
 -- 89
 -- See pe5_89.hs
 
