@@ -2,7 +2,7 @@
 -- Path sum: three ways
 -- Find the minimal path sum, in a text file containing a 80 by 80 matrix,
 -- from any cell on the left edge to any cell on the right edge by only moving up, down and right.
--- Answer: 260324 time 1.6 seconds (with interpretted code)
+-- Answer: 260324 (time real 0m0.138s)
 
 import ProjectEuler (wordsWhen, quicksort)
 -- hide Preludes Right as P.Right
