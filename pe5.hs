@@ -1,6 +1,7 @@
 -- Project Euler in Haskell problems 81..100
 
 import ProjectEuler
+import Data.Set (fromList, size)  --for uniquing in 87
 
 -- 81
 -- See pe5_81.hs
@@ -38,35 +39,24 @@ pe85 = let [diff,h,w] = closest in w*h
 
 -- 87
 -- Prime power triples: How many numbers below fifty million can be expressed as the sum of a prime square, prime cube, and prime fourth power?
--- Answer: 1097343 (78.16 secs, 6867680132 bytes)  (1139575 non-unique solutions in 22.86 sec) 
--- Analysis: find the prime closest to square root of 50e6, the prime closest to cube root of 50e6, etc, and search
---   for all permutations.  This will create some duplicates, which must found and removed;
---   This brute force solution takes about 22 seconds to create all numbers, and then an additional 56 seconds to unique.
+-- Answer: 1097343 (8.46 secs, 1412321004 bytes)
+-- Analysis: Check all prime upto to the fourth root of 50e6 for the fourth power term.  With each of those,
+--   check all primes up to the cube root of remainder, continue in this way to the square root.
+--   The biggest speed up comes from precomputing a single list of primes that are filtered as necessary.
+--   This will create some duplicates, which must found and removed;
+--   This brute force solution takes about 1 seconds to create over one million numbers,
+--   and then an additional 56 seconds to remove about 40,000 non-unique solutions.
 --   There are much better uniquing solutions using hash tables.
---   I can limit the permutations checked by calculating doing the forth roots first, and then calculating the upper
---   limit on the cube root and the square root.  Also, Precalculating one list of primes helped speed things up. 
 --   There might be a trick to eliminate duplicates before adding to the list (i.e. does it help to know 4^2 = 2^4)
--- Setting limits adds more work but checks fewer numbers, the result is only a small speedup.
--- Precalculating one list of primes helped speed things up sometimes ?!.
--- Based on these results I still have lots to learn about optimizing Haskell
---primePowerTriples n = [p | a <- primesTo max2, b <- primesTo max3, c <- primesTo max4, let p = a^2 + b^3 + c^4, p < n] -- 23 sec
---primePowerTriples n = [p | c <- primesTo max4, b <- primesTo max3, a <- primesTo max2, let p = a^2 + b^3 + c^4, p < n]  -- 78 sec
---primePowerTriples n = [p | c <- takeWhile (<=max4) ps, b <- takeWhile (<=max3) ps, a <- ps, let p = a^2 + b^3 + c^4, p < n]  -- 6 sec
-primePowerTriples n = [p | c <- takeWhile (<=max4) ps, let c4 = c^4, b <- takeWhile (<=(max3' (n-c4))) ps, let b3 = b^3, a <- takeWhile (<=(max2' (n-c4-b3))) ps, let p = a^2 + b3 + c4, p < n]  -- 3 sec
-primePowerTriples n = [p | c <- primesTo max4, b <- primesTo (max3' (n - c^4)), a <- primesTo (max2' (n - b^3 - c^4)), let p = a^2 + b^3 + c^4, p < n] -- 55 sec
---primePowerTriples n = [p | a <- ps, b <- takeWhile (<=max3) ps, c <- takeWhile (<=max4) ps, let p = a^2 + b^3 + c^4, p < n] -- 7 sec
---primePowerTriples n = [p | a <- primesTo max2, b <- primesTo (max3' (n-a^2)), c <- primesTo (max4' (n-a^2-b^3)), let p = a^2 + b^3 + c^4, p < n] -- 18 sec
---primePowerTriples n = [p | a <- ps, b <- takeWhile (<=(max3' (n-a^2))) ps, c <- takeWhile (<=(max4' (n-a^2-b^3))) ps, let p = a^2 + b^3 + c^4, p < n] -- 6 sec
---primePowerTriples n = [p | a <- ps, let a2 = a^2, b <- takeWhile (<=(max3' (n-a2))) ps, let b3 = b^3, c <- takeWhile (<=(max4' (n-a2-b3))) ps, let p = a2 + b3 + c^4, p < n] -- 4 sec
-   where ps = primesTo max2
-         max2 = floor ((fromIntegral n)**(1/2))
-         max3 = floor ((fromIntegral n)**(1/3))
-         max4 = floor ((fromIntegral n)**(1/4))
-         max2' x = floor ((fromIntegral x)**(1/2))
-         max3' x = floor ((fromIntegral x)**(1/3))
-         max4' x = floor ((fromIntegral x)**(1/4))
+primePowerTriples n = [p | c <- takeWhile (<=(max4 n)) ps, let c4 = c^4, b <- takeWhile (<=(max3 (n-c4))) ps, let b3 = b^3, a <- takeWhile (<=(max2 (n-c4-b3))) ps, let p = a^2 + b3 + c4]  -- 1.3 sec (but 338 seconds to quicksort - out of order)
+   where ps = primesTo (max2 n)
+         max2 x = floor ((fromIntegral x)**(1/2))
+         max3 x = floor ((fromIntegral x)**(1/3))
+         max4 x = floor ((fromIntegral x)**(1/4))
+
+pe87 = size $ fromList $ primePowerTriples 50000000
 --pe87 = length $ unique $ quicksort $ primePowerTriples 50000000
-pe87 = length $ primePowerTriples 50000000
+--pe87 = length $ primePowerTriples 50000000
 
 
 -- 89

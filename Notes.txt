@@ -28,6 +28,6 @@ By Regan Sarwas (rsarwas@gmail.com) August 2013 to ...
   scan[l|r|l1|r1] are similar to the fold functions, except they return a list with the value of the accumulator at each step
 
 
-* FIXME improve time and space: 12, 14, 23, 27, 39, 47, 58, 70, 87
+* FIXME improve time and space: 12, 14, 23, 27, 39, 47, 58, 70
 * RE-SOLVE - 76, I stumbled onto some help with this problem, but I would like to resolve it myself.
 
