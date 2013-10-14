@@ -99,3 +99,23 @@ pe97 = (28433 * (powerMod 2 7830457 (10^10)) + 1) `mod` 10^10
 
 -- 99
 -- See pe5_99.hs
+
+
+-- 100
+-- Arranged probability: By finding the first arrangement to contain over 10^12 discs in total, determine the number of blue discs that the box would contain.
+-- Answer:
+-- Analysis: P(BB) = B/T * (B-1)/(T-1) = 1/2 where B = number of blue discs, T = total number of discs, and P(BB) is the probability of drawing
+--   two blue discs.  Find B and T which equal exactly 1/2.  rearranging terms and expanding, 2B^2 - 2B + T - T^2 = 0.
+--   This equation is true for B,T = 15,21 and 85,120.  It can be shown that the equation holds for these values, and not others nearby.
+--   using the quadratic formula, to solve for B if T is known  aB^2 +bB + c == 0, where a = 2, b = -2, c = T-T^2
+--   b t = (0.5,0.5*(sqrt (1 - 2*t*(1-t))))  so 1 - 2t*(t-1) must be a perfect square
+isps n = n'*n' == n where n' = floor $ sqrt (fromIntegral n)
+blue t = (1+ (isqrt (1 - 2*t*(1-t)))) `div` 2
+smallAnswers = map (\(t,_) -> (blue t,t)) $ filter (\(_,t') -> isps t') [(t,1-2*t*(1-t)) | t <- [10..(10^6)]]
+-- smallAnswers => [(15,21),(85,120),(493,697),(2871,4060),(16731,23661),(97513,137904),(568345,803761)] in (8.01 secs, 1043295932 bytes)
+-- and the following generated a correct solution for 10^3, however failed to find a solution after 10 hours with 10^12:
+-- pe100 = blue $ fst $ head $ filter (\(t,t') -> isps t') [(t,1-2*t*(1-t)) | t <- [(10^3)..]]
+-- Since the inner loop has some simple math, and the isPerfectSquare solution, the only optimization is at isPerfectSquare
+-- Using a very complicated solution (http://stackoverflow.com/questions/295579/fastest-way-to-determine-if-an-integers-square-root-is-an-integer)
+-- it is possible to get a 35% increase in speed which will never be enough.
+-- I need a better way to get to zoom in to the solution.
