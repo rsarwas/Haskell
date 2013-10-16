@@ -88,6 +88,10 @@ pe92 = (10^7 - 1)  - (length $ filter chainEndsIn1 digitSums) where
       | otherwise           = False
 
 
+-- 96
+-- See pe5_96.hs
+
+
 -- 97
 -- Large non-Mersenne prime: Find the last ten digits of 28433 * 2^7830457 + 1.
 --    this is a massive non-Mersenne prime which contains 2,357,207 digits
