@@ -77,21 +77,11 @@ pe63 = last $ takeWhile check [1..] where check x = x == (length $ digits (9^x))
 -- for n = 1; [1..9]^1 = [1..9] all are 1 digit numbers, therfore there are 9 solutions with n = 1
 -- for n = 2: [1..9]^2 = [1,4,9,16,..81] therefore there are 6 solutions for n = 2
 -- for n = 3: [4..9]^3 = [64,125..??] therefore there are 5 solutions for n = 3
--- for n = 4: [5..9]^3 = [725,1296..??] therefore there are 4 solutions for n = 4
--- for n = 5: [6..9]^3 = [7776,16807..??] therefore there are 3 solutions for n = 5
+-- for n = 4: [5..9]^4 = [625,1296..??] therefore there are 4 solutions for n = 4
+-- for n = 5: [6..9]^5 = [7776,16807..??] therefore there are 3 solutions for n = 5
 -- continuing thus, there are 3@6, 2@7..10, and 1@11, we already know 9^21 is the last 21 digit number
 -- Therefore the real Answer is 9+6+5+4+(3*2)+(2*4)+(1*11) = 49
 
--- 65
--- Convergants of e:  Find the sum of digits in the numerator of the 100th convergent of the continued fraction for e.
--- Answer: 272 (0.01 secs, 4167024 bytes)
--- Analysis, convertants of continued fractions are given by hn/kn, where hn = an*hn-1 + hn-2, and kn = an*kn-1 + kn-2
--- where hn-2 = 0, hn-1 = 1. kn-2 = 1, hn-1 = 0.  the continued fraction of e is [2; 1,2,1, 1,4,1, 1,6,1 , ... , 1,2k,1, ...].
--- starting with a0 = 2, a1 = 1, ...  the 100th convergant is at a99, but it is the 100th item in the continued fraction
-e = reverse $ foldl (\a e -> 1:(2*e):1:a) [2] [1..33]
-pe65 = sum $ digits $ eNumerator 100 where
-  eNumerator n = last $ foldl contFrac [0,1] (take n e)
-  contFrac [h2,h1] a = [h1,(a*h1+h2)]
 
 -- 64
 -- Odd period square roots: How many continued fractions for sqrt(N) <= 10000 have an odd period?
@@ -114,6 +104,18 @@ sq' m d ao a s =
 -- These expansions include the first term, so if we subtract 1
 period n = [(length $ cfsq x) -1 | x <- [2..n], let xs = isqrt x, xs * xs /= x] 
 pe64 = length $ filter odd (period (10^4))
+
+
+-- 65
+-- Convergants of e:  Find the sum of digits in the numerator of the 100th convergent of the continued fraction for e.
+-- Answer: 272 (0.01 secs, 4167024 bytes)
+-- Analysis, convertants of continued fractions are given by hn/kn, where hn = an*hn-1 + hn-2, and kn = an*kn-1 + kn-2
+-- where hn-2 = 0, hn-1 = 1. kn-2 = 1, hn-1 = 0.  the continued fraction of e is [2; 1,2,1, 1,4,1, 1,6,1 , ... , 1,2k,1, ...].
+-- starting with a0 = 2, a1 = 1, ...  the 100th convergant is at a99, but it is the 100th item in the continued fraction
+e = reverse $ foldl (\a e -> 1:(2*e):1:a) [2] [1..33]
+pe65 = sum $ digits $ eNumerator 100 where
+  eNumerator n = last $ foldl contFrac [0,1] (take n e)
+  contFrac [h2,h1] a = [h1,(a*h1+h2)]
 
 
 -- 67
