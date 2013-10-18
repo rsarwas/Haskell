@@ -254,7 +254,7 @@ pe13 = take 10 $ digits $ sum pe13data
 
 -- 14
 -- Which starting number, under one million, produces the longest Collatz sequence chain?
--- Answer: (837799,525)  (347.67 secs, 97453747000 bytes) 
+-- Answer: (0.23 secs, 46962072 bytes)
 -- FIXME improve time and space
 collatzChain :: (Integral a) => a -> [a]
 collatzChain 1 = [1]
@@ -266,8 +266,21 @@ max' (x:xs)
   | (snd x) > (snd maxtail) = x
   | otherwise               = maxtail
   where maxtail = max' xs
-pe14 = max' [(x,length $ collatzChain x) | x <- [1..999999]]
-
+pe14 = max' [(x,length $ collatzChain x) | x <- [1..999999]] -- (837799,525)  (347.67 secs, 97453747000 bytes) 
+curMax _     []             = []
+curMax m (x:xs) | snd x > m     = x:(curMax (snd x) xs)
+                | otherwise = curMax m xs
+findPattern n = curMax 0 [(x, length $ collatzChain x) | x <- [1..n]]
+pe14' = findPattern 1000
+-- [1,2,3,6,7,9,18,25,27,54,73,97,129,171,231,313,327,649,703,871]
+-- which is sequence A006877 on Sloane's (OEIS) list, which yields 511935, 626331, 837799, 1117065
+-- so the solution is 837799 in (0.23 secs, 46962072 bytes)
+-- In reading the forum on this post, it seams that the brute force solution is the way to go, with
+-- assambly code delivering fast results.
+collatzLength 1 = 1
+collatzLength n = 1+(if odd n then collatzLength (3*n+1) else collatzLength (n `div` 2))
+pe14'' = snd $ maximum [(collatzLength x, x) | x <- [1..999999]] -- 420 laptop seconds.
+-- this is probably a situation where the recursion doesn't optimize to a tight loop like C
 
 -- 15
 -- How many such lattice paths are there through a 20×20 grid?
