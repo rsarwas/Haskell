@@ -122,6 +122,26 @@ pe65 = sum $ digits $ eNumerator 100 where
 -- See pe4_67.hs
 
 
+-- 68: Magic 5-gon ring
+-- Answer:
+others xs l = [x | x <- l, not $ x `elem` xs]
+orders xs = xs:[lexiPerm x xs | x <- [1..((l*l-l)-1)]]
+  where l = length xs
+combine xs ys = 1 == (length $ group $ combine' xs' ys)
+   where xs' = (last xs):xs
+combine' _ [] = []
+combine' (x:xs) (y:ys) = [(x+(head xs)+y)]:(combine' xs ys)
+format [i1, i2, i3] [o1, o2, o3] = digitsToInt [o3,i2,i3,o1,i3,i1,o2,i1,i2]
+format [i1, i2, i3,i4] [o1, o2, o3, o4] = digitsToInt [o4,i2,i4, o3,i3,i3, o1,i4,i1, o2,i1,i2]
+permute xs =  concat $ map permute' xs
+permute' xs = filter (\x -> head x == h) $ orders xs where h = head xs
+--permute' [x1,x2,x3] = [[x1,x2,x3],[x1,x3,x2]]
+magicNgon n =  [ format i o  | i <- nChoose n s, o <- orders $ others i s, combine i o]
+  where s = [1..(2*n)]
+pe68 = maximum $ magicNgon 3
+--pe68 = maximum $ filter (<10^16) magicNgon 5
+
+
 -- 69
 -- Totient Maximum:  Find the value of n ≤ 1,000,000 for which n/φ(n) is a maximum
 -- Answer: 510510 (0.01 secs, 3604432 bytes)
