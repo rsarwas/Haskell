@@ -1,6 +1,7 @@
 -- Project Euler in Haskell problems 61..80
 
 import ProjectEuler
+import Data.Ratio  -- for 80
 
 -- 61
 -- Cyclical figurate numbers: Find the sum of the only ordered set of six cyclic 4-digit numbers
@@ -310,3 +311,56 @@ pe76 = p !! 100 - 1
 -- eliminating them from all the list, we are left with 3 being second, and 9 being penultimate.
 -- iterate thus twice more to get the answer.
 
+
+-- 80
+-- Square root digital expansion: For the first one hundred natural numbers, find the total of the digital sums of the
+--                                first one hundred decimal digits for all the irrational square roots.
+-- Answer: 
+sqrtCF x = (m,x-m^2):[(2*m,x-m^2) | r<-[0..]]
+        where m = isqrt x
+--sqrtTo n x = floor ((10^n) * (sqrt x))
+cf' 1 x = (x-1,1)
+cf' 2 x = (x+1,2)
+cf' n x = let (p1,q1) = cf' (n-1) x
+              (p2,q2) = cf' (n-2) x
+              p = 2*p1 + (x-1)*p2
+              q = 2*q1 + (x-1)*q2
+          in (p,q)
+pe80 = sum $ map (sum.(take 100).digits) [sqrtTo 100 x | x <- [1..100], not $ x `elem` squares] where squares = [x^2 | x <- [1..10]]
+sqrtTo n x = 
+  let a = sqrt' (1 % (10^n)) x
+  in (numerator a)*(10^n) `div` (denominator a)
+-- From http://hackage.haskell.org/package/numbers-3000.2.0.0/docs/src/Data-Number-FixedFunctions.html#fromCF
+sqrt' :: Rational -> Rational -> Rational
+sqrt' eps x = approxCF eps ((m,x-m^2):[(2*m,x-m^2) | r<-[0..]])
+        where
+            m = (isqrt  (floor x))%1
+approx      :: Rational -> Rational -> Rational
+approx eps x = approxRational x eps
+approxCF :: Rational -> [(Rational, Rational)] -> Rational
+approxCF eps [] = 0
+approxCF eps x
+        --
+        -- Approximate infinite continued fraction x by fraction,
+        -- evaluating from left to right, and stopping when
+        -- accuracy eps is achieved, or when a partial numerator
+        -- is zero -- as it indicates the end of CF.
+        --
+        -- This recursive function relates continued fraction
+        -- to rational approximation.
+        --
+        = approxCF' eps x 0 1 1 q' p' 1
+            where
+                h = fst (x!!0)
+                (q', p') = x!!0
+                approxCF' eps x v2 v1 u2 u1 a' n
+                    | abs (1 - f1/f) < eps = approx eps f
+                    | a == 0    = approx eps f
+                    | otherwise = approxCF' eps x v1 v u1 u a (n+1)
+                    where
+                        (b, a) = x!!n
+                        u  = b*u1 + a'*u2
+                        v  = b*v1 + a'*v2
+                        f  = u/v
+                        f1 = u1/v1
+ 
