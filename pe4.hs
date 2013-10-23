@@ -119,6 +119,30 @@ pe65 = sum $ digits $ eNumerator 100 where
   contFrac [h2,h1] a = [h1,(a*h1+h2)]
 
 
+-- 66
+-- Diophantine equation: Find the value of D ≤ 1000 in minimal solutions of x for which the largest value of x is obtained
+--                       in the diophantine equation of x^2 – Dy^2 = 1
+-- Answer: 
+-- Analysis: The problem can also be stated as finding the fundamental solution to Pell's equation,
+--           which may be found by performing the continued fraction expansion and testing each successive
+--           convergent until a solution to Pell's equation is found. See http://en.wikipedia.org/wiki/Pell's_equation.
+--           the expansion is the periodic continued fraction, not the faster converging generalized cont. fraction.
+sqrtCF x = (m,x-m^2):[(2*m,x-m^2) | r<-[0..]]
+           where m = isqrt x
+sqrtCF1 x = (1,1):[(2,x-1) | r<-[0..]]
+--fundamentalX n = [(x,y,t) | (x,y) <- convergents (sqrtCF n), let t = x*x-n*y*y] where m = isqrt(n) --  == 1
+fundamentalX n = [(x,y,t) | (x,y) <- convergents (sqrtCF1 n), let t = x*x-n*y*y] where m = isqrt(n) --  == 1
+--fundamentalX n = [(x,y,t) | (x,y) <- convergents ((m,n-m^2):[(2*m,n-m^2) | r<-[0..]]), let t = x*x-n*y*y] where m = isqrt(n) --  == 1
+convergents ((b0,a0):(b1,a1):xs) = (b0,1):(b1*b0+a1,b1):(convergents' (b0,1) (b1*b0+a1,b1) xs)
+  where convergents' (p2,q2) (p1,q1) ((b,a):xs) = (p,q):(convergents' (p1,q1) (p,q) xs)
+         where p = b*p1 + a*p2
+               q = b*q1 + a*q2
+
+  
+--pe66 = snd $ maximum $ [(fundamentalX d,d) | d <- [1..1000], not $ (d `elem` squares)]
+--  where squares = [x^2 | x <- [1..(isqrt 1000)]] 
+
+
 -- 67
 -- See pe4_67.hs
 
@@ -316,8 +340,6 @@ pe76 = p !! 100 - 1
 -- Square root digital expansion: For the first one hundred natural numbers, find the total of the digital sums of the
 --                                first one hundred decimal digits for all the irrational square roots.
 -- Answer: 
-sqrtCF x = (m,x-m^2):[(2*m,x-m^2) | r<-[0..]]
-        where m = isqrt x
 --sqrtTo n x = floor ((10^n) * (sqrt x))
 cf' 1 x = (x-1,1)
 cf' 2 x = (x+1,2)
