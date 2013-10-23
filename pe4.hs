@@ -71,7 +71,7 @@ pe62 = (head $ quicksort (find 5 346 []))^3
 
 -- 63
 -- Powerful digit counts: How many n-digit positive integers exist which are also an nth power?
--- Answer (wrong): 21 (0.01 secs, 3683256 bytes)
+-- Answer (wrong, see notes below): 21 (0.01 secs, 3683256 bytes)
 pe63 = last $ takeWhile check [1..] where check x = x == (length $ digits (9^x))
 -- I made an error in interpreting this problem as find the largest n (which is 21)
 -- for any n, 10^n will have n+1 digits, n must be a positive integer.
@@ -339,22 +339,19 @@ pe76 = p !! 100 - 1
 -- 80
 -- Square root digital expansion: For the first one hundred natural numbers, find the total of the digital sums of the
 --                                first one hundred decimal digits for all the irrational square roots.
--- Answer: 
---sqrtTo n x = floor ((10^n) * (sqrt x))
-cf' 1 x = (x-1,1)
-cf' 2 x = (x+1,2)
-cf' n x = let (p1,q1) = cf' (n-1) x
-              (p2,q2) = cf' (n-2) x
-              p = 2*p1 + (x-1)*p2
-              q = 2*q1 + (x-1)*q2
-          in (p,q)
-pe80 = sum $ map (sum.(take 100).digits) [sqrtTo 100 x | x <- [1..100], not $ x `elem` squares] where squares = [x^2 | x <- [1..10]]
-sqrtTo n x = 
-  let a = sqrt' (1 % (10^n)) x
-  in (numerator a)*(10^n) `div` (denominator a)
+-- Answer: 40886 (0.68 laptop secs, 303187096 bytes)
+-- by experimentation, we need to go to an epsilon of 1/10^102 to avoid rounding errors in the last digits
+pe80 = sum [sumSqRootDigits 100 x | x <- [1..100], not $ x `elem` squares]
+  where
+    squares = [x^2 | x <- [1..10]]
+    sumSqRootDigits d n = sum $ take d $ digits $ sqrtTo (d+2) n
+    sqrtTo n x = 
+      let a = sqrteps (1 % (10^n)) x
+      in (numerator a)*(10^n) `div` (denominator a)
+
 -- From http://hackage.haskell.org/package/numbers-3000.2.0.0/docs/src/Data-Number-FixedFunctions.html#fromCF
-sqrt' :: Rational -> Rational -> Rational
-sqrt' eps x = approxCF eps ((m,x-m^2):[(2*m,x-m^2) | r<-[0..]])
+sqrteps :: Rational -> Rational -> Rational
+sqrteps eps x = approxCF eps ((m,x-m^2):[(2*m,x-m^2) | r<-[0..]])
         where
             m = (isqrt  (floor x))%1
 approx      :: Rational -> Rational -> Rational
