@@ -76,3 +76,20 @@ plusUp = take 5 [(p,x) | x <- [1..], let n = (99 * (999999 + x)) % 100, let p = 
 --                           1570000 - 1579999 = 10 + 4 + 1 = 15  (120 for 1500000 to 1580000)
 -- 1575000 + 120*100 = 1587000
 --   woo hoo, all the numbers from 1579999 to 1587000 are bouncy, so 1587000 is the answer
+
+
+-- 120
+-- Square Remainders: For 3 <= a <= 1000, find  rmax, where r is the remainder when (a-1)^n + (a+1)^n is divided by a^2
+-- Answers: 333082500  (0.01 laptop secs, 4752528 bytes)
+-- Analysis: by scribbling the expansion of (a+1), I found that (a+1)^n = x0a^n + x1a^(n-1) ... xna^0 where
+--   x0, x1, ... xn is the nth row of pascals triangle, (a-1)n is the same with all the odd terms (x1, x3, ..) are negative.
+--   when these terms are added, 2*(x0a^n + x1a^(n-1) ... xna^0) where the x are the nth row of pascals triangle,
+--   but all the odd terms x1, x3, ... are 0. When n is even, all the terms except the last (2) are evenly divisible by a^2.
+--   when n is odd, all the terms except the next to last (2*n*a) are evenly divisible by a^2.
+--   therefore, the remainder = 2 (when n is even) or 2*a*n when n is odd.  Therefore we will look for odd n to find the
+--   max r.  if n = a/2, then r = a^2 which = 0 mod a^2;  therefore rmax is when nmax is as close as possible to a/2.
+--   This was verified by examining the using the computer to compute (a-1)^n + (a+1)^n `div` a^2 for the first
+--   few a for n<- [0..20]
+pe120 = sum [ 2*a*(n a) | a <- [3..1000]]
+  where
+    n a = if odd a then a `div` 2 else (a `div` 2) - 1
