@@ -101,6 +101,10 @@ pe92 = (10^7 - 1)  - (length $ filter chainEndsIn1 digitSums) where
 pe97 = (28433 * (powerMod 2 7830457 (10^10)) + 1) `mod` 10^10
 
 
+-- 98
+-- See pe5_98.hs
+
+
 -- 99
 -- See pe5_99.hs
 
