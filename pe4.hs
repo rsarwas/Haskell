@@ -2,6 +2,7 @@
 
 import ProjectEuler
 import Data.Ratio  -- for 80
+import Data.List (sort,group)
 
 -- 61
 -- Cyclical figurate numbers: Find the sum of the only ordered set of six cyclic 4-digit numbers
@@ -280,6 +281,23 @@ count d (n1,d1) (n2,d2) =
       n'' =     n2*d `div` d2
   in sum [1 | n <- [n'..n''], gcd n d == 1]
 pe73 = sum $ map (\x -> count x (1,3) (1,2)) [5..12000]
+
+
+-- 75
+-- Integer Right Triangles:
+-- Answer: 160822 (6.55 laptop secs, 2176962096 bytes)
+-- Analysis:  for a pythagoream triple, a = k(m^2 - n^2), b = k(2mn) and c = k(m^2+n^2), where m > n, and m-n is odd
+--            if m and n are coprime, then it is a solution with k = 1, and it is the smallest in a family.
+--            since m > n, if we assume m = n+1, we can find the upper bound of n at 611 for p = a+b+c <= 1,500,000
+--            m has a max for each value of n that is solution to a quadratic equation.
+basePerims = [2*m*(n+m) | n <- [1..611], m <- [(n+1)..(mmax n)], odd (m-n), gcd m n == 1]
+  where mmax n = ((isqrt (3000000 - n^2)) - n) `div` 2
+allPerims = [p*k | p <- basePerims, k <- [1..(1500000 `div` p)]]
+--takes about 0.4 sec to generate ~98,000 unique basePerims and about 2 more seconds to generate 1,250,000 allPerims with dups
+--sorting with data.list takes about 5 seconds.  This is probably not the smartest/fastest way to do this, but it is simple and works.
+--I'm using the data.list group, because it is way faster than the group I have in ProjectEuler, which does not require a sorted array.
+--pe75 = length $ filter (\(_,n)-> n ==1) $ group $ sort allPerims
+pe75 = length $ filter ((==1).length) $ group $ sort allPerims
 
 
 -- 76

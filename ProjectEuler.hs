@@ -4,7 +4,7 @@ module ProjectEuler
 , divisors
 , divisorCount
 , fibs
-, group
+--, group
 , isPrime
 , isqrt
 , lexiPerm
