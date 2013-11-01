@@ -1,6 +1,34 @@
 -- Project Euler in Haskell problems 201..220
 
 import ProjectEuler
+import Data.Ratio
+
+-- 205
+-- Dice Game: What is the probability that Pete 9 4-sided dice beats Colin (6 6-sided dice)? Give your answer rounded to seven decimal places in the form 0.abcdefg
+-- Answer: 5731441 (0.01 secs, 3127216 bytes)
+-- Analysis:  Sum the probabities that Pete will get each possible number 4..36, times the probability that Colin will get a
+--            lower role.  The probability of a role is the number of ways that role can occur divided by the possible roles
+--            (nsides^ndice).  Counting the ways to make a number is the hard part. Thanks to http://wizardofodds.com/gambling/dice/
+--            the numbers for n dice can be determined from the numbers for n-1 dice.
+-- counts is the number of ways that you can role an x with n-dice with m-sides (where x is a one-based index)
+counts 1     nsides = replicate nsides 1 
+counts ndice nsides = replicate (ndice-1) 0 ++ [sumPriorBelow i | i <- [ndice..(ndice*nsides)]] ++ (replicate nsides 0)
+  where prior = counts (ndice-1) nsides
+        sumPriorBelow i = sum $ take (toEnd i) $ drop (toStart i) prior
+        toStart i = max 0 (i-nsides-1)   
+        toEnd   i = min nsides (i-1)
+-- pete = the probability that pete will role an i, where i is the (base 1) index of the list
+-- pete' = the probability that pete will role an i or less where i is the (base 1) index of the list
+pete = map (%(4^9)) $ counts 9 4
+pete' = scanl1 (+) pete
+colin = map (%(6^6)) $ counts 6 6
+colin' = scanl1 (+) colin
+tie = sum $ zipWith (*) pete colin
+peteWin = sum $ zipWith (*) pete (0:colin')
+colinWin = sum $ zipWith (*) colin (0:pete')
+test205 = (peteWin, tie, colinWin, peteWin+tie+colinWin)
+--pe205 = floor (10^7 * peteWin + 0.5)
+
 
 -- 206
 -- Concealed Square: Find the unique positive integer whose square has the form 1_2_3_4_5_6_7_8_9_0, where each “_” is a single digit.
