@@ -284,11 +284,13 @@ pe73 = sum $ map (\x -> count x (1,3) (1,2)) [5..12000]
 
 
 -- 75
--- Integer Right Triangles:
+-- Integer Right Triangles: Given that L is the length of the wire, for how many values of L <= 1,500,000 can exactly
+--                          one integer sided right angle triangle be formed?
 -- Answer: 160822 (6.55 laptop secs, 2176962096 bytes)
 -- Analysis:  for a pythagoream triple, a = k(m^2 - n^2), b = k(2mn) and c = k(m^2+n^2), where m > n, and m-n is odd
---            if m and n are coprime, then it is a solution with k = 1, and it is the smallest in a family.
---            since m > n, if we assume m = n+1, we can find the upper bound of n at 611 for p = a+b+c <= 1,500,000
+--            if m and n are coprime, and k = 1, then it the solution is primative (the smallest in a family).
+--            L = P = a+b+c = k(2m^2 + 2mn) = k2m(m+n)
+--            since m > n, if we assume m = n+1, we can find the upper bound of n = 611 for P <= 1,500,000
 --            m has a max for each value of n that is solution to a quadratic equation.
 basePerims = [2*m*(n+m) | n <- [1..611], m <- [(n+1)..(mmax n)], odd (m-n), gcd m n == 1]
   where mmax n = ((isqrt (3000000 - n^2)) - n) `div` 2
