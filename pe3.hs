@@ -157,49 +157,37 @@ pe50 = maximum $ map (\x -> (length x, head x)) (consecutivePrimeSums 1000000)
 -- By replacing the 3rd and 4th digits of 56**3 with the same digit, this 5-digit number is the first example having
 --   seven primes among the ten generated numbers, yielding the family: 56003, 56113, 56333, 56443, 56663, 56773, and 56993.
 --   Consequently 56003, being the first member of this family, is the smallest prime with this property.
--- Answer:
--- Analysis: a family having 8 primes also has 7 primes, so the solution must be greater than 56003.  Any 5 digit number with
---   eight primes must be in the configuration nn**n. The * can never be in the last spot, because it will be even in some cases.
---   the last digit must always be in the set (1,3,7,9) if the number is prime.  If the ** is in one of the two leading spots,
---   there will be a prime less than 56003, contradicting the problem statement.  I will try the remaining 5 digit numbers first.
-is5digit = not $ null [ ns | a <- [57..99], f <- ['1','3','7','9'], let ns = (show a) ++ "**" ++ [f], primeCount 7 ns]
-primeCount n ns = 
-   let possibles = [read (replace "*" [x] ns) ::Int | x <- ['0'..'9']]
-       notPrimes = take (11-n)  $ filter (not . isPrime) possibles
-   in length notPrimes < (11-n)
--- This took 0.3 seconds to prove that the solution is not a 5 digit number.  Try brute force all 6 digit numbers
+-- Answer: [121313,222323,323333,424343,525353,626363,828383,929393] (19.91 secs, 6652208736 bytes)
 
--- Testing the 6 digit numbers in the same way seemed fraught with difficulties, and really slow.
--- New Idea: Create an ordered list and a set, with fast lookup, of all 6 digit prime numbers.
---   I can break this into 4 sets: primes ending in a 1, primes ending in a 3, ending in a 7 or 9.
---   these four sets are mutually exclusive, and I only need to check for matches within each set.
-primes' = dropWhile (<99999) (primesTo 999999)
-pset1 = fromList $ filter (\x -> (x+9) `mod` 10 == 0) primes'
-pset3 = fromList $ filter (\x -> (x+7) `mod` 10 == 0) primes'
-pset7 = fromList $ filter (\x -> (x+3) `mod` 10 == 0) primes'
-pset9 = fromList $ filter (\x -> (x+1) `mod` 10 == 0) primes'
---pe51 = (size pset1, size pset3, size pset7, size pset9)
--- this takes 23 seconds to create 4 list of (17230,17263,17210,17203) primes, which should be small emough to check quickly.
--- now I just need to figure out how....
---   for each prime number with 1 or more zeros, test each combination of zeros by replacing the zeros in each combination
---   with {1..9} testing the numbers against the set of primes. fail if 3 numbers are not prime.
---   for each prime number with 1 or more ones, test each combo by replacing with {2..9}, fail with 2 non-primes
---   for each prime number with 1 or more twos, test each combo by replacing with {3..9}, fail with 1 non-primes
---   ignore all numbers without a zero, one, or two.
---   This should test for all possibilities in order.  This may do some redundant work, i.e. testing 4561353, after 4560353
---   had already been searched, however, it may be that 4560353 is not prime, so was never searched.  It is simpler to check
---   4561353 than find a way to figure out if 4560353 has been done.
--- I'm going to see if I get a match with a number in the form *-----
-filt x ps = takeWhile (<((x+1)*100000)) $ dropWhile (<(x*(100000))) ps
-testhead n p pset = filter (\p -> member p pset) [(n*100000) + p' | n <- [(n+1)..9], let p' = p `mod` 100000]
---testhead 1 100151 pset1 => [300151,400151]
-ch pset = filter (test 1) (filt 1 ps) ++ (filter (test 2) (filt 2 ps))
-  where ps = toList pset
-        test n p = 7 <= (length $ filter (\p -> member p pset) [(n*100000) + p' | n <- [(n+1)..9], let p' = p `mod` 100000])
---pe51 = take 1 ((ch pset1) ++ (ch pset3) ++ (ch pset7) ++ (ch pset9))
---This returned an empty list, so there is no 8 digit families in the form *-----, however it did not check other variants
---with the lead digit, like 100151 and 200251, etc., so I really haven't accomplished much of anything
+-- Any family of size eight will have either 0,1,or2 be the smallest replaced members.
+-- by extension, any family of size x will have 0..(10-x) be the smallest replaced members
+-- I will check all primes in order and replace the 0 with 1-9, then 1 with 2-9, etc.
+-- if I find a big enough list of primes, I will return that, otherwise null.
 
+nDigits = 6  -- I also checked all the 5 digit numbers (2.65 seconds, our previous method was faster)
+familySize = 8
+primes' = dropWhile (<(10^(nDigits-1))) (primesTo (10^nDigits))
+primes'' = fromList primes'
+
+-- return a new pile with all old elements replaced with new
+replace' old new pile = map (\x -> if x == old then new else x) pile
+
+-- this could be optimized by short circuiting the search, as soon as I find 11-size non-primes 
+bigFamilyWith r p size pset =
+  let pdigits = digits p
+  in if (not $ r `elem` pdigits)
+     then []
+     else let newps = filter (\x -> member x pset) [digitsToInt $ replace' r n pdigits | n<-[r+1..9]]
+          in if ((size-1) <= (length newps))
+             then p:newps
+             else []
+
+primeFamilyWithSize p size pset =
+  let family = take 1 $ filter (not . null) [bigFamilyWith x p size pset | x <- [0..(10-size)]]
+  in if null family then [] else head family
+
+pe51 = take 1 $ filter (not . null) $ [primeFamilyWithSize p familySize primes'' | p <- primes']
+  
 
 -- 52
 -- Permuted multiples: 
