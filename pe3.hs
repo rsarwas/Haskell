@@ -276,12 +276,14 @@ pe58 = snd $ head $ filter (\(p,s) -> (p < 10)) $ drop 1 percents
 -- 60
 -- Prime pair sets: Find the lowest sum for a set of five primes for which any two primes concatenate to produce another prime.
 -- Answer:
--- Given that the set [3,7,109,673] is the lowest sum of 4 primes where all concatenated pairs are prime.
+-- Analysis: Given that the set [3,7,109,673] is the lowest sum of 4 primes where all concatenated pairs are prime.
 -- Any set of 4 from the set of 5 will need to be all pairs.  Therefore a good starting point is to look for a prime larger than 673
 -- that pairs with each of the existing numbers.  IF this search is fruitless (after a reasonable amount of search),
--- try finding the next set of 4, bu replacing 673 with a larger prime, if this is fruitless,
+-- try finding the next set of 4, by replacing 673 with a larger prime, if this is fruitless,
 -- try replacing 109 with a larger prime, then search for #4 and and then #5.
---pe60 = (sum low4) + (head $ filter isPrimePair (dropWhile (<999) (primesTo 9999)))   
+--   This approach turned out to be fruitless.
+--   pe60 = (sum low4) + (head $ filter isPrimePair (dropWhile (<999) (primesTo 9999)))
+  
 
 mag n
   | n < 10    = 10
@@ -289,9 +291,16 @@ mag n
   | n < 1000  = 1000
   | n < 10000 = 10000
   | otherwise = 10 * (mag (n `div` 10))
-primePairsTo n = [[a,b] | let p = primesTo n,  a <- p, b <- dropWhile (<= a) p, isPrimePair a b]
-isPrimePair p1 p2 = (isPrime (p1*(mag p2) + p2)) &&
-                    (isPrime (p2*(mag p1) + p1))
+pe60primes = primesTo 999999
+pe60primes' = fromList pe60primes
+
+primePairsTo n = [[a,b] | let p = takeWhile (<n) pe60primes,  a <- p, b <- dropWhile (<= a) p, isPrimePair a b]
+isPrimePair p1 p2 = let m1 = mag p1
+                        m2 = mag p2
+                        small = m1*m2 <= 10^6 
+                    in if small
+                       then (member (p1*m2 + p2) pe60primes') && (member (p2*m1 + p1) pe60primes')
+                       else (isPrime (p1*m2 + p2)) && (isPrime (p2*m1 + p1))
 primeTriplesTo n = [p1:b | let pp = primePairsTo n,
                            [p1,p2] <- pp,
                            b <- filter (\[a,b] -> p2 == a && (isPrimePair p1 b)) pp]
