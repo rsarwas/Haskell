@@ -3,6 +3,7 @@
 import ProjectEuler
 import Data.Ratio  -- for 80
 import Data.List (sort,group)
+import qualified Data.Map as Map -- for 74
 
 -- 61
 -- Cyclical figurate numbers: Find the sum of the only ordered set of six cyclic 4-digit numbers
@@ -282,6 +283,47 @@ count d (n1,d1) (n2,d2) =
   in sum [1 | n <- [n'..n''], gcd n d == 1]
 pe73 = sum $ map (\x -> count x (1,3) (1,2)) [5..12000]
 
+
+-- 74
+-- Digit factorial chains
+-- Answer: 402 (66.62 secs, 11423971424 bytes)
+factdig 0 = 1
+factdig 1 = 1
+factdig 2 = 2
+factdig 3 = 6
+factdig 4 = 24
+factdig 5 = 120
+factdig 6 = 720
+factdig 7 = 5040
+factdig 8 = 40320
+factdig 9 = 362880
+digitFactorial = sum . map factdig . digits
+initialLengths = Map.fromList [(1,1), (2,1), (145,1), (169,3), (871,2), (872,2), (1454,3), (40585,1), (45361,2), (45362,2), (363601,3)] 
+
+sl 1 = 1
+sl 2 = 1
+sl 145 = 1
+sl 871 = 2
+sl 872 = 2
+sl 45361 = 2
+sl 45362 = 2
+sl 40585 = 1 -- from pe34
+sl 169 = 3
+sl 1454 = 3
+sl 363601 = 3
+sl n = 1 + sl (digitFactorial n)
+
+myInsert n m =
+-- case Map.lookup (digitToInt $ reverse $ sort $ digits n) m of Nothing then recurse Just a -> (Map.insert n a m, a) 
+  case Map.lookup n m of
+  (Nothing) -> let (m',l) = myInsert (digitFactorial n) m
+                in (Map.insert n (l+1) m', l+1)
+  (Just l) -> (m,l)
+
+allLengths = fst $ foldr (\k acc -> myInsert k (fst acc)) (initialLengths,0) [1..999999]
+pe74 = length $ filter (\(n,l) -> l == 60 && n < 999999) $ Map.toList allLengths
+pe74' x = filter (\(n,l) -> l == 60) [(n,sl n) | n <- [1..x]]
+--estimated time for simple solution is 800 seconds, based on .8 seconds for 10^3, 8 seconds for 10^4
 
 -- 75
 -- Integer Right Triangles: Given that L is the length of the wire, for how many values of L <= 1,500,000 can exactly
