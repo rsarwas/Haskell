@@ -150,23 +150,33 @@ pe66 = snd $ maximum $ [(fundamentalX d,d) | d <- [1..1000], not $ (d `elem` squ
 
 
 -- 68: Magic 5-gon ring
--- Answer:
-others xs l = [x | x <- l, not $ x `elem` xs]
-orders xs = xs:[lexiPerm x xs | x <- [1..((l*l-l)-1)]]
-  where l = length xs
-combine xs ys = 1 == (length $ group $ combine' xs' ys)
-   where xs' = (last xs):xs
-combine' _ [] = []
-combine' (x:xs) (y:ys) = [(x+(head xs)+y)]:(combine' xs ys)
-format [i1, i2, i3] [o1, o2, o3] = digitsToInt [o3,i2,i3,o1,i3,i1,o2,i1,i2]
-format [i1, i2, i3,i4] [o1, o2, o3, o4] = digitsToInt [o4,i2,i4, o3,i3,i3, o1,i4,i1, o2,i1,i2]
-permute xs =  concat $ map permute' xs
-permute' xs = filter (\x -> head x == h) $ orders xs where h = head xs
---permute' [x1,x2,x3] = [[x1,x2,x3],[x1,x3,x2]]
-magicNgon n =  [ format i o  | i <- nChoose n s, o <- orders $ others i s, combine i o]
-  where s = [1..(2*n)]
-pe68 = maximum $ magicNgon 3
---pe68 = maximum $ filter (<10^16) magicNgon 5
+-- Answer: 6531031914842725 (1.52 laptop secs, 447672240 bytes)
+-- Analysis:
+--  if we assign indexes from 1 to n counting clockwise on the outside, then the inside, (starting the inside at the same
+--   place as we started the outside), we can determine if a permutation of n*2 ints is a magic N-gon
+--  for the 5-gon, the 10 must be in the outer loop, else it will be used twice, and we will get a 17 digit number
+--  The largest number will start with n+1 with n+1..2n in the outer loop, unless there is no solution with that
+--  configuration.  we should assume there is (like for the 3-gon)
+
+--  permy n, return a list of all unique permutations of n*2 digits with lowest of first 3 at head
+--  i.e 123456 == 312645 == 231564, and we should only consider 123456
+--  also, only consider n+1..2n in the first n positions, since we are looking for the largest number
+--  for n=3 [4,5,6]++all perms of [1,2,3] and [4,6,5] with all perms of [1,2,3]
+--  for n=5 [6] ++ perms of 7..10 ++ perms 1..5
+permy n = [ (n+1):(a ++ b) | a <- permy' [(n+2)..(2*n)], b <- permy' [1..n]]
+permy' [x] = [[x]]
+permy' (x:xs) = map (x:) ps ++ 
+                [start ++ [x] ++ end | p <- ps, i <- [1..(length ps - 1)], let (start,end) = splitAt i p] ++
+                map (++[x]) ps
+                   where ps = permy' xs
+
+ngon n xs = [ngonLeg i n xs | i <- [0..(n-1)]]
+ngonLeg i n xs = (take 1 $ drop i xs) ++ (take 2 $ drop (n+i) xs) ++ if i == (n-1) then [xs!!n] else []
+allEqual (x:xs) = and $ map (x==) xs
+isMagic = allEqual . map sum
+magicngons n = filter isMagic [ngon n xs | xs <- permy n]
+--pe68 = digitsToInt $ concat $ maximum $ magicngons 3
+pe68 = concat $ maximum $ magicngons 5   -- digitsToInt does not work with 2 digit ints (i.e. 10)
 
 
 -- 69
