@@ -352,7 +352,7 @@ pe74 =  length $ filter (\(n,l) -> l == 60 && n < 999999) $ Map.toList allLength
 -- 75
 -- Integer Right Triangles: Given that L is the length of the wire, for how many values of L <= 1,500,000 can exactly
 --                          one integer sided right angle triangle be formed?
--- Answer: 160822 (6.55 laptop secs, 2176962096 bytes)
+-- Answer: WRONG!!??? 160822 (6.55 laptop secs, 2176962096 bytes)
 -- Analysis:  for a pythagoream triple, a = k(m^2 - n^2), b = k(2mn) and c = k(m^2+n^2), where m > n, and m-n is odd
 --            if m and n are coprime, and k = 1, then it the solution is primative (the smallest in a family).
 --            L = P = a+b+c = k(2m^2 + 2mn) = k2m(m+n)
