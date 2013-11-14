@@ -11,6 +11,10 @@ import Data.Set (fromList, size)  --for uniquing in 87
 -- See pe5_82.hs
 
 
+-- 83
+-- See pe5_83.hs
+
+
 -- 85
 -- Counting rectangles: Although there exists no rectangular grid that contains exactly two million rectangles, find the area of the grid with the nearest solution.
 -- Answer: 2772 (0.00 secs, 2059720 bytes)
