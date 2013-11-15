@@ -79,7 +79,6 @@ pe87 = size $ fromList $ primePowerTriples 50000000
 --      sides not horizontal or vertical = hypDn (by symmetry)
 -- 6) right angle at 0,0 sides inside x or y axis = 0
 
--- sides left & up
 hypDn n = [(i,j, m*u, m*v) | i <- [1..n], j <- [1..n], let d = gcd i j, let u = j `div` d, let v = i `div` d, m <- [1.. (j `div` v)], i+u*m <= n]
 pe91' n = 3*(n^2) + 2 * (length $ hypDn n)
 pe91 = pe91' 50
