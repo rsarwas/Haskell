@@ -67,6 +67,24 @@ pe87 = size $ fromList $ primePowerTriples 50000000
 -- See pe5_89.hs
 
 
+-- 91
+-- Right triangles with integer coordinates: Given that (x0,y0) = (0,0) and 0 ≤ x1, y1, x2, y2 ≤ 50, how many right triangles can be formed?
+-- Answer: 14234 (0.02 secs, 11885880 bytes)
+-- 1) horizontal/vertical sides below/right of hypotenuse = n^2 (right angle at i,j below hypotenuse) - limit
+-- 2) horizontal/vertical sides above/left of hypotenuse = n^2 (right angle at i,j above hypotenuse)
+-- 3) horizontal/vertical sides below/left of hypotenuse = n^2 (right angle at 0,0)
+-- 4) hypotenuse on x-axis (0 degrees) or rotated CCW (< 90) with right angle above hypotenuse;
+--      sides not horizontal or vertical = hypDn
+-- 5) hypotenuse on y-axis (90 degrees) or rotated CW (> 0) with right angle below hypotenuse; 
+--      sides not horizontal or vertical = hypDn (by symmetry)
+-- 6) right angle at 0,0 sides inside x or y axis = 0
+
+-- sides left & up
+hypDn n = [(i,j, m*u, m*v) | i <- [1..n], j <- [1..n], let d = gcd i j, let u = j `div` d, let v = i `div` d, m <- [1.. (j `div` v)], i+u*m <= n]
+pe91' n = 3*(n^2) + 2 * (length $ hypDn n)
+pe91 = pe91' 50
+
+
 -- 92
 -- Square digit chains: How many starting numbers below ten million will arrive at 89?
 -- Answer: 8581146 (32.57 secs, 6717408512 bytes)
