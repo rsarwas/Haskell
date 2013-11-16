@@ -352,14 +352,14 @@ pe74 =  length $ filter (\(n,l) -> l == 60 && n < 999999) $ Map.toList allLength
 -- 75
 -- Integer Right Triangles: Given that L is the length of the wire, for how many values of L <= 1,500,000 can exactly
 --                          one integer sided right angle triangle be formed?
--- Answer: WRONG!!??? 160822 (6.55 laptop secs, 2176962096 bytes)
+-- Answer: 161667  (3.00 new laptop secs, 2205145384 bytes)
 -- Analysis:  for a pythagoream triple, a = k(m^2 - n^2), b = k(2mn) and c = k(m^2+n^2), where m > n, and m-n is odd
 --            if m and n are coprime, and k = 1, then it the solution is primative (the smallest in a family).
 --            L = P = a+b+c = k(2m^2 + 2mn) = k2m(m+n)
 --            since m > n, if we assume m = n+1, we can find the upper bound of n = 611 for P <= 1,500,000
 --            m has a max for each value of n that is solution to a quadratic equation.
 basePerims = [2*m*(n+m) | n <- [1..611], m <- [(n+1)..(mmax n)], odd (m-n), gcd m n == 1]
-  where mmax n = ((isqrt (3000000 - n^2)) - n) `div` 2
+  where mmax n = ((isqrt (3000000 + n^2)) - n) `div` 2
 allPerims = [p*k | p <- basePerims, k <- [1..(1500000 `div` p)]]
 --takes about 0.4 sec to generate ~98,000 unique basePerims and about 2 more seconds to generate 1,250,000 allPerims with dups
 --sorting with data.list takes about 5 seconds.  This is probably not the smartest/fastest way to do this, but it is simple and works.
