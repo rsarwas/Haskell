@@ -2,9 +2,23 @@
 
 import ProjectEuler
 import Data.Ratio
+import Data.List (nub)
 
 -- 102
 -- See pe6_102.hs
+
+
+-- 104
+-- Pandigital Fibonacci ends
+-- Answer: 329468 (13.06 new laptop secs, 8926902496 bytes)
+pandigital19 n = length d == 9 && (not (0 `elem` d))
+  where d = nub n
+pandigitalTail n = pandigital19 $ digits $ n `mod` (10^9)
+pandigitalHead (i, n) =
+  let h = n `div` (10^(i `div` 5))
+      d = take 9 $ digits h
+  in  pandigital19 d
+pe104 = fst $ head $ filter pandigitalHead $ filter (pandigitalTail . snd) $ zip [1..] fibs
 
 
 -- 112
