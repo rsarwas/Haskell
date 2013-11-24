@@ -92,6 +92,29 @@ plusUp = take 5 [(p,x) | x <- [1..], let n = (99 * (999999 + x)) % 100, let p = 
 --   woo hoo, all the numbers from 1579999 to 1587000 are bouncy, so 1587000 is the answer
 
 
+-- 114
+-- Counting block combinations I:  How many ways can a row measuring fifty units in length be filled?
+--   with block at least 3 units long, separated by at least 1 unit.
+-- Answer: 
+-- Analysis:  use a recursive solution.  Putting a block of length n at some point i in the 50 units will
+--  yield 1 plus the solutions for the space prior plus the solutions for the empty space after.
+-- countBlocks:
+--  min is the smallest size group of units to consider
+--  max is the largest size to consider (we only look for blocks less than or equal to
+--       the starting block to avoid finding duplicate solutions.
+--  len is the total number of units in the search space.
+countBlocks :: Int -> Int -> Int -> Int
+countBlocks min max len = sum [countforOneBlockOfSize n | n <- [min..max]]
+  where
+    -- problem need to subtract for symetrical equals,
+    -- i.e: 4s3 <> 3s4 (correctly counted twice), however 3s3 = 3s3 (incorrectly counted twice)
+    countforOneBlockOfSize l = sum [(blocksIn i) + 1 + (blocksIn (open-i)) | i <- [0..open]]
+      where
+        open = len - l
+        blocksIn n = if (n < (min+1)) then 0 else (countBlocks min l (n-1))
+pe114 = (countBlocks 3 50 50) + 1  -- plus one for the empty set.
+
+
 -- 120
 -- Square Remainders: For 3 <= a <= 1000, find  rmax, where r is the remainder when (a-1)^n + (a+1)^n is divided by a^2
 -- Answers: 333082500  (0.01 laptop secs, 4752528 bytes)
