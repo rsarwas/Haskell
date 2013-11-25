@@ -113,6 +113,9 @@ countBlocks min max len = sum [countforOneBlockOfSize n | n <- [min..max]]
         open = len - l
         blocksIn n = if (n < (min+1)) then 0 else (countBlocks min l (n-1))
 pe114 = (countBlocks 3 50 50) + 1  -- plus one for the empty set.
+-- unfortunately, in addition to being wrong, this solution is also exponetial in time
+-- while it only took 0.18 sec for 25 units, and 45 seconds for 35 units, the prediction for 50 units is 9 hours
+
 
 
 -- 120
