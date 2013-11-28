@@ -45,3 +45,82 @@ pe124 = snd ((quicksort $ [(r,n) | n <- [1..100000], let r = rad n, r < 10000]) 
       where
         rad n = product $ unique $ primeFactors' n p
         p = primesTo (isqrt 100000)
+
+-- 125
+-- Palindromic sums: Find the sum of all the numbers less than 10^8 that are both palindromic and can be written as the sum of consecutive squares.
+-- Answer: 2916867073 (7.88 secs, 3964658688 bytes)
+{--
+Analysis:
+note: A sum has to have at least two terms
+      while this is obvious by the definition of sum, some texts on partitions, consider a
+      single term to be a sum.  If this were the case, then 1,4,9,121,484 (which equal
+      1^2, 2^2, 3^2, 11^2 and 22^2 respectively) would be sum of squares palindromes below 1000.
+      There are 11 palindromes below 1000 (whose sum is equal to 4162) without considering these terms.
+note: Only positive numbers are considered; ignore 0^2 as a term.
+
+The solution is the sum all palindromes that are sums of consecutive squares less than n
+a palindrom is a number which equals the number with its digits in reverse order
+The terms in s1 .. s(m-1) are ALL the sums of consecutive squares less than n
+where
+  s1 = [1^2 + 2^2, 1^2 + 2^2 + 3^2, ... 1^2 + 2^2 + .. (m-1)^2 + m^2]
+  s2 = [2^2 + 3^2, 2^2 + 3^2 + 4^2, ... 2^2 + 3^2 + .. (m-1)^2 + m^2]
+   :
+  s(m-1) = [(m-1)^2 + m^2]
+
+if m is the first integer for which m^2 + (m+1)^2 > n then
+1) I do not need to consider any additional terms in these sequences 
+2) I do not need to consider any additional sequences
+proof of 1:
+Since 1,2,3,..m-1,m,m+1, are monotonically increasing, the squares of these
+terms are monotonically increasing.  Therefore the terms in the sequences are
+monotonically increasing.  If i is the index of the first term greater than n
+then all terms at index i or greater exceed n.
+The last term in each sequence is greater than or equal to (m-1)^2 + m^2
+If there were a next term in each sequence it would be greater than or equal
+to m^2 + (m+1)^2. Since m^2 + (m+1)^2 > n, I can ignore that next term and all
+subsequent terms.
+proof of 2:
+The next sequence would be sm and the first term of sm would be m^2 + (m+1)^2
+since m^2 + (m+1)^2 > n, I can ignore that term. and by proof 1, all subsequent terms
+the sequence sm is empty. Therefore sm-1 is the last non-empty sequence.
+
+find m:
+let a = m-1, b = m and c = m+1
+since a < b and b < c, we know a^2 + b^2 < b^2 + b^2 < b^2 + c^2;
+if b^2 + b^2 = n then a^2 + b^2 < n and n < b^2 + c^2
+solve for b in  b^2 + b^2 = n  => 2b^2 = n => b^2 = n/2
+therefore: b = m = sqrt(n/2)  (unless n is a square, m will be irrational, so use the closest int)
+--}
+
+pe125 = sum $ palindromeSums (10^8)
+palindromeSums n = filter palindrome $ concat $ sums' n
+palindrome x = x == (digitsToInt $ reverse $ digits x)
+-- need to drop the first item in the list since it is not a sum
+sums' n = map (takeWhile (<n) . (drop 1)) $ sums n
+sums n = map (scanl1 (+)) $ squares n
+squares n =  [[x^2 | x <- [firstTerm..m]] | firstTerm <- [1..(m-1)]]
+  where m = floor $ sqrt ((fromIntegral n)/2)
+
+{--
+Testing this code yields:
+*Main> squares 100
+[[1,4,9,16,25,36,49],[4,9,16,25,36,49],[9,16,25,36,49],[16,25,36,49],[25,36,49],[36,49]]
+*Main> sums 100
+[[1,5,14,30,55,91,140],[4,13,29,54,90,139],[9,25,50,86,135],[16,41,77,126],[25,61,110],[36,85]]
+*Main> sums' 100
+[[5,14,30,55,91],[13,29,54,90],[25,50,86],[41,77],[61],[85]]
+*Main> palindromeSums 100
+[5,55,77]
+*Main> sum $ palindromeSums 100
+137
+*Main> palindromeSums 1000
+[5,55,505,818,77,636,595,181,434,313,545]
+*Main> length $ palindromeSums 1000
+11
+*Main> sum $ palindromeSums 1000
+4164
+*Main> pe125
+2916867073
+
+unfortunately this answer isn't right.  What is wrong?
+--}
