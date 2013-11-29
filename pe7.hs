@@ -2,6 +2,7 @@
 
 import ProjectEuler
 import Data.Ratio
+import Data.List
 
 -- 121
 -- Disc game prize fund: Find the maximum prize fund that should be allocated to a single game in which fifteen turns are played.
@@ -48,7 +49,8 @@ pe124 = snd ((quicksort $ [(r,n) | n <- [1..100000], let r = rad n, r < 10000]) 
 
 -- 125
 -- Palindromic sums: Find the sum of all the numbers less than 10^8 that are both palindromic and can be written as the sum of consecutive squares.
--- Answer: 2916867073 (7.88 secs, 3964658688 bytes)
+-- Answer: 2906969179 (7.63 secs, 3961783280 bytes)
+-- Wrong Answer: 2916867073 (7.88 secs, 3964658688 bytes) 554455 and 9343439 can be formed by two different sums
 {--
 Analysis:
 note: A sum has to have at least two terms
@@ -61,6 +63,7 @@ note: Only positive numbers are considered; ignore 0^2 as a term.
 The solution is the sum all palindromes that are sums of consecutive squares less than n
 a palindrom is a number which equals the number with its digits in reverse order
 The terms in s1 .. s(m-1) are ALL the sums of consecutive squares less than n
+NOTE: it is possible that a number can be formed by more than one sum of squares
 where
   s1 = [1^2 + 2^2, 1^2 + 2^2 + 3^2, ... 1^2 + 2^2 + .. (m-1)^2 + m^2]
   s2 = [2^2 + 3^2, 2^2 + 3^2 + 4^2, ... 2^2 + 3^2 + .. (m-1)^2 + m^2]
@@ -89,10 +92,11 @@ let a = m-1, b = m and c = m+1
 since a < b and b < c, we know a^2 + b^2 < b^2 + b^2 < b^2 + c^2;
 if b^2 + b^2 = n then a^2 + b^2 < n and n < b^2 + c^2
 solve for b in  b^2 + b^2 = n  => 2b^2 = n => b^2 = n/2
-therefore: b = m = sqrt(n/2)  (unless n is a square, m will be irrational, so use the closest int)
+b = sqrt(n/2)  (unless n is a square, b will be irrational),
+therefore  m = floor b
 --}
-
-pe125 = sum $ palindromeSums (10^8)
+-- need to 'unique' the list
+pe125 = sum $ nub $ palindromeSums (10^8)
 palindromeSums n = filter palindrome $ concat $ sums' n
 palindrome x = x == (digitsToInt $ reverse $ digits x)
 -- need to drop the first item in the list since it is not a sum
