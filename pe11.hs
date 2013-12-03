@@ -2,6 +2,7 @@
 
 import ProjectEuler
 import Data.Ratio
+import Data.List
 
 -- 205
 -- Dice Game: What is the probability that Pete 9 4-sided dice beats Colin (6 6-sided dice)? Give your answer rounded to seven decimal places in the form 0.abcdefg
@@ -59,3 +60,35 @@ pe206 = head $ filter match trys
   where match n = match' (n*n `div` 100) 9
         match' _ 0 = True
         match' n d = if (n `mod` 10) == d then (match' (n `div` 100) (d-1)) else False
+
+
+-- 210
+-- Obtuse Angled Triangles: Find N(1,000,000,000) where N(r) is the number of points B in S(r) where triangle OBC has an obtuse angle
+--                          where O is the point (0,0) and C is the point (r/4,r/4)
+--                          and S(r) is the set of points (x,y) with integer coordinates satisfying |x| + |y| ≤ r
+-- Answer: 1598174770174689458 (212.25 secs, 178587109152 bytes)
+-- Analysis: The math is easy to verify by drawing the simple cases on grid paper.
+-- totals are easiest to obtain by counting along the diagonal  S(r) is a square rotated 45 degrees
+-- the tricky ones are those within the circle of radius N*sqrt(2) and center N/8,N/8.  this is broken
+-- down into the square bounded by O and C, and a few extras, checked individually in 1/8th of the circle,
+-- being careful to not double counting overlapping points
+-- this formula could be expressed much more succinctly, but this expression is hopefully more clear
+pe210 = numObtuse 1000000000
+  where
+    numObtuse    n = (numSr n) - (numNotObtuse n) 
+    numSr        n = (n+1)^2 + n^2
+    numNotObtuse :: Integer -> Integer
+    numNotObtuse n = (numLines n) + (numOnNegDiag n) - (inSquareOC n) - (inCircle n)
+      where
+        nq = n `div` 4
+        numLines     n = n+1 - (1 + nq)
+        numOnNegDiag n = n+1 + nq * (n+1 + n)
+        inSquareOC   n = (nq + 1)^2 - 2 - (nq+1)
+        inCircle     n = 4*m + 8*(foldl' (+) 0 [nq `div` 2 - 1 - (circley dx nq) | dx <- [1..m]])
+          where
+            m = floor ( (sqrt 2 - 1) * (fromIntegral nq) / 2)
+            circley dx nq = floor (a - (sqrt ( r2 - (x - a)^2)))
+              where
+                r2 = (fromIntegral nq)^2/2
+                a  = (fromIntegral nq)/2
+                x  = fromIntegral (nq + dx)
