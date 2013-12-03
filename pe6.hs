@@ -21,6 +21,9 @@ pandigitalHead (i, n) =
 pe104 = fst $ head $ filter pandigitalHead $ filter (pandigitalTail . snd) $ zip [1..] fibs
 
 
+-- 107
+-- See pe6_107.hs
+
 -- 112
 -- Bouncy numbers: Find the least number for which the proportion of bouncy numbers is exactly 99%.
 -- Answer: 1587000 (0.06 secs, 9492116 bytes) + lots of pencil and paper time.
