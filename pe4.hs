@@ -404,6 +404,18 @@ p = map head $ iterate next [1]
 pe76 = p !! 100 - 1
 
 
+-- 77
+-- Prime summations: What is the first value which can be written as the sum of primes in over five thousand different ways?
+-- Answer: 71  (0.43 secs, 415623888 bytes)
+countBelow n n' = sum [f x y | x <- primesTo (min (n-2) n'), let y = n - x]
+  where
+    f x y
+      | x == 2    = if odd y then 0 else 1
+      | isPrime y = if y > x then (countBelow y x) else (1 + countBelow y x)
+      | otherwise = countBelow y x
+pe77 = fst $ head $ filter (\(x,y) -> y > 5000) [ (x,countBelow x x) | x <- [11..]]
+
+
 -- 79
 -- Passcode derivation: Given that the three characters are always asked for in order, analyse the file
 -- so as to determine the shortest possible secret passcode of unknown length.
