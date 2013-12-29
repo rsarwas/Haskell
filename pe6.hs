@@ -98,26 +98,21 @@ plusUp = take 5 [(p,x) | x <- [1..], let n = (99 * (999999 + x)) % 100, let p = 
 -- 114
 -- Counting block combinations I:  How many ways can a row measuring fifty units in length be filled?
 --   with block at least 3 units long, separated by at least 1 unit.
--- Answer: 
--- Analysis:  use a recursive solution.  Putting a block of length n at some point i in the 50 units will
---  yield 1 plus the solutions for the space prior plus the solutions for the empty space after.
--- countBlocks:
---  min is the smallest size group of units to consider
---  max is the largest size to consider (we only look for blocks less than or equal to
---       the starting block to avoid finding duplicate solutions.
---  len is the total number of units in the search space.
-countBlocks :: Int -> Int -> Int -> Int
-countBlocks min max len = sum [countforOneBlockOfSize n | n <- [min..max]]
-  where
-    -- problem need to subtract for symetrical equals,
-    -- i.e: 4s3 <> 3s4 (correctly counted twice), however 3s3 = 3s3 (incorrectly counted twice)
-    countforOneBlockOfSize l = sum [(blocksIn i) + 1 + (blocksIn (open-i)) | i <- [0..open]]
-      where
-        open = len - l
-        blocksIn n = if (n < (min+1)) then 0 else (countBlocks min l (n-1))
-pe114 = (countBlocks 3 50 50) + 1  -- plus one for the empty set.
--- unfortunately, in addition to being wrong, this solution is also exponetial in time
--- while it only took 0.18 sec for 25 units, and 45 seconds for 35 units, the prediction for 50 units is 9 hours
+-- Answer: 16475640049 (7.05 secs, 4810812360 bytes)
+-- Analysis:  Put each size block at the beginning (with 0 or more leading spaces),
+--  and then use recursion to fill the remaining space.
+--  for a row of length 9 (and a minimum block of length 3:
+--    with a 9 unit block there are 1 plays with no recursions
+--    with a 8 unit block there are 2 plays with no recursions
+--    with a 7 unit block there are 3 plays with no recursions
+--    with a 6 unit block there are 4 plays with no recursions
+--    with a 5 unit block there are 5 with fill 3
+--    with a 4 unit block there are 6 with fill 4 + fill 3
+--    with a 3 unit block there are 7 with fill 5 + fill 4 + fill 3
+--    total is 1 (all empty) + sum [1..7] + 3*fill 3 + 2*fill 4 + 1*fill 5
+--  this is generalized for a row of length l, with a minimum block of length n as follows: 
+fill114 l n = sum [1..(l-n+1)] + (sum [y*(fill114 x n) | x <- [n..(l-n-1)], let y = (max 0 (l-x-n))])
+pe114 = 1 + fill114 50 3
 
 
 -- 116
