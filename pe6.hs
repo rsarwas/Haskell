@@ -120,6 +120,16 @@ pe114 = (countBlocks 3 50 50) + 1  -- plus one for the empty set.
 -- while it only took 0.18 sec for 25 units, and 45 seconds for 35 units, the prediction for 50 units is 9 hours
 
 
+-- 116
+-- Red, green or blue tiles : How many different ways can the black tiles in a row measuring
+-- fifty units in length be replaced if colours cannot be mixed and at least one coloured tile must be used?
+-- colours: red (length two), green (length three), or blue (length four).
+-- Answer: 
+fill l n
+  | l <  n    = 0
+  | l == n    = 1
+  | otherwise = 1 + (l-n) + (sum [fill x n | x <- [n..(l-n)]])
+pe116 = (fill 50 2) + (fill 50 3) + (fill 50 4)
 
 -- 120
 -- Square Remainders: For 3 <= a <= 1000, find  rmax, where r is the remainder when (a-1)^n + (a+1)^n is divided by a^2
