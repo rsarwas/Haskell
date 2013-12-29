@@ -125,6 +125,8 @@ pe114 = (countBlocks 3 50 50) + 1  -- plus one for the empty set.
 -- fifty units in length be replaced if colours cannot be mixed and at least one coloured tile must be used?
 -- colours: red (length two), green (length three), or blue (length four).
 -- Answer: 
+-- The following recursive solution takes too long: fill 50 4 = 2.4 sec, fill 50 3 takes 59.5 sec, fill 50 2 is projected
+-- to take 6 hours 
 fill l n
   | l <  n    = 0
   | l == n    = 1
