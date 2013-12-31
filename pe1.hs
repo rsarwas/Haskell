@@ -140,8 +140,9 @@ pe11 = maximum [horizontalMax, verticalMax, leftDiagonalMax, rightDiagonalMax]
 
 -- 12
 -- What is the value of the first triangle number to have over five hundred divisors?
--- Answer: 76576500 (134.29 secs, 18814711340 bytes)
--- FIXME: Can be improved by starting out Triangle number search with the first highly composite number with 500 divisors
+-- Answer: 76576500 (3.27 secs, 11445640472 bytes)
+-- improved solution time with revised primeFactor code in divisorCount (and new laptop)
+-- Analysis: Could be improved by starting out Triangle number search with the first highly composite number with 500 divisors
 pe12 = head [x | x <- triangleNumbers, 500 <= divisorCount x]
 
 
