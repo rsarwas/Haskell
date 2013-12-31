@@ -71,10 +71,11 @@ pe26 = maximum [(length $ div' 10 p,p) | p <- (primesTo 999)]
        where div' n x = let (q,r) = n `quotRem` x in if r < 2 then [q] else q:(div' (10*r) x)
 
 
--- 27 (algorithm needs optimzation)
+-- 27
 -- Quadratic primes
 -- Answer: -59231 (71 consecutive primes with a = -61 and b = 971)
---         (156.75 laptop secs, 5212541820 bytes)
+--         (3.02 new laptop secs, 5328626000 bytes)
+--  speedup due to improvements in primeFactors (called by isPrime function)
 pe27 = let consecutivePrimes a b = length $ takeWhile (\n -> isPrime (n*n + a*n + b)) [0..]
        in maximum [((consecutivePrimes a b),a,b) | a <- [(-999)..999], b <- primesTo 999]
 
