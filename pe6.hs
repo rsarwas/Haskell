@@ -115,6 +115,14 @@ fill114 l n = sum [1..(l-n+1)] + (sum [y*(fill114 x n) | x <- [n..(l-n-1)], let 
 pe114 = 1 + fill114 50 3
 
 
+-- 115
+-- For m = 50, find the least value of n for which the fill-count function first exceeds one million.
+-- Answer: 168 (0.01 secs, 14029176 bytes)
+-- Analysis: the fill function is the same as fill114 +1 for the empty case
+fill115 m n = 1 + (fill114 n m)
+pe115 = head $ filter (\x -> fill115 50 x > 1000000) [150..]
+
+
 -- 116
 -- Red, green or blue tiles : How many different ways can the black tiles in a row measuring
 -- fifty units in length be replaced if colours cannot be mixed and at least one coloured tile must be used?
