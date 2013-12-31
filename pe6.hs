@@ -119,14 +119,41 @@ pe114 = 1 + fill114 50 3
 -- Red, green or blue tiles : How many different ways can the black tiles in a row measuring
 -- fifty units in length be replaced if colours cannot be mixed and at least one coloured tile must be used?
 -- colours: red (length two), green (length three), or blue (length four).
--- Answer: 
--- The following recursive solution takes too long: fill 50 4 = 2.4 sec, fill 50 3 takes 59.5 sec, fill 50 2 is projected
--- to take 6 hours 
-fill l n
+-- Answer: 20492570929 (0.00 secs, 4675848 bytes)
+fill116 l n
   | l <  n    = 0
   | l == n    = 1
-  | otherwise = 1 + (l-n) + (sum [fill x n | x <- [n..(l-n)]])
-pe116 = (fill 50 2) + (fill 50 3) + (fill 50 4)
+  | otherwise = 1 + (l-n) + (sum [fill116 x n | x <- [n..(l-n)]])
+pe116' = (fill116 50 2) + (fill116 50 3) + (fill116 50 4)
+-- The previous recursive solution takes too long: fill 50 4 = 2.4 sec, fill 50 3 takes 59.5 sec, fill 50 2 is projected
+-- to take 6 hours 
+-- Analysis: I examined the solutions to various rows with 2 unit blocks to get the
+--   following table.
+--    row| #of permutations for different numbers of blocks
+--   size| 1   2    3    4    5
+--   ---------------------------- 
+--     2 | 1 
+--     3 | 2
+--     4 | 3 + 1
+--     5 | 4 + 3  
+--     6 | 5 + 6  + 1
+--     7 | 6 + 10 + 4
+--     8 | 7 + 15 + 10 + 1
+--     9 | 8 + 21 + 20 + 5
+--    10 | 9 + 28 + 35 + 15 + 1
+--  the number of additive terms increases every multiple of the block size
+--  so for a row of 6 there are 5 ways to put one block, 6 ways to put on 2 blocks,
+--  and 1 way to put on 3 blocks, for a total of 12.
+--  It was noticed from the sketches, and the table that each subsequent column is
+--  the sum of previous terms in the previous row.  This leads to a simple recursive
+--  solution. 
+fill116' l n = fill116'' l n 1 [1..]
+fill116'' l n x lst
+  | l <  n*x  = 0
+  | l == n*x  = 1
+  | otherwise = (head (drop (l - x*n) lst)) + (fill116'' l n (x+1) (scanl1 (+) lst))  
+pe116 = (fill116' 50 2) + (fill116' 50 3) + (fill116' 50 4)
+
 
 -- 120
 -- Square Remainders: For 3 <= a <= 1000, find  rmax, where r is the remainder when (a-1)^n + (a+1)^n is divided by a^2
