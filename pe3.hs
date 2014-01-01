@@ -83,7 +83,7 @@ pe46 = head $ filter (null . snd) goldbachs
 -- The first three consecutive numbers to have three distinct prime factors are:
 --   644 = 2^2 * 7 * 23;   645 = 3 * 5 * 43;   646 = 2 * 17 * 19
 -- Note All 9 prime factors do not need to be distinct
--- Answer: 134043 (3.66 new laptop secs, 10463983400 bytes) //improvements due to better primeFactors routine
+-- Answer: 134043 (3.66 new laptop secs, 10463983400 bytes) -- improvements due to better primeFactors routine
 distinctPrimeFactorCount = length . unique . primeFactors
 numbersWith4DistinctPrimeFactors = [x | x <- [1..], distinctPrimeFactorCount x > 3]
 findFirstOfFour (r:s:t:u:xs)
@@ -258,7 +258,7 @@ pe57 = length $ filter test (terms 1000)
 
 -- 58
 -- Spiral primes: What is the side length of the square spiral for which the ratio of primes along both diagonals first falls below 10%?
--- Answer: 26241 (354.83 secs, 165870820400 bytes) -- Need a better prime checker
+-- Answer: 26241 (13.62 new laptop secs, 48832942872 bytes) -- improvements due to better primeFactors routine in isPrime
 counts =  scanl addPrimes (0,1,1) [3,5..] where
   addPrimes (n,d,_) side =
     let side2 = side^2
