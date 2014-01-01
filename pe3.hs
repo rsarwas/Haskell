@@ -83,7 +83,7 @@ pe46 = head $ filter (null . snd) goldbachs
 -- The first three consecutive numbers to have three distinct prime factors are:
 --   644 = 2^2 * 7 * 23;   645 = 3 * 5 * 43;   646 = 2 * 17 * 19
 -- Note All 9 prime factors do not need to be distinct
--- Answer: 134043 (71.16 secs, 26183203160 bytes)
+-- Answer: 134043 (3.66 new laptop secs, 10463983400 bytes) //improvements due to better primeFactors routine
 distinctPrimeFactorCount = length . unique . primeFactors
 numbersWith4DistinctPrimeFactors = [x | x <- [1..], distinctPrimeFactorCount x > 3]
 findFirstOfFour (r:s:t:u:xs)
