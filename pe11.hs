@@ -28,7 +28,7 @@ tie = sum $ zipWith (*) pete colin
 peteWin = sum $ zipWith (*) pete (0:colin')
 colinWin = sum $ zipWith (*) colin (0:pete')
 test205 = (peteWin, tie, colinWin, peteWin+tie+colinWin)
---pe205 = floor (10^7 * peteWin + 0.5)
+pe205 = floor (10^7 * peteWin + 0.5)
 
 
 -- 206

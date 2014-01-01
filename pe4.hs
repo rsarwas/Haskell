@@ -296,7 +296,7 @@ pe73 = sum $ map (\x -> count x (1,3) (1,2)) [5..12000]
 
 -- 74
 -- Digit factorial chains
--- Answer: 402 (47.66 secs, 11423971424 bytes)
+-- Answer: 402 (8.30 secs, 8353854992 bytes)
 -- Analysis: mostly brute force, however, we can see that using lists will take way to long, so we use a hash table (Map)
 --  saving all the intermediate results, so if those numbers are hit, we can short circuit the check.
 -- optimization: recognizing that digitFactorial of 103 is the same as 130 as 301 as 310 (but not 013, or 031),
@@ -432,6 +432,7 @@ pe77 = fst $ head $ filter (\(x,y) -> y > 5000) [ (x,countBelow x x) | x <- [11.
 -- Therefore, 7 must be the first number, and 0 must be the last
 -- eliminating them from all the list, we are left with 3 being second, and 9 being penultimate.
 -- iterate thus twice more to get the answer.
+pe79 = 73162890
 
 
 -- 80
