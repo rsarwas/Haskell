@@ -2,6 +2,7 @@
 
 import ProjectEuler
 import Data.Ratio -- for probem 33
+import Data.List -- for sort and group in problem 39
 
 -- 21
 -- Evaluate the sum of all the amicable numbers under 10000
@@ -224,11 +225,15 @@ pe38 = head [(f a) | a <- [9876,9875..9183], isPandigital a, isPandigital (a*2),
 
 -- 39
 -- Integer Right Triangles: For which perimeter p <= 1000 is there a maximum number of integer right triangles
--- Answer: 840 (111.71 laptop secs, 14777564224 bytes)
--- lots of permimeters have no integral right triangles, can we identify those and not check?
-pe39 = snd $ maximum [(length $ rightTriangles p,p) | p <- [12..1000]]
-       where rightTriangles p = 
-               [(a,b,c) | a <- [1..(p `div` 3)], b <- [(p `div` 3)..(p `div` 2)], c <- [p - a - b], c^2 == a^2 + b^2]
+-- Answer: 840 (0.03 secs, 7281032 bytes)
+-- Analysis:  based on work done for problem 75 (see it for details)
+--            could be made faster by creating a map from perimeter -> count when generating allPerims
+basePerims = [2*m*(n+m) | n <- [1..nmax], m <- [(n+1)..(mmax n)], odd (m-n), gcd m n == 1]
+  where
+    nmax = isqrt 2500 --(1000 / 4)
+    mmax n = ((isqrt (2*1000 + n^2)) - n) `div` 2
+allPerims = [p*k | p <- basePerims, k <- [1..(1000 `div` p)]]
+pe39 = snd $ maximum $ map (\l -> (length l,head l)) $ group $ sort allPerims
 
 
 -- 40
