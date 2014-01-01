@@ -255,33 +255,37 @@ pe13 = take 10 $ digits $ sum pe13data
 
 -- 14
 -- Which starting number, under one million, produces the longest Collatz sequence chain?
--- Answer: (0.23 secs, 46962072 bytes)
--- FIXME improve time and space
+-- Answer: 837799 (0.10 secs, 46962072 bytes)
+
 collatzChain :: (Integral a) => a -> [a]
 collatzChain 1 = [1]
 collatzChain n
     | even n    = n:collatzChain (n `div` 2)
     | otherwise = n:collatzChain (3*n+1)
-max' [x] = x
-max' (x:xs)
-  | (snd x) > (snd maxtail) = x
-  | otherwise               = maxtail
-  where maxtail = max' xs
-pe14 = max' [(x,length $ collatzChain x) | x <- [1..999999]] -- (837799,525)  (347.67 secs, 97453747000 bytes) 
+    
+--brute force: check all chains, and pick the longest
+pe14' = snd $ maximum [(length $ collatzChain x,x) | x <- [1..999999]] -- (217.45 secs, 97144526760 bytes) 
+
+--recursive solution
+-- this is probably a situation where the recursion doesn't optimize to a tight loop like C
+collatzLength 1 = 1
+collatzLength n = 1+(if odd n then collatzLength (3*n+1) else collatzLength (n `div` 2))
+pe14'' = snd $ maximum [(collatzLength x, x) | x <- [1..999999]] -- 420 laptop seconds.
+
+--OEIS solution (kinda a cheat)
+-- look for a pattern in the starting numbers that produce the longest chain seen so far
 curMax _     []             = []
 curMax m (x:xs) | snd x > m     = x:(curMax (snd x) xs)
                 | otherwise = curMax m xs
 findPattern n = curMax 0 [(x, length $ collatzChain x) | x <- [1..n]]
-pe14' = findPattern 1000
--- [1,2,3,6,7,9,18,25,27,54,73,97,129,171,231,313,327,649,703,871]
--- which is sequence A006877 on Sloane's (OEIS) list, which yields 511935, 626331, 837799, 1117065
--- so the solution is 837799 in (0.23 secs, 46962072 bytes)
--- In reading the forum on this post, it seams that the brute force solution is the way to go, with
--- assambly code delivering fast results.
-collatzLength 1 = 1
-collatzLength n = 1+(if odd n then collatzLength (3*n+1) else collatzLength (n `div` 2))
-pe14'' = snd $ maximum [(collatzLength x, x) | x <- [1..999999]] -- 420 laptop seconds.
--- this is probably a situation where the recursion doesn't optimize to a tight loop like C
+pe14 = findPattern 1000
+-- this yields [1,2,3,6,7,9,18,25,27,54,73,97,129,171,231,313,327,649,703,871] in (0.10 secs, 45410112 bytes)
+-- which is sequence A006877 on Sloane's (OEIS) list.  Looking at the list online, the sequence includes
+-- 511935, 626331, 837799, 1117065, so the solution is 837799
+-- 
+-- In reading the forum on this post, it seems that the brute force solution (above) is the way to go,
+-- with assembly code delivering the fastest results.
+
 
 -- 15
 -- How many such lattice paths are there through a 20×20 grid?
