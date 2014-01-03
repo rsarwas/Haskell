@@ -416,6 +416,17 @@ countBelow n n' = sum [f x y | x <- primesTo (min (n-2) n'), let y = n - x]
 pe77 = fst $ head $ filter (\(x,y) -> y > 5000) [ (x,countBelow x x) | x <- [11..]]
 
 
+-- 78
+-- Coin partitions: Find the least value of n for which p(n) is divisible by one million.
+-- Answer:
+-- Analysis: This uses the partition function from 76, it can determine that p(599) = 435350207840317348270000
+-- is the first partition divisible by 10000 within 0.03, and that
+-- p(11224) = 134664723242887520089229243811393012549783715496870074127499761107322501027469760957809248421625196998368711300000
+-- is the first number divisible by 10000 took 31.91 seconds.
+-- but after over 10 minutes it had not found a number divisible by 1000000
+pe78 = length $ takeWhile (\x -> x `mod` 100000 /= 0) p 
+
+
 -- 79
 -- Passcode derivation: Given that the three characters are always asked for in order, analyse the file
 -- so as to determine the shortest possible secret passcode of unknown length.
