@@ -166,22 +166,18 @@ pe116 = (fill116' 50 2) + (fill116' 50 3) + (fill116' 50 4)
 -- 117
 -- How many ways can a row measuring fifty units in length be tiled?
 -- Using black tiles (one units), red tiles (two units), green tiles (three units), and blue tiles (four units)
--- Answer:
--- Analysis:  This is similar to 114, with a limit on the max size.
---  Put each size block at the beginning (with 0 or more leading spaces),
---  and then use recursion to fill the remaining space.
---  for a row of length 9 (and a minimum block of length 3 and max of 7):
---    with a 7 unit block there are 3 (single block plays) and no room for other blocks
---    with a 6 unit block there are 4 with fill 3
---    with a 5 unit block there are 5 with fill 4 + fill 3
---    with a 4 unit block there are 6 with fill 5 + fill 4 + fill 3
---    with a 3 unit block there are 7 with fill 6 + fill 5 + fill 4 + fill 3
---    total is 1 (all empty) + sum [3..7] + 4*fill 3 + 3*fill 4 + 2*fill 5 + 1*fill 6
---  this is generalized for a row of length l, with a minimum block of length n as follows: 
-fill117 l n m = sum [(max 0 (l-m+1))..(l-n+1)] + (sum [y*(fill117 x n m) | x <- [n..(l-n)], let y = (min (1+m-n) (max 0 (1+l-x-n)))])
-pe117 = 1 + fill117 50 2 4
--- The previous recursive solution takes too long: fill 50 4 4 = 6.6 sec, fill 40 3 3 takes 3.7 sec, fill 30 2 2 takes 2.3, fill 30 2 4 takes 2.3 
--- fill 50 2 4 is projected to take 16 hours 
+-- Answer: 100808458960497 (0.01 secs, 7221456 bytes)
+-- Analysis:  A solution similar to 114 turned out to be way to slow.
+--   this equivalent to finding the number of compositions of 50 cells into parts of 1,2,3,or 4 cells
+--   the wikipedia page on generalized fibonaci numbers has this interesting fact: The number of compositions of
+--   nonnegative integers into parts that are at most n is a Fibonacci sequence of order n.
+--   therefore we just need to find the 50th term in the tetranacci (fibonacci sequence of order 4).
+--         0 1 2 3 4 5...
+--   0 0 0 1 1 2 4 8 15...
+--  The following si from the haskell page on generalized fibonnaci numbers
+nfibs n = let r = replicate (n-1) 0 ++ 1 : 1 : zipWith ((-).(2*)) (drop n r) r
+          in r
+pe117 = (nfibs 4) !! (50+3)
 
 
 -- 120
