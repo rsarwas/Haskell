@@ -132,19 +132,30 @@ pe97 = (28433 * (powerMod 2 7830457 (10^10)) + 1) `mod` 10^10
 
 -- 100
 -- Arranged probability: By finding the first arrangement to contain over 10^12 discs in total, determine the number of blue discs that the box would contain.
--- Answer:
--- Analysis: P(BB) = B/T * (B-1)/(T-1) = 1/2 where B = number of blue discs, T = total number of discs, and P(BB) is the probability of drawing
---   two blue discs.  Find B and T which equal exactly 1/2.  rearranging terms and expanding, 2B^2 - 2B + T - T^2 = 0.
+-- Answer: 756872327473 (0.01 secs, 5748152 bytes)
+-- Analysis: P(BB) = b(b-1)/(t(t-1)) = 1/2 where b = number of blue discs, t = total number of discs,
+--   and P(BB) is the probability of drawing two blue discs.  Find b and t which equal exactly 1/2.  rearranging terms and expanding, 2B^2 - 2B + T - T^2 = 0.
 --   This equation is true for B,T = 15,21 and 85,120.  It can be shown that the equation holds for these values, and not others nearby.
 --   using the quadratic formula, to solve for B if T is known  aB^2 +bB + c == 0, where a = 2, b = -2, c = T-T^2
---   b t = (0.5,0.5*(sqrt (1 - 2*t*(1-t))))  so 1 - 2t*(t-1) must be a perfect square
-isps n = n'*n' == n where n' = floor $ sqrt (fromIntegral n)
-blue t = (1+ (isqrt (1 - 2*t*(1-t)))) `div` 2
-smallAnswers = map (\(t,_) -> (blue t,t)) $ filter (\(_,t') -> isps t') [(t,1-2*t*(1-t)) | t <- [10..(10^6)]]
--- smallAnswers => [(15,21),(85,120),(493,697),(2871,4060),(16731,23661),(97513,137904),(568345,803761)] in (8.01 secs, 1043295932 bytes)
+--   b t = (0.5,0.5*(sqrt (1 - 2*t*(1-t))))  so 1 - 2t*(1-t) must be a perfect square
+--   isps n = n'*n' == n where n' = floor $ sqrt (fromIntegral n)
+--   blue t = (1+ (isqrt (1 - 2*t*(1-t)))) `div` 2
+--   smallAnswers = map (\(t,_) -> (blue t,t)) $ filter (\(_,t') -> isps t') [(t,1-2*t*(1-t)) | t <- [10..(10^6)]]
+-- smallAnswers => [(15,21),(85,120),(493,697),(2871,4060),(16731,23661),(97513,137904),(568345,803761)] in (2.87 secs, 1043295932 bytes)
 -- and the following generated a correct solution for 10^3, however failed to find a solution after 10 hours with 10^12:
 -- pe100 = blue $ fst $ head $ filter (\(t,t') -> isps t') [(t,1-2*t*(1-t)) | t <- [(10^3)..]]
 -- Since the inner loop has some simple math, and the isPerfectSquare solution, the only optimization is at isPerfectSquare
 -- Using a very complicated solution (http://stackoverflow.com/questions/295579/fastest-way-to-determine-if-an-integers-square-root-is-an-integer)
 -- it is possible to get a 35% increase in speed which will never be enough.
 -- I need a better way to get to zoom in to the solution.
+-- After graphing f(x) = 1-2*x*(1-x) - floor(sqrt(1-2*x*(1-x))), I could see there was a pattern, but I could not 
+-- deduce it, so I decided to check OEIS for the sequence 21,120,697,4060,23661,137904,803761, which turns out to be
+-- sequence A046090, similarly, 15,85,493,2871,16731,97513,568345 is sequence A011900, whose formula is b(n)=6*b(n-1)-b(n-2)-2, with b(0)=1, b(1)=3 
+-- on that site I also learned that if I let t=(T+1)/2, and b=(B+1)/2 then 2b(b-1) = t(t-1) can be rewritten
+-- as B^2 -2T^2 = 1 which is Pell's Equation, which can also be solved quickly 
+-- A011900: a(n)=6*a(n-1)-a(n-2)-2, with a(0)=1, a(1)=3
+blues = 1 : scanl (\b a -> 6*b-a-2) 3 blues
+-- using the quadratic formula to solve  t(t-1) = 2b(b-1) for t(b) we have:
+total blue = (1+isqrt(1+8*blue*(blue-1))) `div` 2
+pe100 = fst $ head $ dropWhile (\(_,t) -> t < 10^12) [(blue, total blue) | blue <- blues]
+
