@@ -4,6 +4,18 @@ import ProjectEuler
 import Data.Ratio
 import Data.List (nub)
 
+-- 101
+-- Optimum polynomial: Find the sum of FITs for the BOPs.
+-- Answer: 37076114526 (0.01 secs, 8324216 bytes)
+-- u n = n^3 -- for testing
+u n = 1 - n + n^2 - n^3 + n^4 - n^5 + n^6 - n^7 + n^8 - n^9 + n^10
+pe101 = sum [ fit n | n <- [1..10]]
+fit n = op n (n+1)
+-- op n is a polynomial interpolation fitting u(1) .. u(n)
+-- using lagrange polynomials (see wikipedia for polynomial interpolation
+op n x = sum [ (u i) * (numerator $ product [ (x - j) % (i - j) | j <- [1..n], j /= i]) | i <- [1..n]]
+
+
 -- 102
 -- See pe6_102.hs
 
