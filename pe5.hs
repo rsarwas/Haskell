@@ -109,6 +109,25 @@ pe92 = (10^7 - 1)  - (length $ filter chainEndsIn1 digitSums) where
       | otherwise           = False
 
 
+-- 94
+-- Almost equilateral triangles: Find the sum of the perimeters of all almost equilateral triangles with integral side lengths and area and whose perimeters do not exceed one billion (1,000,000,000).
+-- Answer: 518408346 (0.00 secs, 1065872 bytes); plus 0.48 seconds for sample
+-- Analysis: We shall define an almost equilateral triangle (AET) to be a triangle for which two sides are equal and the third differs by no more than one unit.
+--   I start with a brute force method, to check all upto 10^5 this reveals that a brute force solution will take too long,
+--   but it does produce a well-known sequence, OEIS A120893, that can be generated much faster.
+isIntArea s b = if (even b) then isps (s2 - b2') else isps' (4*s2 - b2)
+  where s2  = s^2
+        b2  = b^2
+        b2' = b2 `div` 4
+isps n = n'*n' == n where n' = floor $ sqrt (fromIntegral n)
+isps' n = (n'*n' == n) && (n' `mod` 4 == 0) where n' = floor $ sqrt (fromIntegral n)
+sample94 = [(s,b,s+s+b) | s <- [5..50000], b <- [(s-1),(s+1)], isIntArea s b]
+-- OEIS A120893: a(n) = 3*a(n-1) + 3*a(n-2) - a(n-3); a(0)=1, a(1)=1, a(2)=5
+hyp94 = let r = 1:1:5: zip3With (\a b c -> 3*(a+b) - c) (drop 2 r) (drop 1 r) r
+        in r
+pe94 = sum $ takeWhile (<10^9) [s+s+b | s <- (drop 2 hyp94), b <- [(s-1),(s+1)], isIntArea s b]
+
+
 -- 96
 -- See pe5_96.hs
 
