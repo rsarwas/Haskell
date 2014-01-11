@@ -113,12 +113,13 @@ pe92 = (10^7 - 1)  - (length $ filter chainEndsIn1 digitSums) where
 
 -- 93
 -- Arithmetic expressions
--- Answer: 1258 (11.40 secs, 6446784648 bytes)
+-- Answer: 1258 (10.03 secs, 5989995008 bytes)
 -- Find the set of four distinct digits, a < b < c < d, for which the longest set of consecutive positive integers, 1 to n,
 -- can be obtained by combined the integers with any combination of the four operators (*./,+,-).
 -- giving your answer as a string: abcd.
--- Analysis: There are at most 9*8*7*6 = 3024 combinations of numbers with 4*3*2*1 permutations in ordering. combined with
--- 4^3 = 64 permutations of the operators (in a 3 out of 6 positions) of operators, yields a fairly manageable search
+-- Analysis: There are 126 unique sets of the first 4 integers 1234 .. 6789 with 4*3*2*1=24 permutations in ordering. combined with
+-- 4^3 = 64 permutations of the operators, in a 4 different postfix configurations.  This is 24*64*4 =  6144 expressions for 126
+-- sets of numbers. Therefore we must solve 774144 expressions.  This is a fairly manageable search
 -- space, so it should be possible to solve this with brute force.
 -- I will use RPN to generate all the possible combinations of integers and operators for each set of numbers.
 -- A data.ratio will be used to store intermediate results, and if the result is not an integer, then 0 will be returned
@@ -144,15 +145,15 @@ nsets = [[a,b,c,d] | a <- [1..6], b <-[(a+1)..7], c<-[(b+1)..8], d<-[(c+1)..9]]
 opsets :: [[Char]]
 opsets = [[a,b,c] | a <- ops, b <- ops, c <- ops] where ops  = "*+-/"
 
-rpnStrings (n1:n2:n3:[n4]) (op1:op2:op3:[]) = [[chr n1, chr n2, op1, chr n3, op2, chr n4, op3],
-                                               [chr n1, chr n2, chr n3, op1, op2, chr n4, op3], 
-                                               [chr n1, chr n2, chr n3, op1, chr n4, op2, op3],
-                                               [chr n1, chr n2, chr n3, chr n4, op1, op2, op3]]
+rpnStrings [n1,n2,n3,n4] [op1,op2,op3] = [[n1, n2, op1, n3, op2, n4, op3],
+                                          [n1, n2, n3, op1, op2, n4, op3], 
+                                          [n1, n2, n3, op1, n4, op2, op3],
+                                          [n1, n2, n3, n4, op1, op2, op3]]
                                                
-target' nset = [rpnCalculator s | nsetperm <- [lexiPerm i nset | i <- [0..23]], opperm <- opsets, s <- (rpnStrings nsetperm opperm)]
-target nset = sort $ nub $ filter (<999) $ filter (>0) $ (target' nset)
+allTargets nset = [rpnCalculator exp | nsetperm <- [lexiPerm i nset | i <- [0..23]], opperm <- opsets, exp <- (rpnStrings (map chr nsetperm) opperm)]
+targets nset = sort $ nub $ filter (<999) $ filter (>0) $ (allTargets nset)
 targetCount ns = (snd $ head $ dropWhile (\(x,i) -> i == x) (zip ns [1..])) - 1
-pe93 =  snd $ last $ sort $ [(targetCount (target nset), (digitsToInt nset)) | nset <- nsets] 
+pe93 =  snd $ last $ sort $ [(targetCount (targets nset), (digitsToInt nset)) | nset <- nsets] 
 
 
 -- 94
