@@ -2,6 +2,8 @@
 
 import ProjectEuler
 import Data.Set (fromList, size)  --for uniquing in 87
+import Data.Ratio -- for 93
+import Data.List -- 93
 
 -- 81
 -- See pe5_81.hs
@@ -107,6 +109,50 @@ pe92 = (10^7 - 1)  - (length $ filter chainEndsIn1 digitSums) where
     chainEndsIn1 n
       | n `elem` shortList  = True
       | otherwise           = False
+
+
+-- 93
+-- Arithmetic expressions
+-- Answer: 1258 (11.40 secs, 6446784648 bytes)
+-- Find the set of four distinct digits, a < b < c < d, for which the longest set of consecutive positive integers, 1 to n,
+-- can be obtained by combined the integers with any combination of the four operators (*./,+,-).
+-- giving your answer as a string: abcd.
+-- Analysis: There are at most 9*8*7*6 = 3024 combinations of numbers with 4*3*2*1 permutations in ordering. combined with
+-- 4^3 = 64 permutations of the operators (in a 3 out of 6 positions) of operators, yields a fairly manageable search
+-- space, so it should be possible to solve this with brute force.
+-- I will use RPN to generate all the possible combinations of integers and operators for each set of numbers.
+-- A data.ratio will be used to store intermediate results, and if the result is not an integer, then 0 will be returned
+-- The only characters allowed as input are "123456789-+*/"
+
+ord :: Char -> Ratio Int
+ord c = (fromEnum c - fromEnum '0') % 1
+chr :: Int -> Char
+chr i = toEnum ((fromEnum '0') + i)
+
+rpn '+' (a:b:s) = (b + a):s
+rpn '*' (a:b:s) = (b * a):s
+rpn '-' (a:b:s) = (b - a):s
+rpn '/' (a:b:s) = if (a == 0) then (9999999 % 1):s else (b / a):s
+rpn c s = if ( '1' <= c && c <= '9') then (ord c):s else error "Invalid stack/input"
+
+rpnCalculator :: [Char] -> Int
+rpnCalculator s = if (denominator r) == 1 then (numerator r) else 0
+  where r = head $ foldr rpn [] (reverse s)
+
+nsets :: [[Int]]
+nsets = [[a,b,c,d] | a <- [1..6], b <-[(a+1)..7], c<-[(b+1)..8], d<-[(c+1)..9]]
+opsets :: [[Char]]
+opsets = [[a,b,c] | a <- ops, b <- ops, c <- ops] where ops  = "*+-/"
+
+rpnStrings (n1:n2:n3:[n4]) (op1:op2:op3:[]) = [[chr n1, chr n2, op1, chr n3, op2, chr n4, op3],
+                                               [chr n1, chr n2, chr n3, op1, op2, chr n4, op3], 
+                                               [chr n1, chr n2, chr n3, op1, chr n4, op2, op3],
+                                               [chr n1, chr n2, chr n3, chr n4, op1, op2, op3]]
+                                               
+target' nset = [rpnCalculator s | nsetperm <- [lexiPerm i nset | i <- [0..23]], opperm <- opsets, s <- (rpnStrings nsetperm opperm)]
+target nset = sort $ nub $ filter (<999) $ filter (>0) $ (target' nset)
+targetCount ns = (snd $ head $ dropWhile (\(x,i) -> i == x) (zip ns [1..])) - 1
+pe93 =  snd $ last $ sort $ [(targetCount (target nset), (digitsToInt nset)) | nset <- nsets] 
 
 
 -- 94
