@@ -99,6 +99,21 @@ pe87 = size $ fromList $ primePowerTriples 50000000
 -- See pe5_89.hs
 
 
+-- 90
+-- Cube digit pairs: How many distinct arrangements of the two cubes allow for all of the square numbers to be displayed?
+-- Answer: 1217 (0.12 secs, 49853112 bytes)
+-- Analysis: The search space is pretty small, so a brute force check of all options is fast enough.  The biggest trick is
+--   to not double count d1,d2 different from d2,d1
+options = [[a,b,c,d,e,f] | a <- [0..4], b <-[(a+1)..5], c<-[(b+1)..6], d<-[(c+1)..7], e<-[(d+1)..8], f<-[(e+1)..9]]
+options' = map add6 $ map add9 options
+  where add6 xs = if (9 `elem` xs && not (6 `elem` xs)) then 6:xs else xs
+        add9 xs = if (6 `elem` xs && not (9 `elem` xs)) then 9:xs else xs
+goodPair xs ys = (check xs ys 0 1) && (check xs ys 0 4) && (check xs ys 0 9) && (check xs ys 1 6) && (check xs ys 2 5) &&
+                 (check xs ys 3 6) && (check xs ys 4 9) && (check xs ys 6 4) && (check xs ys 8 1)
+check xs ys x y = (x `elem` xs && y `elem` ys) || (x `elem` ys && y `elem` xs)
+pe90 = sum [1 | d1 <- options', d2 <- dropWhile (/= d1) options', goodPair d1 d2]
+
+
 -- 91
 -- Right triangles with integer coordinates: Given that (x0,y0) = (0,0) and 0 ≤ x1, y1, x2, y2 ≤ 50, how many right triangles can be formed?
 -- Answer: 14234 (0.02 secs, 11885880 bytes)
