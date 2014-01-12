@@ -43,6 +43,36 @@ closest = minimum $ map (\[h,w] -> [(abs (2000000 - (rectCount w h))),h,w]) rect
 pe85 = let [diff,h,w] = closest in w*h
 
 
+-- 86
+-- Cuboid route: Find the least value of M such that the number of solutions first exceeds one million.
+-- Answer: 1818 (0.21 secs, 18760528 bytes) + (0.07 secs, 6276728 bytes) + last bit of search/verification by hand
+-- Analysis:  the solution is the shortest "straight" integer path along the surface of an integral cuboid.
+--   When the cuboid is unfolded, the path is the hypotenuse of a right triangle, so this is a pythaorean triple problem.
+--   the sides a and b are one of the following choices (h,w+l), (w,h+l), (l,w+h). and a little pen an paper work shows
+--   that for any pythagorean triple, the number of unique cuboids is (a `div` 2) + (b `div` 2), however when the long leg
+--   is divided up on two surfaces, then the integral length is not the shortest route.  This happens when one of the segments
+--   of the long leg is greater than the short leg.  i.e for the triple 6,8,10 on a cuboid of 6,7,1 then the shortest route is
+--   on the hypotenuse formed by 7 and 6+1.  There are a-b-1 of these non-integral shortes routes where a is the longer leg.
+--   all the remaining fit on a cuboid with max dimension of b where b is the short leg.  This makes it tricky to maintain a
+--   running tota, so I will look at long legs and short legs separately, and add them as a last manual step.
+baseLegsTo m' = [longLegFirst m n | n <- [1..nmax], m <- [(n+1)..(mmax n)], odd (m-n), gcd m n == 1]
+  where mmax n = isqrt (m' + n^2)
+        nmax = isqrt (m' `div` 2)
+        longLegFirst m n = ((max a b), (min a b))
+          where a = m^2 - (n^2)
+                b = 2*m*n
+manyLegsTo m' = [(a*k,b*k) | (a,b) <- (baseLegsTo m'), k <- [1..(m' `div` a)]]
+sortedLongLegsTo m' = nub $ sort $ manyLegsTo m'
+sortedShortLegsTo m' = nub $ sort $ map (\(a,b) -> (b,a)) (manyLegsTo m')
+bigCuboidsTo m' = [(a,(b `div` 2)) | (a,b) <- sortedLongLegsTo m']
+smallCuboidsTo m' = [(a,(max 0 ((b `div` 2) - (b-a-1)))) | (a,b) <- sortedShortLegsTo m']
+totalBigCuboidsTo m' = scanl (\(a1,a2) (x,y) -> ((max a1 x),(a2+y)) ) (0,0) (bigCuboidsTo m')
+totalSmallCuboidsTo m' = scanl (\(a1,a2) (x,y) -> ((max a1 x),(a2+y)) ) (0,0) (smallCuboidsTo m')
+-- the number provided is the length of the long leg, so we need to go larger to ensure all the small legs are captured.
+pe86 = takeWhile (\(a,b) -> a < 1820) $ dropWhile (\(a,b) -> a < 1815) $ totalSmallCuboidsTo 4000
+pe86' = takeWhile (\(a,b) -> a < 1820) $ dropWhile (\(a,b) -> a < 1815) $ totalBigCuboidsTo 2000
+
+
 -- 87
 -- Prime power triples: How many numbers below fifty million can be expressed as the sum of a prime square, prime cube, and prime fourth power?
 -- Answer: 1097343 (8.46 secs, 1412321004 bytes)

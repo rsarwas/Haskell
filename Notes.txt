@@ -33,5 +33,6 @@ By Regan Sarwas (rsarwas@gmail.com) August 2013 to ...
   72, too slow
   76, I stumbled onto some help with this problem, but I would like to resolve it myself.
   79, solved manually, find computer solution
+  86, last step is manual, find complete computer solution
  112, lots of manual work; find complete computer solution
  210, too slow
