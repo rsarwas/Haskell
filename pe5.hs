@@ -143,7 +143,7 @@ pe92 = (10^7 - 1)  - (length $ filter chainEndsIn1 digitSums) where
 
 -- 93
 -- Arithmetic expressions
--- Answer: 1258 (10.03 secs, 5989995008 bytes)
+-- Answer: 1258 (10.03 secs, 5989995008 bytes); using Maybes slowed it down to 13.60 secs
 -- Find the set of four distinct digits, a < b < c < d, for which the longest set of consecutive positive integers, 1 to n,
 -- can be obtained by combined the integers with any combination of the four operators (*./,+,-).
 -- giving your answer as a string: abcd.
@@ -160,15 +160,18 @@ ord c = (fromEnum c - fromEnum '0') % 1
 chr :: Int -> Char
 chr i = toEnum ((fromEnum '0') + i)
 
-rpn '+' (a:b:s) = (b + a):s
-rpn '*' (a:b:s) = (b * a):s
-rpn '-' (a:b:s) = (b - a):s
-rpn '/' (a:b:s) = if (a == 0) then (9999999 % 1):s else (b / a):s
-rpn c s = if ( '1' <= c && c <= '9') then (ord c):s else error "Invalid stack/input"
+rpn _ (Nothing:_:s) = Nothing:s
+rpn '+' (Just a:Just b:s) = Just (b + a):s
+rpn '*' (Just a:Just b:s) = Just (b * a):s
+rpn '-' (Just a:Just b:s) = Just (b - a):s
+rpn '/' (Just a:Just b:s) = if (a == 0) then Nothing:s else Just (b / a):s
+rpn c s = if ('1' <= c && c <= '9') then Just (ord c):s else Nothing:s
 
-rpnCalculator :: [Char] -> Int
-rpnCalculator s = if (denominator r) == 1 then (numerator r) else 0
-  where r = head $ foldr rpn [] (reverse s)
+rpnCalculator :: [Char] -> Maybe Int
+rpnCalculator s = checkSolution (solve s) 
+  where solve exp = head $ foldr rpn [] (reverse exp)
+        checkSolution Nothing = Nothing
+        checkSolution (Just a)  = if (denominator a) == 1 then (let n = numerator a in if n < 1 then Nothing else Just n) else Nothing 
 
 nsets :: [[Int]]
 nsets = [[a,b,c,d] | a <- [1..6], b <-[(a+1)..7], c<-[(b+1)..8], d<-[(c+1)..9]]
@@ -181,7 +184,7 @@ rpnStrings [n1,n2,n3,n4] [op1,op2,op3] = [[n1, n2, op1, n3, op2, n4, op3],
                                           [n1, n2, n3, n4, op1, op2, op3]]
                                                
 allTargets nset = [rpnCalculator exp | nsetperm <- [lexiPerm i nset | i <- [0..23]], opperm <- opsets, exp <- (rpnStrings (map chr nsetperm) opperm)]
-targets nset = sort $ nub $ filter (<999) $ filter (>0) $ (allTargets nset)
+targets nset = sort $ nub $ map (\(Just a) -> a) $ filter (/=Nothing) (allTargets nset)
 targetCount ns = (snd $ head $ dropWhile (\(x,i) -> i == x) (zip ns [1..])) - 1
 pe93 =  snd $ last $ sort $ [(targetCount (targets nset), (digitsToInt nset)) | nset <- nsets] 
 
