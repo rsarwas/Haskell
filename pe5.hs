@@ -3,7 +3,7 @@
 import ProjectEuler
 import Data.Set (fromList, size)  --for uniquing in 87
 import Data.Ratio -- for 93
-import Data.List -- 93
+import Data.List -- 88, 93
 
 -- 81
 -- See pe5_81.hs
@@ -91,8 +91,18 @@ primePowerTriples n = [p | c <- takeWhile (<=(max4 n)) ps, let c4 = c^4, b <- ta
          max4 x = floor ((fromIntegral x)**(1/4))
 
 pe87 = size $ fromList $ primePowerTriples 50000000
---pe87 = length $ unique $ quicksort $ primePowerTriples 50000000
---pe87 = length $ primePowerTriples 50000000
+
+
+-- 88
+-- Product-sum numbers: What is the sum of all the minimal product-sum numbers for 2≤k≤12000?
+-- Answer: 
+mps2 k = [ (n1, n2, n1*n2) | n1 <- [2..k], n2 <- [n1..(2*k `div` n1)], (n1*n2 - n1 - n2) == (k-2)]
+minimalProductSum x = minimum (f' x) --[f n x | n <- [2..((x `div` 2)+ 1)]]
+  where f 2 k = 2*k
+        f n k = if (k-1) `mod` (n-1) == 0 then k + n + ((k-n) `div` (n-1)) else f 2 k
+        f' k = [ n1*n2 | n1 <- [2..k], n2 <- [n1..(2*k `div` n1)], (n1*n2 - n1 - n2) == (k-2)]
+pe88test = nub [minimalProductSum k | k <- [2..12]]
+pe88 = sum $ nub [minimalProductSum k | k <- [2..12000]]
 
 
 -- 89
