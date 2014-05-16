@@ -37,3 +37,30 @@ penultimate [x] = error "singleton"
 penultimate x = second rx
    where rx = reverse x
          second (u:v:_) = v
+         
+-- 3) find the kth element in a list
+elementat :: Int -> [a] -> a
+elementat _ [] = error "element is beyond end of list"
+elementat 0 (x:_) = x
+elementat n (x:xs) = elementat (n-1) xs
+
+-- 4) find the length of a list
+mylength :: [a] -> Int
+mylength = foldl (\acc _ -> acc+1) 0
+
+-- 5) reverse a list
+myreverse :: [a] -> [a]
+myreverse [] = []
+myreverse (x:xs) = myreverse xs ++ [x]
+
+
+-- 6) flatten
+
+-- 7) reduce sequential and equal elements to a single instance in a list
+dedup :: (Eq a) => [a] -> [a]
+dedup [] = []
+dedup [a] = [a]
+dedup (a:b:xs) | a == b    = dedup (b:xs)
+               | otherwise = a : (dedup (b:xs))
+
+-- 8) compress
