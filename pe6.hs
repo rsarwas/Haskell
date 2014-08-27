@@ -36,6 +36,47 @@ pe104 = fst $ head $ filter pandigitalHead $ filter (pandigitalTail . snd) $ zip
 -- 107
 -- See pe6_107.hs
 
+
+-- 109
+-- In darts, how many distinct ways can a player checkout with a score less than 100?
+data Dart = Single Int | Double Int | Triple Int | Bull | DoubleBull | Miss
+     deriving (Show, Eq, Ord)
+
+type DartGroup = (Dart, Dart, Dart)
+
+score :: Dart -> Int
+score (Single a) = a
+score (Double a) = 2*a
+score (Triple a) = 3*a
+score       Bull = 25
+score DoubleBull = 50
+score       Miss = 0
+
+groupScore :: DartGroup -> Int
+groupScore (d1,d2,d3) = score d1 + score d2 + score d3
+
+lastDarts :: [Dart]
+lastDarts = DoubleBull:[Double x | x <- [1..20]]
+allDarts :: [Dart]
+allDarts = Bull:lastDarts ++ [Single x | x <- [1..20]] ++ [Triple x | x <- [1..20]]
+
+nomiss  = [ (  d1,   d2, d3) | d1 <- allDarts, d2 <- allDarts, d3 <- lastDarts, d1 <= d2]
+onemiss = [ (Miss,   d2, d3) | d2 <- allDarts, d3 <- lastDarts]
+twomiss = [ (Miss, Miss, d3) | d3 <- lastDarts]
+
+distinct = length nomiss + length onemiss + length twomiss
+
+dartsForScore :: Int -> [DartGroup]
+dartsForScore n = [d | d <- (nomiss ++ onemiss ++ twomiss), groupScore d == n ]
+
+countLessThan :: Int -> Int
+countLessThan n = length $ filter (< n) [groupScore d | d <- (nomiss ++ onemiss ++ twomiss)]
+
+pe109Check1 = distinct
+pe109Check2 = length (dartsForScore 6)
+pe109 = countLessThan 100
+
+
 -- 112
 -- Bouncy numbers: Find the least number for which the proportion of bouncy numbers is exactly 99%.
 -- Answer: 1587000 (0.06 secs, 9492116 bytes) + lots of pencil and paper time.
