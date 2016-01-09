@@ -1,7 +1,15 @@
 -- Project Euler in Haskell problems 161..180
 
--- 169
+-- 162
+-- How many hexadecimal numbers containing at most sixteen hexadecimal digits exist with all of the digits 0,1, and A present at least once?
+-- Answer: 6377292 (in Hex = 0x614F4C)
+hexCount :: Int -> Int
+hexCount 3 = 4
+hexCount n = 3 * (hexCount (n-1))
+pe162 = hexCount 16
 
+
+-- 169
 -- returns a list of powers of 2 [1,2,4,8..]
 powersOf2 :: Integral a => [a]
 powersOf2 = [2^n | n <- [0..]]
