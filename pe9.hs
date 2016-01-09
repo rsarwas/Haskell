@@ -31,3 +31,26 @@ s x = f l n 1
          n = 1 + (head l)
 
 pe169 = s (10^25)
+
+
+-- 173
+-- Using up to one million tiles how many different "hollow" square laminae can be formed?
+-- Answer: 1572729  (3.03 secs, 1,387,625,960 bytes)
+-- Analysis:
+-- Hole size 1,3,5,... -> 8,16,24,32,40,48,56,64,72,80,88,96,... tiles in a ring
+-- Hole size 2,4,6,... -> 12,20,28,36,44,52,60,68,76,84,92,100, ... tiles in a ring
+-- for n=100 tiles:
+--     Single rings = 12 from first list + 12 from second list; take while x < n
+--     Double rings = 5 from l1 + 5 from l2; take while x < n/2+4 (rings are n/2 + n/2-4), count is list length - 1
+--     Triple rings = 3 + 2  take while x < max n/3+8 (rings n/3+8 + n/3 + n/3-8), count is list length - 2
+--     Quad rings =  1 + 1 take while x < n/4+12; count = len - 3
+
+laminaeCount':: Int -> Int -> Int
+laminaeCount' r t =
+  (length $ takeWhile (\x -> x <= maxRingSize r t) [12,20..]) - (r-1) +
+  (length $ takeWhile (\x -> x <= maxRingSize r t) [ 8,16..]) - (r-1)
+    where maxRingSize rings tiles = tiles `div` rings + 4*(rings-1)  -- 0 < rings <= tiles
+
+laminaeCount:: Int -> Int
+laminaeCount tiles = sum $ takeWhile (>0) [laminaeCount' rings tiles | rings <- [1..]]
+pe173 = laminaeCount 1000000
