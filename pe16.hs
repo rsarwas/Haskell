@@ -20,7 +20,7 @@ nap x n
   | n < (2*x-1) = 0
   | otherwise   = sum [nap (x-1) y | y <- [1..(n-2)]]
 
-all non adjacent permutation for less than n digits
+-- all non adjacent permutation for less than n digits
 allnap :: Int -> Int
 allnap n = sum [nap x n | x <- [1..((n +1) `div` 2)]]
 pe301 = 1 + allnap 30 -- +1 for the = part of the <=
