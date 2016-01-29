@@ -1,9 +1,11 @@
 -- Project Euler in Haskell problems 81..100
 
 import ProjectEuler
-import Data.Set (fromList, size)  --for uniquing in 87
+import Data.Set (fromList, size)  -- for uniquing in 87
 import Data.Ratio -- for 93
 import Data.List -- 88, 93
+import System.Random -- 84
+import qualified Data.Map as Map -- 84
 
 -- 81
 -- See pe5_81.hs
@@ -16,6 +18,91 @@ import Data.List -- 88, 93
 -- 83
 -- See pe5_83.hs
 
+-- 84
+-- Monopoly
+-- Answer: 101524 (0.94 secs, 325,983,680 bytes)
+
+-- Fisher Yates randomizer for shuffling cards
+fisherYatesStep :: RandomGen g => (Map.Map Int a, g) -> (Int, a) -> (Map.Map Int a, g)
+fisherYatesStep (m, gen) (i, x) = ((Map.insert j x . Map.insert i (m Map.! j)) m, gen')
+  where
+    (j, gen') = randomR (0, i) gen
+
+fisherYates :: RandomGen g => g -> [a] -> ([a], g)
+fisherYates gen [] = ([], gen)
+fisherYates gen l =
+  toElems $ foldl fisherYatesStep (initial (head l) gen) (numerate (tail l))
+  where
+    toElems (x, y) = (Map.elems x, y)
+    numerate = zip [1..]
+    initial x gen = (Map.singleton 0 x, gen)
+
+shuffle :: Int -> [a] -> [a]
+shuffle seed = fst . fisherYates (mkStdGen seed)
+
+roll :: Int -> Int -> [(Int,Int)]
+roll sides seed = zip (dicerolls sides seed) (dicerolls sides (seed +1))
+  where
+    dicerolls sides seed = randomRs (1, sides) (mkStdGen seed)
+
+
+nextRR :: Int -> Int
+nextRR sq
+  | sq == 7   = 15
+  | sq == 22  = 25
+  | otherwise = 5
+
+nextUT :: Int -> Int
+nextUT sq = if sq == 22 then 28 else 12
+
+playCH :: Int -> Int -> [Int] -> Int
+playCH i sq cards
+  | i == cards!!1  = 0   --GO
+  | i == cards!!2  = 10  --JAIL
+  | i == cards!!3  = 11  --C1
+  | i == cards!!4  = 24  --E3
+  | i == cards!!5  = 39  --H2
+  | i == cards!!6  = 5   --R1
+  | i == cards!!7  = nextRR sq
+  | i == cards!!8  = nextRR sq
+  | i == cards!!9  = nextUT sq
+  | i == cards!!10 = sq - 3  -- if sq == 36, then we need to play the CC
+  | otherwise      = sq
+
+playCC :: Int -> Int -> [Int] -> Int
+playCC i sq cards
+  | i == cards!!1 = 0   --GO
+  | i == cards!!2 = 10  --JAIL
+  | otherwise     = sq
+
+-- state = (square[0:39], chanceIndex[0:15], commChestIndex[0:15], doublesCount[0:2]
+-- roll = (die1, die2)
+move :: (Int, Int, Int, Int, [Int], [Int]) -> (Int, Int) -> (Int, Int, Int, Int, [Int], [Int])
+move (sq, ch, cc, dbl, chCards, ccCards) (d1, d2)
+  | d1 == d2 && dbl == 2                = ret 10 ch cc 0
+  | nsq == 30                           = ret 10 ch cc ndbl
+  | nsq == 2 || nsq == 17 || nsq == 33  = ret playcc ch (draw cc) ndbl
+  | nsq == 36                           = let nsq' = playch in if nsq' == 33 then (ret playcc (draw ch) (draw cc) ndbl) else (ret nsq' (draw ch) cc ndbl)
+  | nsq == 7 || nsq == 22               = ret playch (draw ch) cc ndbl
+  | otherwise                           = ret nsq ch cc ndbl
+  where
+    ret a b c d = (a, b, c, d, chCards, ccCards)
+    playcc = playCC cc nsq ccCards
+    playch = playCH ch nsq chCards
+    playcc' = playCC cc 33 ccCards
+    nsq = (sq + d1 + d2) `mod` 40
+    ndbl = if d1 == d2 then dbl + 1 else 0
+    draw i = (i + 1) `mod` 16
+
+top3 sides n seed = map snd $ take 3 $ reverse $ quicksort [(y,x) | (x,y) <- histogram]
+  where
+    chCards = shuffle seed [0..15]
+    ccCards = shuffle (seed +1) [0..15]
+    movelist = scanl move (0, 0, 0, 0, chCards, ccCards) (roll sides (seed+2))
+    playgame = take n $ drop 1 $ movelist
+    histogram = zip [0..39] (counts [0..39] [x | (x,_,_,_,_,_) <- playgame])
+test84 = top3 6 100000 5345  -- 102400
+pe84 = top3 4 100000 683475
 
 -- 85
 -- Counting rectangles: Although there exists no rectangular grid that contains exactly two million rectangles, find the area of the grid with the nearest solution.
@@ -95,7 +182,7 @@ pe87 = size $ fromList $ primePowerTriples 50000000
 
 -- 88
 -- Product-sum numbers: What is the sum of all the minimal product-sum numbers for 2≤k≤12000?
--- Answer: 
+-- Answer:
 mps2 k = [ (n1, n2, n1*n2) | n1 <- [2..k], n2 <- [n1..(2*k `div` n1)], (n1*n2 - n1 - n2) == (k-2)]
 minimalProductSum x = minimum (f' x) --[f n x | n <- [2..((x `div` 2)+ 1)]]
   where f 2 k = 2*k
@@ -132,7 +219,7 @@ pe90 = sum [1 | d1 <- options', d2 <- dropWhile (/= d1) options', goodPair d1 d2
 -- 3) horizontal/vertical sides below/left of hypotenuse = n^2 (right angle at 0,0)
 -- 4) hypotenuse on x-axis (0 degrees) or rotated CCW (< 90) with right angle above hypotenuse;
 --      sides not horizontal or vertical = hypDn
--- 5) hypotenuse on y-axis (90 degrees) or rotated CW (> 0) with right angle below hypotenuse; 
+-- 5) hypotenuse on y-axis (90 degrees) or rotated CW (> 0) with right angle below hypotenuse;
 --      sides not horizontal or vertical = hypDn (by symmetry)
 -- 6) right angle at 0,0 sides inside x or y axis = 0
 
@@ -193,10 +280,10 @@ rpn '/' (Just a:Just b:s) = if (a == 0) then Nothing:s else Just (b / a):s
 rpn c s = if ('1' <= c && c <= '9') then Just (ord c):s else Nothing:s
 
 rpnCalculator :: [Char] -> Maybe Int
-rpnCalculator s = checkSolution (solve s) 
+rpnCalculator s = checkSolution (solve s)
   where solve exp = head $ foldr rpn [] (reverse exp)
         checkSolution Nothing = Nothing
-        checkSolution (Just a)  = if (denominator a) == 1 then (let n = numerator a in if n < 1 then Nothing else Just n) else Nothing 
+        checkSolution (Just a)  = if (denominator a) == 1 then (let n = numerator a in if n < 1 then Nothing else Just n) else Nothing
 
 nsets :: [[Int]]
 nsets = [[a,b,c,d] | a <- [1..6], b <-[(a+1)..7], c<-[(b+1)..8], d<-[(c+1)..9]]
@@ -204,14 +291,14 @@ opsets :: [[Char]]
 opsets = [[a,b,c] | a <- ops, b <- ops, c <- ops] where ops  = "*+-/"
 
 rpnStrings [n1,n2,n3,n4] [op1,op2,op3] = [[n1, n2, op1, n3, op2, n4, op3],
-                                          [n1, n2, n3, op1, op2, n4, op3], 
+                                          [n1, n2, n3, op1, op2, n4, op3],
                                           [n1, n2, n3, op1, n4, op2, op3],
                                           [n1, n2, n3, n4, op1, op2, op3]]
-                                               
+
 allTargets nset = [rpnCalculator exp | nsetperm <- [lexiPerm i nset | i <- [0..23]], opperm <- opsets, exp <- (rpnStrings (map chr nsetperm) opperm)]
 targets nset = sort $ nub $ map (\(Just a) -> a) $ filter (/=Nothing) (allTargets nset)
 targetCount ns = (snd $ head $ dropWhile (\(x,i) -> i == x) (zip ns [1..])) - 1
-pe93 =  snd $ last $ sort $ [(targetCount (targets nset), (digitsToInt nset)) | nset <- nsets] 
+pe93 =  snd $ last $ sort $ [(targetCount (targets nset), (digitsToInt nset)) | nset <- nsets]
 
 
 -- 94
@@ -241,7 +328,7 @@ pe94 = sum $ takeWhile (<10^9) [s+s+b | s <- (drop 2 hyp94), b <- [(s-1),(s+1)],
 -- Large non-Mersenne prime: Find the last ten digits of 28433 * 2^7830457 + 1.
 --    this is a massive non-Mersenne prime which contains 2,357,207 digits
 -- Answer: 8739992577 (0.01 laptop secs, 1583960 bytes)
--- Note: (a  *b^c  +d) mod m == (a * (b^c mod m) + d) mod m 
+-- Note: (a  *b^c  +d) mod m == (a * (b^c mod m) + d) mod m
 -- we can solve b^c mod m with Modular exponentiation which is much more efficient when c is large.
 pe97 = (28433 * (powerMod 2 7830457 (10^10)) + 1) `mod` 10^10
 
@@ -272,11 +359,11 @@ pe97 = (28433 * (powerMod 2 7830457 (10^10)) + 1) `mod` 10^10
 -- Using a very complicated solution (http://stackoverflow.com/questions/295579/fastest-way-to-determine-if-an-integers-square-root-is-an-integer)
 -- it is possible to get a 35% increase in speed which will never be enough.
 -- I need a better way to get to zoom in to the solution.
--- After graphing f(x) = 1-2*x*(1-x) - floor(sqrt(1-2*x*(1-x))), I could see there was a pattern, but I could not 
+-- After graphing f(x) = 1-2*x*(1-x) - floor(sqrt(1-2*x*(1-x))), I could see there was a pattern, but I could not
 -- deduce it, so I decided to check OEIS for the sequence 21,120,697,4060,23661,137904,803761, which turns out to be
--- sequence A046090, similarly, 15,85,493,2871,16731,97513,568345 is sequence A011900, whose formula is b(n)=6*b(n-1)-b(n-2)-2, with b(0)=1, b(1)=3 
+-- sequence A046090, similarly, 15,85,493,2871,16731,97513,568345 is sequence A011900, whose formula is b(n)=6*b(n-1)-b(n-2)-2, with b(0)=1, b(1)=3
 -- on that site I also learned that if I let t=(T+1)/2, and b=(B+1)/2 then 2b(b-1) = t(t-1) can be rewritten
--- as B^2 -2T^2 = 1 which is Pell's Equation, which can also be solved quickly 
+-- as B^2 -2T^2 = 1 which is Pell's Equation, which can also be solved quickly
 -- A011900: a(n)=6*a(n-1)-a(n-2)-2, with a(0)=1, a(1)=3
 blues = 1 : scanl (\b a -> 6*b-a-2) 3 blues
 -- using the quadratic formula to solve  t(t-1) = 2b(b-1) for t(b) we have:

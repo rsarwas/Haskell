@@ -1,5 +1,7 @@
 module ProjectEuler
-( digits
+( count
+, counts
+, digits
 , digitsToInt
 , divisors
 , divisorCount
@@ -30,7 +32,15 @@ module ProjectEuler
 
 import Data.Bits -- for shiftR in powerMod
 
--- Returns a list of decimal digits from an integral 
+-- returns the count of an item in a list
+count :: Eq a => a -> [a] -> Int
+count x = length . filter (==x)
+
+-- returns a list of frequency list (number of times each item in list1 appears in list2
+counts :: Eq a => [a] -> [a] -> [Int]
+counts vs xs = map (flip count xs) vs
+
+-- Returns a list of decimal digits from an integral
 digits :: Integral a => a -> [a]
 digits x
      | x < 0     = digits (-x)
@@ -47,7 +57,7 @@ divisors n = unique $ quicksort $ map product (powerSet (primeFactors n))
 
 -- Returns the number of divisors a number has (includes 1 and the number)
 -- uses the fact the number of divisors is (c1+1)*(c2+1)* ... * (ck+1)
--- where n = p1^c1 * p2^c2 * ... * pk^ck where pi are the prime factors 
+-- where n = p1^c1 * p2^c2 * ... * pk^ck where pi are the prime factors
 divisorCount :: (Integral a) => a -> Int
 divisorCount n  = product $ map ((+1).snd) $ (group (primeFactors n))
 
@@ -63,9 +73,9 @@ group (x:xs) = (x,1 + (length $ filter (==x) xs)):(group (filter (/=x) xs))
 
 -- Predicate that tests if a number is prime
 isPrime :: (Integral a) => a -> Bool
-isPrime n 
+isPrime n
   | n < 2     = False
-  | otherwise = n == head (primeFactors n) 
+  | otherwise = n == head (primeFactors n)
 
 --isqrt: integral square root, isqrt n returns the largest integer a such that a * a <= n
 isqrt :: (Integral a) => a -> a
@@ -76,7 +86,7 @@ isqrt n = truncate (sqrt (fromIntegral n))
 lexiPerm :: (Eq t) => Int -> [t] -> [t]
 lexiPerm _ [] = error "Empty list"
 lexiPerm 0 items = items
-lexiPerm i items  
+lexiPerm i items
     | i <  0 = error "The permutation index must be a positive number"
     | i >= m2 = error "There are not that many permutations for these items"
     | otherwise = d:(lexiPerm r [x | x <- items, x /= d])
@@ -130,7 +140,7 @@ powerSet (x:xs) = tailps ++ map m tailps where
   tailps = powerSet xs
   m = (:) x
 
--- The prime factors of a number; returns an empty list for numbers < 2 
+-- The prime factors of a number; returns an empty list for numbers < 2
 primeFactors :: (Integral a) => a -> [a]
 primeFactors n = primeFactors' n (primesTo (isqrt n))
 primeFactors' n possiblePrimes
@@ -139,7 +149,7 @@ primeFactors' n possiblePrimes
   | r == 0              = nextPrime:(primeFactors' q possiblePrimes)
   | otherwise           = primeFactors' n (tail possiblePrimes)
   where nextPrime = head possiblePrimes
-        (q,r) = n `quotRem` nextPrime 
+        (q,r) = n `quotRem` nextPrime
 
 -- a finite list of prime numbers: [2,3,5,7..n]
 -- Algorithm stolen from http://www.haskell.org/haskellwiki/Prime_numbers
@@ -149,18 +159,18 @@ primesTo m
   | otherwise = 2 : sieve [3,5..m]  where
     sieve []     = []
     sieve (p:xs) = p : sieve (xs `minus` [p*p, p*p+2*p..m])
-    minus (x:xs) (y:ys) = case (compare x y) of 
+    minus (x:xs) (y:ys) = case (compare x y) of
                LT -> x : minus  xs  (y:ys)
-               EQ ->     minus  xs     ys 
+               EQ ->     minus  xs     ys
                GT ->     minus (x:xs)  ys
     minus xs      _     = xs
 
 -- uses the quicksort algorithm to sort a list of sortable items
-quicksort :: (Ord a) => [a] -> [a]    
-quicksort [] = []    
-quicksort (x:xs) =     
-    let smallerSorted = quicksort (filter (<=x) xs)  
-        biggerSorted = quicksort (filter (>x) xs)   
+quicksort :: (Ord a) => [a] -> [a]
+quicksort [] = []
+quicksort (x:xs) =
+    let smallerSorted = quicksort (filter (<=x) xs)
+        biggerSorted = quicksort (filter (>x) xs)
     in  smallerSorted ++ [x] ++ biggerSorted
 
 -- Returns a new string with a new substring replacing all old substrings in the input
@@ -203,7 +213,7 @@ wordsWhen p s =  case dropWhile p s of
                       "" -> []
                       s' -> w : wordsWhen p s''
                             where (w, s'') = break p s'
-                            
+
 -- zip 3 lists together with your own function
 zip3With :: (a -> b -> c -> d) -> [a] -> [b] -> [c] -> [d]
 zip3With _ [] _ _ = []
