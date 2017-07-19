@@ -30,10 +30,27 @@ By Regan Sarwas (rsarwas@gmail.com) August 2013 to ...
 
 * RE-SOLVE:
   14, I found a shortcut, try to optimize brute force solution
+  23, look for faster solution
   72, too slow
   76, I stumbled onto some help with this problem, but I would like to resolve it myself.
   79, solved manually, find computer solution
   86, last step is manual, find complete computer solution
+  92, kinda slow
  112, lots of manual work; find complete computer solution
  210, too slow
- 387, too slow
+ 387, WAAAAAAY too slow
+
+* IN-PROGRESS
+  60
+  78
+  83
+  88
+ 107
+ 109 *
+ 121 *
+ 124 *
+ 125 *
+ 162
+ 169
+ 187
+ 233
