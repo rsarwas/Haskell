@@ -2,7 +2,9 @@
 -- Path sum: four ways
 -- Find the minimal path sum, in a text file containing a 80 by 80 matrix,
 -- from the top left cell to the bottom right cell by moving up, down, left or right.
--- Answer: 
+-- Answer:
+-- compile with ghc pe5_83.hs; run with time ./pe5_83 < pe5_83matrix.txt
+
 -- This is a little slower and more complicated than necessary, because it also keeps track of
 --   the optimal path, for reporting/verification.
 
@@ -24,10 +26,10 @@ import qualified Prelude as P
 --   note: Right is already defined in Prelude for Either, so we need to hide it as P.Right
 -- Winner is a tuple of the minimum path value (Int), row index of the starting cell in the
 --   left column (Int), and the path to the cell in the right column that makes the minimum
---   path value (Path). 
+--   path value (Path).
 type Grid = [[Int]]
 data Direction = Left| Right | Up | Down
-     deriving (Eq, Ord, Show, Read, Bounded, Enum) 
+     deriving (Eq, Ord, Show, Read, Bounded, Enum)
 type Path = [Direction]
 type Best = [(Int,Int,Path)]
 type Winner = (Int, Int, Path)
