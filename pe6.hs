@@ -38,7 +38,9 @@ pe104 = fst $ head $ filter pandigitalHead $ filter (pandigitalTail . snd) $ zip
 
 
 -- 109
--- In darts, how many distinct ways can a player checkout with a score less than 100?
+-- Darts
+-- How many distinct ways can a player checkout with a score less than 100?
+-- Answer: 38182 (0.15 secs, 38,862,952 bytes)
 data Dart = Single Int | Double Int | Triple Int | Bull | DoubleBull | Miss
      deriving (Show, Eq, Ord)
 
