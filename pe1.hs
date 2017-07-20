@@ -30,7 +30,7 @@ pe4 = head $ filter has3DigitDivisor palindromes where
       palindromes = [read (show x ++ (reverse $ show x)) :: Int | x <- [997,996..100]]
       has3DigitDivisor n
         | n < 100*100 || 999*999 < n = False
-        | otherwise                  = or [True | x <- [999,998..(n `div` 999)], n `mod` x == 0] 
+        | otherwise                  = or [True | x <- [999,998..(n `div` 999)], n `mod` x == 0]
 
 
 -- 5
@@ -49,7 +49,7 @@ pe6 = abs (sumOfSquares [1..100] - squareOfSum [1..100])
 
 -- 7
 -- What is the 10 001st prime number?
--- Answer: 104743  (1.20 laptop secs, 199001748 bytes) 
+-- Answer: 104743  (1.20 laptop secs, 199001748 bytes)
 -- 1st prime is at index 0; nth is at index n-1
 pe7 = primesTo 105000 !! (10001-1)
 
@@ -106,7 +106,7 @@ pe10 = sum $ primesTo 2000000
 --      [7,8,9]]    [1,1,7,8,9,]]        [7,8,9,1,1]
 -- then transpose and look for maximum adjacent products in each row
 -- so long as the solution is greater than 99*99*99 ~ 1,000,000 we can be sure that a diagonal of three or less is not the max.
-pe11data = 
+pe11data =
   ["08 02 22 97 38 15 00 40 00 75 04 05 07 78 52 12 50 77 91 08",
    "49 49 99 40 17 81 18 57 60 87 17 40 98 43 69 48 04 56 62 00",
    "81 49 31 73 55 79 14 29 93 71 40 67 53 88 30 03 49 13 36 65",
@@ -262,9 +262,9 @@ collatzChain 1 = [1]
 collatzChain n
     | even n    = n:collatzChain (n `div` 2)
     | otherwise = n:collatzChain (3*n+1)
-    
+
 --brute force: check all chains, and pick the longest
-pe14' = snd $ maximum [(length $ collatzChain x,x) | x <- [1..999999]] -- (217.45 secs, 97144526760 bytes) 
+pe14' = snd $ maximum [(length $ collatzChain x,x) | x <- [1..999999]] -- (217.45 secs, 97144526760 bytes)
 
 --recursive solution
 -- this is probably a situation where the recursion doesn't optimize to a tight loop like C
@@ -282,7 +282,7 @@ pe14 = findPattern 1000
 -- this yields [1,2,3,6,7,9,18,25,27,54,73,97,129,171,231,313,327,649,703,871] in (0.10 secs, 45410112 bytes)
 -- which is sequence A006877 on Sloane's (OEIS) list.  Looking at the list online, the sequence includes
 -- 511935, 626331, 837799, 1117065, so the solution is 837799
--- 
+--
 -- In reading the forum on this post, it seems that the brute force solution (above) is the way to go,
 -- with assembly code delivering the fastest results.
 
@@ -295,7 +295,7 @@ pe14 = findPattern 1000
 --     1   1
 --   1   2   1
 -- by summing the two nodes above it you will see that the values of the nodes of the lattice is the central
--- portion of pascal's triangle. all we need is the middle value of the last row. 
+-- portion of pascal's triangle. all we need is the middle value of the last row.
 pe15 = pascalsTriangleRow (pe15data * 2 + 1) !! pe15data
        where pe15data = 20
 
@@ -351,7 +351,7 @@ pe17 = sum $ map intWordLength [1..1000] where
 -- 18
 -- Find the maximum sum of adjacent numbers from top to bottom of the triangle below:
 -- Answer: 1074 (0.00 secs, 1027952 bytes)
-pe18data = 
+pe18data =
   [[75],
    [95, 64],
    [17, 47, 82],
@@ -367,7 +367,7 @@ pe18data =
    [91, 71, 52, 38, 17, 14, 91, 43, 58, 50, 27, 29, 48],
    [63, 66, 04, 68, 89, 53, 67, 30, 73, 16, 69, 87, 40, 31],
    [04, 62, 98, 27, 23, 09, 70, 98, 73, 93, 38, 53, 60, 04, 23]]
-maxTriSum t = head $ foldr1 sumAdjacent t 
+maxTriSum t = head $ foldr1 sumAdjacent t
   where sumAdjacent x y = zip3With maxSum x y (tail y)
         maxSum x y z
                | y < z     = x + z

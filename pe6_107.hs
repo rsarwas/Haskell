@@ -1,5 +1,5 @@
 -- pe107
--- Minimal Network: 
+-- Minimal Network:
 -- Answer:
 -- Analysis:
 
@@ -25,4 +25,3 @@ main = do
   putStrLn ("Above Diag  is " ++ (show $ aboveDiag cols) ++ ".")
   putStrLn ("Minimal Weight  is " ++ show wmin ++ ".")
   putStrLn ("Savings         is " ++ show (w - wmin) ++ ".")
-

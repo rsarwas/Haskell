@@ -12,11 +12,11 @@ import Data.List
 --            (nsides^ndice).  Counting the ways to make a number is the hard part. Thanks to http://wizardofodds.com/gambling/dice/
 --            the numbers for n dice can be determined from the numbers for n-1 dice.
 -- counts is the number of ways that you can role an x with n-dice with m-sides (where x is a one-based index)
-counts 1     nsides = replicate nsides 1 
+counts 1     nsides = replicate nsides 1
 counts ndice nsides = replicate (ndice-1) 0 ++ [sumPriorBelow i | i <- [ndice..(ndice*nsides)]] ++ (replicate nsides 0)
   where prior = counts (ndice-1) nsides
         sumPriorBelow i = sum $ take (toEnd i) $ drop (toStart i) prior
-        toStart i = max 0 (i-nsides-1)   
+        toStart i = max 0 (i-nsides-1)
         toEnd   i = min nsides (i-1)
 -- pete = the probability that pete will role an i, where i is the (base 1) index of the list
 -- pete' = the probability that pete will role an i or less where i is the (base 1) index of the list
@@ -37,7 +37,7 @@ pe205 = floor (10^7 * peteWin + 0.5)
 -- Analysis: max = sqrt 192939... = 1.38e9; min = sqrt 102030... = 1.01e9. so  there are 10 digits,
 --   the first digit is 1, and second digit is 0..3
 --   Since the number ends in 0, the sqrt must end in zero, and the last x must also be zero.
---   the only squares that end in 9 are 3x3 = 9, and 7x7=49, so the penultimate digit is 3 or 7. 
+--   the only squares that end in 9 are 3x3 = 9, and 7x7=49, so the penultimate digit is 3 or 7.
 --   if we let the digits of the solution be expressed as abcdefghij, then we can write out the
 --   following expansion of terms (ignoring any term with j, since j == 0);
 --   we know that a = 1, and b = [0..3], and look for c,d,e, that satisfy this equation
@@ -46,7 +46,7 @@ end  = [(g,h,i,j) | f <- [1], g <- [0..9], h <- [0..9], i <- [3,7], j <- [0],
         let t2 = (2*g*j + 2*h*i      ) `div` 10,
         let t3 = (  i*i              ) `div` 100,
             t1 <= 8,
-            t2 <= 8 - t1, 
+            t2 <= 8 - t1,
             t3 == 8 - t1 - t2]
 end'  = [(e,f,g,h,i,j) | e <- [0..9], f <- [0..9], (g,h,i,j) <- end,
         let t1 = g*g + 2*e*i + 2*f*h,
@@ -75,7 +75,7 @@ pe206 = head $ filter match trys
 -- this formula could be expressed much more succinctly, but this expression is hopefully more clear
 pe210 = numObtuse 1000000000
   where
-    numObtuse    n = (numSr n) - (numNotObtuse n) 
+    numObtuse    n = (numSr n) - (numNotObtuse n)
     numSr        n = (n+1)^2 + n^2
     numNotObtuse :: Integer -> Integer
     numNotObtuse n = (numLines n) + (numOnNegDiag n) - (inSquareOC n) - (inCircle n)

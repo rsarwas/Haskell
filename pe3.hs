@@ -10,23 +10,23 @@ import Data.Ratio -- for probem 57
 pe41 = digitsToInt $ head $ (filter (isPrime . digitsToInt) (filter (odd . last) (decreasingPandigitals [1..9])))
        where decreasingPandigitals xs = (permutations xs) ++ (decreasingPandigitals (init xs))
              permutations xs = let l = product [2..(length xs)] - 1 in [lexiPerm n xs | n <- [l,(l-1)..0]]
-             
+
 
 -- 42
 -- See pe3_42.hs
 
 
 -- 43
--- Substring divisibility: 
+-- Substring divisibility:
 -- Answer:  16695334890  (0.02 laptop secs, 2154476 bytes)
--- seeds are digits $ takeWhile (<1000) (map (17*) [1..]) with the leading zeros preserved and those with duplicate digits removed 
+-- seeds are digits $ takeWhile (<1000) (map (17*) [1..]) with the leading zeros preserved and those with duplicate digits removed
 pe43seeds = [[0,1,7],[0,3,4],[0,5,1],[0,6,8],[0,8,5],[1,0,2],[1,3,6],[1,5,3],[1,7,0],[1,8,7],[2,0,4],[2,3,8],
              [2,8,9],[3,0,6],[3,4,0],[3,5,7],[3,7,4],[3,9,1],[4,0,8],[4,2,5],[4,5,9],[4,7,6],[4,9,3],[5,1,0],
              [5,2,7],[5,6,1],[5,7,8],[6,1,2],[6,2,9],[6,8,0],[6,9,7],[7,1,4],[7,3,1],[7,4,8],[7,6,5],[7,8,2],
              [8,1,6],[8,5,0],[8,6,7],[9,0,1],[9,1,8],[9,3,5],[9,5,2],[9,8,6]]
 pandigitals xs
   | null xs                 = xs
-  | (length $ head xs) == 9 = [d:x | x <- xs, d <- [0..9], d `notElem` x] 
+  | (length $ head xs) == 9 = [d:x | x <- xs, d <- [0..9], d `notElem` x]
   | otherwise               = pandigitals [d:x | x <- xs, d <- [0..9], let divisor = primesTo 13 !! (8 - length x),
                                                                        d `notElem` x,
                                                                        (d*100 + (x!!0)*10 + x!!1) `mod` divisor == 0]
@@ -89,7 +89,7 @@ numbersWith4DistinctPrimeFactors = [x | x <- [1..], distinctPrimeFactorCount x >
 findFirstOfFour (r:s:t:u:xs)
   | r+1 == s && s+1 == t && t+1 == u = r
   | otherwise                        = findFirstOfFour $ (s:t:u:xs)
-pe47 = findFirstOfFour numbersWith4DistinctPrimeFactors 
+pe47 = findFirstOfFour numbersWith4DistinctPrimeFactors
 
 
 -- 48
@@ -109,7 +109,7 @@ pe48 = (sum [x^x | x <- [1..999]]) `mod` 10^10
 perm :: (Eq t) => Int -> [t] -> [t]
 perm _ [] = error "Empty list"
 perm 0 items = items
-perm i items  
+perm i items
     | i <  0 = error "The permutation index must be a positive number"
     | i >= m2 = error "There are not that many permutations for these items"
     | otherwise = d:(perm r (take q items ++ drop (q+1) items))
@@ -150,7 +150,7 @@ pe50 = maximum $ map (\x -> (length x, head x)) (consecutivePrimeSums 1000000)
 
 
 -- 51
--- Prime digit replacements: Find the smallest prime which, by replacing part of the number (not necessarily adjacent digits) 
+-- Prime digit replacements: Find the smallest prime which, by replacing part of the number (not necessarily adjacent digits)
 --   with the same digit, is part of an eight prime value family.
 -- By replacing the 1st digit of the 2-digit number *3, it turns out that six of the nine possible values:
 --   13, 23, 43, 53, 73, and 83, are all prime.
@@ -172,7 +172,7 @@ primes'' = fromList primes'
 -- return a new pile with all old elements replaced with new
 replace' old new pile = map (\x -> if x == old then new else x) pile
 
--- this could be optimized by short circuiting the search, as soon as I find 11-size non-primes 
+-- this could be optimized by short circuiting the search, as soon as I find 11-size non-primes
 bigFamilyWith r p size pset =
   let pdigits = digits p
   in if (not $ r `elem` pdigits)
@@ -187,14 +187,14 @@ primeFamilyWithSize p size pset =
   in if null family then [] else head family
 
 pe51 = take 1 $ filter (not . null) $ [primeFamilyWithSize p familySize primes'' | p <- primes']
-  
+
 
 -- 52
--- Permuted multiples: 
+-- Permuted multiples:
 -- Answer: 142857 (1.49 laptop secs, 181350776 bytes)
 -- In order for x and 6x to have the same number of digits, x must begin with 1
 pe52domain = [136..166] ++ [1136..1666] ++ [11136..16666] ++ [111136..166666]
-pe52test x = and [all ((n `elem`) . digits) [2*x, 3*x, 4*x, 5*x, 6*x]  | n <- digits x] 
+pe52test x = and [all ((n `elem`) . digits) [2*x, 3*x, 4*x, 5*x, 6*x]  | n <- digits x]
 pe52 = head $ filter pe52test pe52domain
 
 
@@ -236,7 +236,7 @@ lychrel n trys
                     then False
                     else (lychrel n'' (trys+1))
 lychrels = [n | n <- [1..9999], lychrel n 0]
-pe55 = length $ lychrels 
+pe55 = length $ lychrels
 
 
 -- 56
@@ -285,7 +285,7 @@ pe58 = snd $ head $ filter (\(p,s) -> (p < 10)) $ drop 1 percents
 -- try replacing 109 with a larger prime, then search for #4 and and then #5.
 --   This approach turned out to be fruitless.
 --   pe60 = (sum low4) + (head $ filter isPrimePair (dropWhile (<999) (primesTo 9999)))
-  
+
 
 mag n
   | n < 10      = 10
@@ -307,17 +307,17 @@ pp2 n
 primePairsTo n = [[a,b] | let p = takeWhile (<n) pe60primes,  a <- p, b <- dropWhile (<= a) p, isPrimePair a b]
 isPrimePair p1 p2 = let m1 = mag p1
                         m2 = mag p2
-                        small = m1*m2 <= 10^7 
+                        small = m1*m2 <= 10^7
                     in if small
                        then (member (p1*m2 + p2) pe60primes') && (member (p2*m1 + p1) pe60primes')
                        else (isPrime (p1*m2 + p2)) && (isPrime (p2*m1 + p1))
 primeTriplesTo n = [p1:b | let pp = pp2 n,
                            [p1,p2] <- pp,
                            b <- filter (\[a,b] -> p2 == a && (isPrimePair p1 b)) pp]
-primeQuadsTo n = [p1:b | let pt = primeTriplesTo n, 
+primeQuadsTo n = [p1:b | let pt = primeTriplesTo n,
                          [p1,p2,p3] <- pt,
                          b <- filter (\[a,b,c] -> p2 == a && p3 == b && (isPrimePair p1 c)) pt]
-primeQuintsTo n = [p1:b | let pt = primeQuadsTo n, 
+primeQuintsTo n = [p1:b | let pt = primeQuadsTo n,
                          [p1,p2,p3,p4] <- pt,
                          b <- filter (\[a,b,c,d] -> p2 == a && p3 == b && p4 == c && (isPrimePair p1 d)) pt]
 

@@ -15,7 +15,7 @@ import ProjectEuler ( wordsWhen )
 makeTris :: String -> [[Int]]
 makeTris s = [map read (wordsWhen (==',') x)::[Int] | x <- lines s]
 
-crossesAxis [ax,ay,bx,by,cx,cy] = 
+crossesAxis [ax,ay,bx,by,cx,cy] =
    not (threeSimilar ax bx cx || (threeSimilar ay by cy))
 
 contains00 [ax,ay,bx,by,cx,cy] =

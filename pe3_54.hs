@@ -14,22 +14,22 @@ data Rank = Two | Three | Four | Five | Six | Seven | Eight | Nine | Ten | Jack 
             deriving (Eq, Ord, Show, Read, Bounded, Enum)
 data Suit = Diamonds | Clubs | Hearts | Spades
             deriving (Eq, Ord, Show, Read, Bounded, Enum)
-data Card = Card Rank Suit deriving (Show) 
-data Hand = Hand [Card] deriving (Show) 
+data Card = Card Rank Suit deriving (Show)
+data Hand = Hand [Card] deriving (Show)
 data Score = HighCard [Rank] | OnePair [Rank] | TwoPair [Rank] | ThreeOfAKind [Rank] |
              Straight Rank | Flush [Rank] | FullHouse [Rank] | FourOfAKind [Rank] | StraightFlush Rank
              deriving (Eq, Ord, Show)
 
-rank :: Card -> Rank  
+rank :: Card -> Rank
 rank (Card r _) = r
 
-suit :: Card -> Suit  
+suit :: Card -> Suit
 suit (Card _ s) = s
 
-instance Eq Hand where  
+instance Eq Hand where
     h1 == h2 = (score h1) == (score h2)
-    
-instance Ord Hand where  
+
+instance Ord Hand where
     compare h1 h2 = compare (score h1) (score h2)
 
 score :: Hand -> Score
@@ -57,7 +57,7 @@ isStraight rs = isMonotonic rs where
 
 isFlush :: Hand -> Bool
 isFlush (Hand (c:cs)) = and $ map (\x -> (suit x) == (suit c)) cs
-  
+
 ranksByCount :: Hand -> [(Int,Rank)]
 ranksByCount (Hand xs) = reverse $ unique $ quicksort $ rankCounts
        where rankCounts = [(length $ filter (== rank) allRanks, rank) | rank <- allRanks]
@@ -67,7 +67,7 @@ player1Score :: [(Hand,Hand)] -> Int
 player1Score xs = sum [1 | (h1,h2) <- xs, h1 > h2]
 
 makeHands :: String -> [(Hand,Hand)]
-makeHands s = [(h1,h2) | line <- lines s, let cards = words line, 
+makeHands s = [(h1,h2) | line <- lines s, let cards = words line,
                                           let h1 = makeHand (take 5 cards),
                                           let h2 = makeHand (drop 5 cards)]
 

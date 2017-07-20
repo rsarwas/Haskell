@@ -83,8 +83,8 @@ pe109 = countLessThan 100
 -- Bouncy numbers: Find the least number for which the proportion of bouncy numbers is exactly 99%.
 -- Answer: 1587000 (0.06 secs, 9492116 bytes) + lots of pencil and paper time.
 inc3 = length [1 | a <- [1..9], b <- [a..9], c <- [b..9]] - 9
-inc4 = length [1 | a <- [1..9], b <- [a..9], c <- [b..9], d <- [c..9]] - 9 
-inc5 = length [1 | a <- [1..9], b <- [a..9], c <- [b..9], d <- [c..9], e <- [d..9]] - 9 
+inc4 = length [1 | a <- [1..9], b <- [a..9], c <- [b..9], d <- [c..9]] - 9
+inc5 = length [1 | a <- [1..9], b <- [a..9], c <- [b..9], d <- [c..9], e <- [d..9]] - 9
 inc6 = length [1 | a <- [1..9], b <- [a..9], c <- [b..9], d <- [c..9], e <- [d..9], f <- [e..9]] - 9
 inc7 = length [1 | a <- [1..9], b <- [a..9], c <- [b..9], d <- [c..9], e <- [d..9], f <- [e..9], g <- [f..9]] - 9
 dec3 = length [1 | a <- [9,8..1], b <- [a,(a-1)..0], c <- [b,(b-1)..0]] - 9
@@ -103,12 +103,12 @@ bouncy7 = 9999999 - 999999 - inc7 - dec7 - 9 + bouncy6
 nobounce = [[0,9,0],[36,9,45],[inc3,9,dec3],[inc4,9,dec4],[inc5,9,dec5],[inc6,9,dec6],[inc7,9,dec7]]
 -- nobounce => [[0,9,0],[36,9,45],[156,9,210],[486,9,705],[1278,9,1992],[2994,9,4995],[6426,9,11430]]
 nobounceCount = sum $ concat nobounce -- == bouncy7
--- There are 987048 bouncy numbers below 1,000,000 (~98.7% -- too low) 
+-- There are 987048 bouncy numbers below 1,000,000 (~98.7% -- too low)
 -- There are 9969183 bouncy numbers below 10,000,000 (~99.7% -- too high)
--- if all the numbers above 999999 were bouncy, then we would need 
+-- if all the numbers above 999999 were bouncy, then we would need
 plusUp = take 5 [(p,x) | x <- [1..], let n = (99 * (999999 + x)) % 100, let p = (numerator n) - 987048, (denominator n == 1), p < x]
 -- plusUp => [(295200,295201),(295299,295301),(295398,295401),(295497,295501),(295596,295601)]
--- therefore with 1 no bounce number, % = 987048+295200/999999+295201 = 99/100; 
+-- therefore with 1 no bounce number, % = 987048+295200/999999+295201 = 99/100;
 --   with 2 no bounce: % = 987048+295299/999999+295301 == 99/100; with 0 no bounce: 987048+295101/999999+295101 = 99/100;
 --   answer = 1295100 + b*100 where b = number of no bounce numbers between 999999 and the answer
 --   estimating about 2500 no bounce numbers in the next 295000 numbers, we will go to about 295000 + 100*2500  = 1,545,000
@@ -124,7 +124,7 @@ plusUp = take 5 [(p,x) | x <- [1..], let n = (99 * (999999 + x)) % 100, let p = 
 --   1112000 - 221 bouncy, 222 - 229 no bounce, 233-39 no bounce ... 299 = 8+7+..+1 = 36
 --   1112300 - 332 bouncy, 333 - 339 no bounce, 344-49 no bounce ... 399 = 7+6+..+1 = 28
 --   ...
---   1112900 - 998 bouncy, 999 no bounce								            = 1				 
+--   1112900 - 998 bouncy, 999 no bounce								            = 1
 --                                                                = 1+3+6+10+15+21+28+36 = 120
 --   similarly, 11113000-3999 = 1+3+..+28 = 84; 4000-4999 = 56; 5000 - 35; 6000 - 20; 7000 - 10; 8000 - 4; 9000 - 1
 --   total 1,000,000 to 1,119,999 = 5+166+120+84+56+35+20+10+4+1 = 501
@@ -134,7 +134,7 @@ plusUp = take 5 [(p,x) | x <- [1..], let n = (99 * (999999 + x)) % 100, let p = 
 --   total to 1199999 = 501 + 330 + 210 + 126 + 70 + 35 + 15 + 5 + 1 = 1293
 --   1200000 to 1222221 bouncy; 222 - 229 no bounce, 233 - 239, 244-249, ... 299  = 8+7+..+1 = 36
 --   by extrapolation from previous analysis, 1200000 - 1229999 = (36+28+..1)+(28+21+..1)+(21+15+..1)+..+(1) = 330
---                                       and  1200000 - 1299999 = 330 + 210 + 126 + 70 + 35 + 15 + 5 + 1 = 792 
+--                                       and  1200000 - 1299999 = 330 + 210 + 126 + 70 + 35 + 15 + 5 + 1 = 792
 --   similarly 1300000 - 1399999 = 210 + 126 + 70 + 35 + 15 + 5 + 1 = 462
 --   similarly 1400000 - 1499999 = 126 + 70 + 35 + 15 + 5 + 1 = 252
 --   total 1000000 - 1499999 = 1293 + 792 + 462 + 252 = 2799
@@ -165,7 +165,7 @@ plusUp = take 5 [(p,x) | x <- [1..], let n = (99 * (999999 + x)) % 100, let p = 
 --    with a 4 unit block there are 6 with fill 4 + fill 3
 --    with a 3 unit block there are 7 with fill 5 + fill 4 + fill 3
 --    total is 1 (all empty) + sum [1..7] + 3*fill 3 + 2*fill 4 + 1*fill 5
---  this is generalized for a row of length l, with a minimum block of length n as follows: 
+--  this is generalized for a row of length l, with a minimum block of length n as follows:
 fill114 l n = sum [1..(l-n+1)] + (sum [y*(fill114 x n) | x <- [n..(l-n-1)], let y = (max 0 (l-x-n))])
 pe114 = 1 + fill114 50 3
 
@@ -189,16 +189,16 @@ fill116 l n
   | otherwise = 1 + (l-n) + (sum [fill116 x n | x <- [n..(l-n)]])
 pe116' = (fill116 50 2) + (fill116 50 3) + (fill116 50 4)
 -- The previous recursive solution takes too long: fill 50 4 = 2.4 sec, fill 50 3 takes 59.5 sec, fill 50 2 is projected
--- to take 6 hours 
+-- to take 6 hours
 -- Analysis: I examined the solutions to various rows with 2 unit blocks to get the
 --   following table.
 --    row| #of permutations for different numbers of blocks
 --   size| 1   2    3    4    5
---   ---------------------------- 
---     2 | 1 
+--   ----------------------------
+--     2 | 1
 --     3 | 2
 --     4 | 3 + 1
---     5 | 4 + 3  
+--     5 | 4 + 3
 --     6 | 5 + 6  + 1
 --     7 | 6 + 10 + 4
 --     8 | 7 + 15 + 10 + 1
@@ -209,12 +209,12 @@ pe116' = (fill116 50 2) + (fill116 50 3) + (fill116 50 4)
 --  and 1 way to put on 3 blocks, for a total of 12.
 --  It was noticed from the sketches, and the table that each subsequent column is
 --  the sum of previous terms in the previous row.  This leads to a simple recursive
---  solution. 
+--  solution.
 fill116' l n = fill116'' l n 1 [1..]
 fill116'' l n x lst
   | l <  n*x  = 0
   | l == n*x  = 1
-  | otherwise = (head (drop (l - x*n) lst)) + (fill116'' l n (x+1) (scanl1 (+) lst))  
+  | otherwise = (head (drop (l - x*n) lst)) + (fill116'' l n (x+1) (scanl1 (+) lst))
 pe116 = (fill116' 50 2) + (fill116' 50 3) + (fill116' 50 4)
 
 

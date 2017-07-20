@@ -36,14 +36,14 @@ findCell puzzle = let cells = [(r,c) | r <- [0..8], c <- [0..8], let row = puzzl
 -- play in the cells row, column or section.
 getMoves :: Grid -> Maybe Cell -> [Int]
 getMoves puzzle Nothing      = []
-getMoves puzzle (Just (r,c)) = 
-  let columnNumbers = filter (/= 0) $ [row !! c | row <- puzzle] 
+getMoves puzzle (Just (r,c)) =
+  let columnNumbers = filter (/= 0) $ [row !! c | row <- puzzle]
       rowNumbers = filter (/= 0) $ (puzzle !! r)
-      sectionNumbers = filter (/= 0) $ [(puzzle !! r') !! c' | r' <- [r''..(r''+2)], c' <- [c''..(c''+2)]] 
+      sectionNumbers = filter (/= 0) $ [(puzzle !! r') !! c' | r' <- [r''..(r''+2)], c' <- [c''..(c''+2)]]
          where (r'',c'') = (3*(r `div` 3), 3*(c `div` 3))
       usedNumbers = columnNumbers ++ rowNumbers ++ sectionNumbers
   in [x | x <- [1..9], not (x `elem` usedNumbers)]
-  
+
 
 -- Returns a new puzzle grid with the given value replacing the value (empty cell) at row,column
 fillCell :: Grid -> Maybe Cell -> Int -> Grid
@@ -66,8 +66,8 @@ makeGrids s = makeGrids' [map (\c -> fromEnum c - 48) x | x <- lines s, take 4 x
 makeGrids' :: [[Int]] -> [Grid]
 makeGrids' [] = []
 makeGrids' xs = let (h,t) = splitAt 9 xs
-                in h:(makeGrids' t) 
+                in h:(makeGrids' t)
 main = do
   text <- getContents
---  print $ sum $ map (topLeft3 . solveSudoku) (makeGrids text) 
-  print $ solveSudoku $ head (makeGrids text) 
+--  print $ sum $ map (topLeft3 . solveSudoku) (makeGrids text)
+  print $ solveSudoku $ head (makeGrids text)

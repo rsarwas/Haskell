@@ -36,7 +36,7 @@ asciify :: String -> [Int]
 asciify = map fromEnum
 
 deasciify :: [Int] -> String
-deasciify = map (\i -> toEnum i ::Char) 
+deasciify = map (\i -> toEnum i ::Char)
 
 xorEncode :: String -> String -> String
 xorEncode key text = deasciify $ zipWith (xor) (asciify text) (cycle (asciify key))
@@ -64,11 +64,11 @@ removeItem :: (Eq b) => (a,b) -> [(a,b)] -> [(a,b)]
 removeItem _ []                          = []
 removeItem x (y:ys) | (snd x) == (snd y) = ys
                     | otherwise          = y : removeItem x ys
-                    
+
 histogram :: (Eq a) => [a] -> [(Int,a)]
 histogram xs = foldr step [] xs where
   step ele acc = let match = [item | item <- acc, (snd item) == ele]
-                 in if   (null match) 
+                 in if   (null match)
                     then ((1                   ,ele):acc)
                     else ((1+(fst (head match)),ele):(removeItem (head match) acc))
 

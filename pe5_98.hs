@@ -1,5 +1,5 @@
 -- pe98
--- Anagram Squares: 
+-- Anagram Squares:
 -- Answer: 18769 137^2 = BROAD = BOARD = 17689 = 133^2 unix time real	0m1.202s
 -- Basic idea, put words in order of their length, and the sorted list of their characters.  matches will be adjacent
 -- with the same length, and the same list of sorted characters.
@@ -14,7 +14,7 @@ import ProjectEuler (unique, quicksort, digitsToInt, digits, isqrt)
 
 solve a = filter (\(a,b,c,d) -> match a b c d) [(w1,w2, digits i1, digits i2) | (l,s,w1,w2) <- a, nums <- anagramSquares l, i1 <- nums, i2 <- nums, i1 /= i2]
 
-findKey :: (Eq k) => k -> [(k,v)] -> Maybe v  
+findKey :: (Eq k) => k -> [(k,v)] -> Maybe v
 findKey key = foldr (\(k,v) acc -> if key == k then Just v else acc) Nothing
 
 match :: [Char] -> [Char] -> [Int] -> [Int] -> Bool
@@ -23,9 +23,9 @@ match w1 w2 n1 n2 = and [match' n1 n2 i1 i2 | (i1,i2) <- wordIndices]
   where match' l1 l2 i1 Nothing = False
         match' l1 l2 i1 (Just i2) = l1!!i1 == l2!!i2
         wordIndices = zip [0..] (newIndicies w1 w2)
-        newIndicies w1 w2 = [findKey a (zip w1 [0..]) | a <- w2] 
+        newIndicies w1 w2 = [findKey a (zip w1 [0..]) | a <- w2]
 
-anagramSquares n = reverse $ anagramSquares' n 
+anagramSquares n = reverse $ anagramSquares' n
 anagramSquares' n = map (\x -> map (snd) x) $ filter ((1<).length) $ group $ squares n
 
 numMatch :: (Eq a) => (a,b) -> (a,b) -> Bool
@@ -70,4 +70,3 @@ main = do
   --print $ filter (\(a,b,_,_,_) -> a /= b) $ map (\(a,b,c,d) -> (a,length b,b,c,d)) $ anagrams $ wordInfo $ wordList input
   -- solve
   print $ take 4 $ solve $ anagrams $ wordInfo $ wordList input
-  

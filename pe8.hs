@@ -34,7 +34,7 @@ nextVector ((p1x,p1y),(p2x,p2y)) =
 pe144 = length $ takeWhile trapped (iterate nextVector v1)
   where trapped ((p1x,p1y),(p2x,p2y)) =
                 not (p2y > 0 && (-0.01) <= p2x && p2x <= 0.01)
-                
+
 -- 145
 -- How many reversible numbers are there below one-billion?
 -- Answer: 608720 (0.00 secs, 2064392 bytes)
@@ -60,7 +60,7 @@ evenNoCarry = 5 + sum [2 | a <-[0..9], b <-[(a+1)..(9-a)], even (a+b)]
 --  similar to 3 digits, d+d must be less than 10.  the outer pair (ag) and inner pair (ec) are reversible with carry,
 --  the pair (bf) must be even, and less than 10 (otherwise a+g+1 will be even (since a+g must be odd)
 -- numbers with 1,5,9,13... have zero reversible numbers
--- numbers with 3,7,11,15.. have 5 times the product of the pairs   
+-- numbers with 3,7,11,15.. have 5 times the product of the pairs
 reversible n
   |  n < 1 = 0
   | even n = product (take (n `div` 2) (reversibleNoCarry:(repeat reversibleNoCarryWithZero)))

@@ -23,10 +23,10 @@ import qualified Prelude as P
 --   note: Right is already defined in Prelude for Either, so we need to hide it as P.Right
 -- Winner is a tuple of the minimum path value (Int), row index of the starting cell in the
 --   left column (Int), and the path to the cell in the right column that makes the minimum
---   path value (Path). 
+--   path value (Path).
 type Grid = [[Int]]
 data Direction = Right | Up | Down
-     deriving (Eq, Ord, Show, Read, Bounded, Enum) 
+     deriving (Eq, Ord, Show, Read, Bounded, Enum)
 type Path = [Direction]
 type Best = [(Int,Int,Path)]
 type Winner = (Int, Int, Path)
@@ -68,9 +68,9 @@ solve' grid best
   where size  = length (grid !! 0)
         best' = zipWith (\(v1, v2, path) (v:_) -> (v, v1+v2, Right:path)) best grid
 
--- Adjust the best path by adding additional segments up and down if appropriate                          
+-- Adjust the best path by adding additional segments up and down if appropriate
 shiftUpDown :: Best -> Best
-shiftUpDown best = map (\(i,b) -> findBetter i b best) $ zip [0..] best 
+shiftUpDown best = map (\(i,b) -> findBetter i b best) $ zip [0..] best
 
 -- Will return a new best path at index i if there is one.
 findBetter :: Int -> (Int,Int,Path) -> Best -> (Int,Int,Path)
@@ -79,7 +79,7 @@ findBetter i (v,vp,p) best =
       betterUps = findBetterPath vp Up (reverse uppers)
       betterDowns = findBetterPath vp Down (if null downers then [] else tail downers)
       better =  quicksort (betterUps ++ betterDowns)
-  in if null better then (v,vp,p) else (let (vp',p') = head better in (v,vp',p'))  
+  in if null better then (v,vp,p) else (let (vp',p') = head better in (v,vp',p'))
 
 -- returns a list of better options (lower path values than the current path, vp)
 findBetterPath :: Int -> Direction -> Best -> [(Int,Path)]
@@ -88,7 +88,7 @@ findBetterPath vp direction others = map fix $ filter betterPath $ takeWhile pos
          betterPath (v',vp',_) = v'+ vp' < vp
          possiblePath (v',_,_) = v' < vp
          others' = scanl1 (\(v1,vp1,p1) (v2,vp2,p2) -> (v1+v2,vp2,p2)) others
-         others'' = zipWith (\(v',vp',p') d -> (v',vp',d++p')) others' [replicate x direction | x <- [1..]] 
+         others'' = zipWith (\(v',vp',p') d -> (v',vp',d++p')) others' [replicate x direction | x <- [1..]]
 
 -- make a list of lists (list of lines, where a line is a list of words, and each word is an int).
 makeGrid :: String -> Grid

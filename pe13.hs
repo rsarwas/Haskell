@@ -29,4 +29,3 @@ pe243 = fst $ head $ filter byCriteria [(x, r x) | n <- [2..lastPrime], let x = 
   where
     byCriteria (n,x) = x < 15499 % 94744
     lastPrime = fst $ head $ filter byCriteria [(p, r x) | p <- (drop 5 (primesTo 500)), let x = (product (primesTo p))]
-

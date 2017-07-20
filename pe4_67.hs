@@ -9,7 +9,7 @@ import ProjectEuler -- for Zip3With
 
 --Stolen from problem 18 t is
 maxTriSum :: (Num a, Ord a) => [[a]] -> a
-maxTriSum t = head $ foldr1 sumAdjacent t 
+maxTriSum t = head $ foldr1 sumAdjacent t
   where sumAdjacent x y = zip3With maxSum x y (tail y)
         maxSum x y z
                | y < z     = x + z

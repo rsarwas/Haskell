@@ -8,5 +8,3 @@ and my solutions to [99 Haskell Problems](http://www.haskell.org/haskellwiki/H-9
 This repo should be private to honor the ethos of Project Euler, but I'm too much of a
 cheapskate to pay for a private github account, so I am relying on any readers who stumble
 upon this repo to avoid looking at solutions to problems you have not already solved yourself.
-
-

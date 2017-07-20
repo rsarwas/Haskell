@@ -5,13 +5,13 @@ import ProjectEuler
 -- 233
 -- Lattice Points: What is the sum of all positive integers N <= 10^11 such that f(N) = 420 ?
 --   where f(N) is the number of points with integer coordinates that are on a circle passing through (0,0), (N,0),(0,N), and (N,N).
--- Answer: 
--- Analysis: 
+-- Answer:
+-- Analysis:
 sqrt2 = sqrt 2
 isSquare x = x'*x' == x where x' = isqrt x
-study n = 
+study n =
   let n2 = n `div` 2
-      n22 = n2^2 
+      n22 = n2^2
       ul = truncate ((fromIntegral n2)*(sqrt2 -1))
   in [d | d <- [1..ul], isSquare (n22 - n*d - d*d)]
 study' ns = filter (\(a,b) -> b > 0) (zip ns (map (length.study) ns))

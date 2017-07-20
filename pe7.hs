@@ -39,7 +39,7 @@ pe121 = payout 15
 -- Answer: 21417 (24.63 secs, 5493082608 bytes)
 -- Analysis: simple brute force solution, using functions already written for other solutions.
 --           since the primeFactors are already sorted, I can use my existing unique function to remove dups
---           Since the sqrt 100000 < 10,000, we need to evaluate all numbers. 
+--           Since the sqrt 100000 < 10,000, we need to evaluate all numbers.
 --           I'm sure there is a trick, or optimization here, but I'm under a minute, so it can wait.
 --           note that getting the primeFactors of the 100,000 numbers is 14 of the 24 seconds
 pe124 = snd ((quicksort $ [(r,n) | n <- [1..100000], let r = rad n, r < 10000]) !! 9999)
@@ -71,7 +71,7 @@ where
   s(m-1) = [(m-1)^2 + m^2]
 
 if m is the first integer for which m^2 + (m+1)^2 > n then
-1) I do not need to consider any additional terms in these sequences 
+1) I do not need to consider any additional terms in these sequences
 2) I do not need to consider any additional sequences
 proof of 1:
 Since 1,2,3,..m-1,m,m+1, are monotonically increasing, the squares of these

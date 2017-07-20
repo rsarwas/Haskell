@@ -369,4 +369,3 @@ blues = 1 : scanl (\b a -> 6*b-a-2) 3 blues
 -- using the quadratic formula to solve  t(t-1) = 2b(b-1) for t(b) we have:
 total blue = (1+isqrt(1+8*blue*(blue-1))) `div` 2
 pe100 = fst $ head $ dropWhile (\(_,t) -> t < 10^12) [(blue, total blue) | blue <- blues]
-

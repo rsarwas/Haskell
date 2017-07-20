@@ -9,7 +9,7 @@
 
 
 -- Converts a String containing a Roman numeral to an Int
-numeralToInt :: String -> Int 
+numeralToInt :: String -> Int
 numeralToInt rn = sum $ foldl mergeLesser [] (map digits rn)
   where
     digits 'M' = 1000
@@ -20,7 +20,7 @@ numeralToInt rn = sum $ foldl mergeLesser [] (map digits rn)
     digits 'V' = 5
     digits 'I' = 1
     mergeLesser [] n = [n]
-    mergeLesser s@(x:xs) n = 
+    mergeLesser s@(x:xs) n =
       if (n <= x)
       then
         n:s
@@ -30,26 +30,26 @@ numeralToInt rn = sum $ foldl mergeLesser [] (map digits rn)
 
 
 -- Converts an Int into a Roman numeral (String) in minimal form
-intToNumeral :: Int -> String          
+intToNumeral :: Int -> String
 intToNumeral n =
   let (m,r) = n `divMod` 1000
-      (c,r') = r `divMod` 100            
+      (c,r') = r `divMod` 100
       (x,i) = r' `divMod` 10
       hundreds x
-        | x <  4 = (replicate x 'C')      
-        | x == 4 = "CD"      
-        | x <  9 = 'D':(replicate (x-5) 'C')      
-        | x == 9 = "CM"      
-      tens x   
-        | x <  4 = (replicate x 'X')      
-        | x == 4 = "XL"      
-        | x <  9 = 'L':(replicate (x-5) 'X')      
-        | x == 9 = "XC"      
-      ones x  
-        | x <  4 = (replicate x 'I')      
-        | x == 4 = "IV"      
-        | x <  9 = 'V':(replicate (x-5) 'I')      
-        | x == 9 = "IX"      
+        | x <  4 = (replicate x 'C')
+        | x == 4 = "CD"
+        | x <  9 = 'D':(replicate (x-5) 'C')
+        | x == 9 = "CM"
+      tens x
+        | x <  4 = (replicate x 'X')
+        | x == 4 = "XL"
+        | x <  9 = 'L':(replicate (x-5) 'X')
+        | x == 9 = "XC"
+      ones x
+        | x <  4 = (replicate x 'I')
+        | x == 4 = "IV"
+        | x <  9 = 'V':(replicate (x-5) 'I')
+        | x == 9 = "IX"
   in (replicate m 'M') ++ (hundreds c) ++ (tens x) ++ (ones i)
 
 

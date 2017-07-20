@@ -56,7 +56,7 @@ pe24 = digitsToInt $ lexiPerm (10^6-1) [0..9]
 fibWithDigits :: Int -> Int
 fibWithDigits n = 1 + (length (takeWhile lessDigitsThan fibs))
   where lessDigitsThan = (>) (10^(n-1))
-        fibs = 1 : scanl (+) 1 fibs 
+        fibs = 1 : scanl (+) 1 fibs
 pe25 = fibWithDigits 1000
 
 
@@ -107,8 +107,8 @@ pe30 = sum [x | x <- [10..200000], equalSumOfPowers x]
 -- 31
 -- Coin Sums:  How many different way can 2 pounds be made using any number of the 8 available coins
 -- Answer: 73682 (0.07 laptop secs, 10532560 bytes)
---pe31 = [(l2,l1,p50,p20,p10,p5,p2,(200-l2-l1-p50-p20-p10-p5-p2)) | 
-pe31 = length [ 1 | 
+--pe31 = [(l2,l1,p50,p20,p10,p5,p2,(200-l2-l1-p50-p20-p10-p5-p2)) |
+pe31 = length [ 1 |
          l2 <- [0,200],
          l1 <- [0,100..(200-l2)],
          p50 <- [0,50..(200-l2-l1)],
@@ -162,8 +162,8 @@ digits3 = [125, 135, 145, 150, 151, 152, 153, 154]
 pe34 = sum $ filter magic (digits2 ++ digits3 ++ [1466..999999])
     where magic x = x == (sum $ [factorials!!d | d <- digits x])
           factorials = scanl (*) 1 [1..9]
-          
-          
+
+
 -- 35
 -- Circular primes: How many circular primes are there below one million?
 -- Answer: 55 (5.91 laptop secs, 754384904 bytes)
@@ -183,7 +183,7 @@ pe35 = 13 + (length $ filter isCircularPrime candidates)
 -- 36
 -- Double-base palindromes: Find the sum of all numbers, less than one million, which are palindromic in base 10 and base 2
 -- Answer: 872187 (0.07 laptop secs, 18396560 bytes)
-palindromes = [read (show x ++ (reverse $ show x)) :: Int | x <- [999,998..1]] ++ 
+palindromes = [read (show x ++ (reverse $ show x)) :: Int | x <- [999,998..1]] ++
               [read (show x ++ show y ++ (reverse $ show x)) :: Int | x <- [99,98..1], y <- [9,8..0]] ++
               [10,9..0]
 -- since the binary number must start with 1 (not 0), it must end with 1, so all the base 10 numbers are odd
@@ -216,7 +216,7 @@ pe37 = sum $ take 11 (filter isTruncateablePrime (filter isPrime candidates))
 -- A 5 or more digit integer is precluded since we need to multiply by 1..n where n>1, so [1,2] is minimal
 -- At this point we can brute force a solution.
 pe38 = head [(f a) | a <- [9876,9875..9183], isPandigital a, isPandigital (a*2), isPandigital (f a) ]
-       where f x = x*10^5+x*2 
+       where f x = x*10^5+x*2
              isPandigital x = let digitsOfX = digits x
                               in (not ( 0 `elem` digitsOfX))
                                  && (length digitsOfX) == (length $ unique $ quicksort digitsOfX)

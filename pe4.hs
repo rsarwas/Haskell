@@ -7,7 +7,7 @@ import qualified Data.Map as Map -- for 74
 
 -- 61
 -- Cyclical figurate numbers: Find the sum of the only ordered set of six cyclic 4-digit numbers
---   for which each polygonal type: triangle, square, pentagonal, hexagonal, heptagonal, and octagonal, 
+--   for which each polygonal type: triangle, square, pentagonal, hexagonal, heptagonal, and octagonal,
 --   is represented by a different number in the set.
 -- Answer: 28684 (0.02 secs, 6264000 bytes)
 -- Analysis:  I make list of the 4 digit figurate numbers,  then I look for cycles as follows
@@ -17,7 +17,7 @@ import qualified Data.Map as Map -- for 74
 --   one list remaining - then there is a solution if a number in the list matches the last number, and
 --   then wraps around to match the first number.
 oct n = n*(3*n - 2)
-hep n = n*(5*n - 3) `div` 2	
+hep n = n*(5*n - 3) `div` 2
 hex n = n*(2*n - 1)
 pen n = n*(3*n - 1) `div` 2
 squ n = n*n
@@ -43,7 +43,7 @@ tri9999 =     ((isqrt (1 + 8*9999)) - 1) `div` 2
 tri1000 = 1 + ((isqrt (1 + 8*1000)) - 1) `div` 2
 tris = makePairs (map tri [tri1000..tri9999])
 
-cyclical (x:xs) [a] = 
+cyclical (x:xs) [a] =
    let solution = [h:x:xs | [h,t] <- a, t == x, (last xs) == h]
    in if (null solution) then [] else (head solution)
 cyclical (x:xs) as =
@@ -60,7 +60,7 @@ pe61 = sum $ makeNums $ numberParts where
 -- Cubic Permutations: Find the smallest cube for which exactly five permutations of its digits are cube.
 -- Answer: 127035954683 (13.29 secs, 1381871616 bytes)
 find :: Int -> Int -> [([Int],[Int])] -> [Int]
-find m n found = 
+find m n found =
   let sortedDigits = quicksort $ digits (n^3)
       matches = findMatch sortedDigits found
       matching = if (null matches) then [] else (snd (head matches))
@@ -96,16 +96,16 @@ cf 0 d = [0]
 cf n 1 = [n]
 cf n d  | n < d     = 0:(cf d n)
         | otherwise = q:(cf d r) where (q,r) = n `quotRem` d
--- From Expressing square roots as continued fraction at 
+-- From Expressing square roots as continued fraction at
 -- http://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Continued_fraction_expansion
 cfsq n = sq' 0 1 ao ao n where ao = isqrt n
-sq' m d ao a s = 
+sq' m d ao a s =
   let m' = d*a - m
       d' = (s - m'*m') `div` d
       a' = (ao + m') `div` d'
   in if a' == 2*ao then a:[a'] else a:(sq' m' d' ao a' s)
 -- These expansions include the first term, so if we subtract 1
-period n = [(length $ cfsq x) -1 | x <- [2..n], let xs = isqrt x, xs * xs /= x] 
+period n = [(length $ cfsq x) -1 | x <- [2..n], let xs = isqrt x, xs * xs /= x]
 pe64 = length $ filter odd (period (10^4))
 
 
@@ -131,7 +131,7 @@ pe65 = sum $ digits $ eNumerator 100 where
 --           See pe64 for the cf of the sqrt of n (modified to not stop at the end of the repeating part)
 --           See pe65 for the convergents of the cf (modified to be a continuous list of numerator & denominator)
 cfsq' n = sq'' 0 1 ao ao n where ao = isqrt n
-sq'' m d ao a s = 
+sq'' m d ao a s =
   let m' = d*a - m
       d' = (s - m'*m') `div` d
       a' = (ao + m') `div` d'
@@ -142,7 +142,7 @@ convergents xs = convergents' (0,1) (1,0) xs
                k = a*k1 + k2
 fundamentalX n = head [(x,y) | (x,y) <- convergents (cfsq' n), x*x-n*y*y == 1] where m = isqrt(n)
 pe66 = snd $ maximum $ [(fundamentalX d,d) | d <- [1..1000], not $ (d `elem` squares)]
-  where squares = [x^2 | x <- [1..(isqrt 1000)]]   
+  where squares = [x^2 | x <- [1..(isqrt 1000)]]
 
 
 -- 67
@@ -165,7 +165,7 @@ pe66 = snd $ maximum $ [(fundamentalX d,d) | d <- [1..1000], not $ (d `elem` squ
 --  for n=5 [6] ++ perms of 7..10 ++ perms 1..5
 permy n = [ (n+1):(a ++ b) | a <- permy' [(n+2)..(2*n)], b <- permy' [1..n]]
 permy' [x] = [[x]]
-permy' (x:xs) = map (x:) ps ++ 
+permy' (x:xs) = map (x:) ps ++
                 [start ++ [x] ++ end | p <- ps, i <- [1..(length ps - 1)], let (start,end) = splitAt i p] ++
                 map (++[x]) ps
                    where ps = permy' xs
@@ -201,7 +201,7 @@ pe69 = head $ last $ takeWhile (\[n,d] -> n < 1000000) $ scanl (\[n,d] p -> [n*p
 --   φ(n) = n(1 - 1/p1)(1 - 1/p2) .. (1 - 1/pn)  if there are no duplicate prime factors then φ(n) = (p1-1)(p2-1)..(pn-1)
 --   The smallest ratio I found was at 2609*2693.  at 215*215*215 (approx. three largest prime factors), the ratio is
 --   much larger than the solution, s we do not need to check solutions with 3 prime factors.
--- This permutation check is simple but slow 
+-- This permutation check is simple but slow
 permutation n1 n2 =
   let n1s = quicksort $ show n1
       n2s = quicksort $ show n2
@@ -251,7 +251,7 @@ pe71 = fst $ snd $ maximum $ take 10 $ map (\(n,d) -> ((fromIntegral n)/(fromInt
 -- Counting Fractions:  How many elements would be contained in the set of reduced proper fractions for d <= 1,000,000?
 -- Answer: 303963552391 (929.59 secs, 19658268356 bytes)  15.5 minutes
 -- Analysis: The number of fractions for each denominator is the Euler phi function,
-t :: (Integral a) => a -> [a] -> a 
+t :: (Integral a) => a -> [a] -> a
 t 1 _ = 1
 --t n = (fromIntegral n) * product [1 - 1/(fromIntegral p) | p <- (unique $ primeFactors n)]
 t n ps = n * (product [(p - 1) | p <- upf]) `div` (product upf)
@@ -266,16 +266,16 @@ mu x ps
    | x == 1              = 1
    | null ps || q' == 0 = -1
    | r == 0  && r' == 0  = 0
-   | r == 0              = (-1)*(mu q (tail ps)) 
-   | otherwise           = mu x (tail ps) 
+   | r == 0              = (-1)*(mu q (tail ps))
+   | otherwise           = mu x (tail ps)
    where nextPrime = head ps
-         (q,r) = x `quotRem` nextPrime 
-         (q',r') = q `quotRem` nextPrime 
+         (q,r) = x `quotRem` nextPrime
+         (q',r') = q `quotRem` nextPrime
 sumTot2 :: (Integral a) => a -> a
 sumTot2 n = sum [mu d ps * flr * (1+flr) | d <- [1..n], let flr = n `div` d] `div` 2
             where ps = primesTo (isqrt n)
 
--- Approximation from Wolfram 
+-- Approximation from Wolfram
 --   This is very fast, but off by 1464 -- error term is O(10^7)
 sumTot3 x = 3*x*x/pi/pi
 sumTot3Error x = x * (log x)**(2/3) * (log (log x))**(4/3)
@@ -345,7 +345,7 @@ myInsert n m =
                       (Just l) -> (Map.insert n l m,l) }
     (Just l) -> (m,l)
 
-initialLengths = Map.fromList [(1,1), (2,1), (145,1), (169,3), (871,2), (872,2), (1454,3), (40585,1), (45361,2), (45362,2), (363601,3)] 
+initialLengths = Map.fromList [(1,1), (2,1), (145,1), (169,3), (871,2), (872,2), (1454,3), (40585,1), (45361,2), (45362,2), (363601,3)]
 allLengths = fst $ foldr (\k acc -> myInsert k (fst acc)) (initialLengths,0) [1..999999]
 pe74 =  length $ filter (\(n,l) -> l == 60 && n < 999999) $ Map.toList allLengths
 
@@ -424,7 +424,7 @@ pe77 = fst $ head $ filter (\(x,y) -> y > 5000) [ (x,countBelow x x) | x <- [11.
 -- p(11224) = 134664723242887520089229243811393012549783715496870074127499761107322501027469760957809248421625196998368711300000
 -- is the first number divisible by 10000 took 31.91 seconds.
 -- but after over 10 minutes it had not found a number divisible by 1000000
-pe78 = length $ takeWhile (\x -> x `mod` 100000 /= 0) p 
+pe78 = length $ takeWhile (\x -> x `mod` 100000 /= 0) p
 
 
 -- 79
@@ -455,7 +455,7 @@ pe80 = sum [sumSqRootDigits 100 x | x <- [1..100], not $ x `elem` squares]
   where
     squares = [x^2 | x <- [1..10]]
     sumSqRootDigits d n = sum $ take d $ digits $ sqrtTo (d+2) n
-    sqrtTo n x = 
+    sqrtTo n x =
       let a = sqrteps (1 % (10^n)) x
       in (numerator a)*(10^n) `div` (denominator a)
 
@@ -492,4 +492,3 @@ approxCF eps x
                         v  = b*v1 + a'*v2
                         f  = u/v
                         f1 = u1/v1
- 

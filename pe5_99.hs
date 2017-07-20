@@ -11,11 +11,11 @@ import ProjectEuler ( wordsWhen )
 -- Calculate exp * log(base) for a line in the form "base,exp"
 makeValue :: [Char] -> Double
 makeValue line = let [b,e] = map (\s -> read s ::Double) $ wordsWhen (== ',') line
-                 in log b * e 
+                 in log b * e
 
 -- make a list of line vales and line number tuples from the input file
 makePairs :: String -> [(Double, Int)]
-makePairs s = let values = map makeValue (lines s)  
+makePairs s = let values = map makeValue (lines s)
               in zip values [1..]
 
 main = do

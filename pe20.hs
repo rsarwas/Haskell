@@ -40,4 +40,3 @@ sh :: Int -> Int
 sh n = sum [ sum $ phs $ shs $ harshad' x | x <- [1..(n-2)]]
 
 pe387 = sh 14
-
