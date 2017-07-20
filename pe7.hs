@@ -49,7 +49,6 @@ pe124 = snd ((quicksort $ [(r,n) | n <- [1..100000], let r = rad n, r < 10000]) 
 
 -- 125
 -- Palindromic sums: Find the sum of all the numbers less than 10^8 that are both palindromic and can be written as the sum of consecutive squares.
--- Wrong Answer: 2916867073 (7.88 secs, 3964658688 bytes) 554455 and 9343439 can be formed by two different sums
 -- Answer: 2906969179 (8.11 secs, 3,660,998,264 bytes)
 {--
 Analysis:
@@ -94,8 +93,14 @@ if b^2 + b^2 = n then a^2 + b^2 < n and n < b^2 + c^2
 solve for b in  b^2 + b^2 = n  => 2b^2 = n => b^2 = n/2
 b = sqrt(n/2)  (unless n is a square, b will be irrational),
 therefore  m = floor b
+
+Initial run yielded 2916867073; which is the wrong answer. :(
+
+After careful inspection I discovered that both 554455 and 9343439 can be
+formed by two different sums.  Therefore I need to unique (with nub) the list
+of palindromeSums before summing
 --}
--- need to 'unique' the list
+
 pe125 = sum $ nub $ palindromeSums (10^8)
 palindromeSums n = filter palindrome $ concat $ sums' n
 palindrome x = x == (digitsToInt $ reverse $ digits x)
@@ -104,27 +109,3 @@ sums' n = map (takeWhile (<n) . (drop 1)) $ sums n
 sums n = map (scanl1 (+)) $ squares n
 squares n =  [[x^2 | x <- [firstTerm..m]] | firstTerm <- [1..(m-1)]]
   where m = floor $ sqrt ((fromIntegral n)/2)
-
-{--
-Testing this code yields:
-*Main> squares 100
-[[1,4,9,16,25,36,49],[4,9,16,25,36,49],[9,16,25,36,49],[16,25,36,49],[25,36,49],[36,49]]
-*Main> sums 100
-[[1,5,14,30,55,91,140],[4,13,29,54,90,139],[9,25,50,86,135],[16,41,77,126],[25,61,110],[36,85]]
-*Main> sums' 100
-[[5,14,30,55,91],[13,29,54,90],[25,50,86],[41,77],[61],[85]]
-*Main> palindromeSums 100
-[5,55,77]
-*Main> sum $ palindromeSums 100
-137
-*Main> palindromeSums 1000
-[5,55,505,818,77,636,595,181,434,313,545]
-*Main> length $ palindromeSums 1000
-11
-*Main> sum $ palindromeSums 1000
-4164
-*Main> pe125
-2916867073
-
-unfortunately this answer isn't right.  What is wrong?
---}
