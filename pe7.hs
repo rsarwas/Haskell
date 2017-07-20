@@ -6,7 +6,7 @@ import Data.List
 
 -- 121
 -- Disc game prize fund: Find the maximum prize fund that should be allocated to a single game in which fifteen turns are played.
--- Answer: 2269 (0.11 secs, 16966496 bytes)
+-- Answer: 2269 (0.07 secs, 30,257,960 bytes)
 -- Analysis: from the example, the prize fund is the integer inverse of the odds
 --  In the first round the odds are 1 in 2 of getting a blue.  In the second round, the odds are 1 in 3, etc ...
 --  Now you list all ways that you can form a winning game, and sum over the products of the corresponding probabilities.
@@ -36,7 +36,7 @@ pe121 = payout 15
 
 -- 124
 -- Ordered radicals: If rad(n) is sorted for 1 ≤ n ≤ 100000, find E(10000), where rad(n) is the product of distinct prime factors of n
--- Answer: 21417 (24.63 secs, 5493082608 bytes)
+-- Answer: 21417 (16.13 secs, 5,653,048,224 bytes)
 -- Analysis: simple brute force solution, using functions already written for other solutions.
 --           since the primeFactors are already sorted, I can use my existing unique function to remove dups
 --           Since the sqrt 100000 < 10,000, we need to evaluate all numbers.
@@ -49,8 +49,8 @@ pe124 = snd ((quicksort $ [(r,n) | n <- [1..100000], let r = rad n, r < 10000]) 
 
 -- 125
 -- Palindromic sums: Find the sum of all the numbers less than 10^8 that are both palindromic and can be written as the sum of consecutive squares.
--- Answer: 2906969179 (7.63 secs, 3961783280 bytes)
 -- Wrong Answer: 2916867073 (7.88 secs, 3964658688 bytes) 554455 and 9343439 can be formed by two different sums
+-- Answer: 2906969179 (8.11 secs, 3,660,998,264 bytes)
 {--
 Analysis:
 note: A sum has to have at least two terms

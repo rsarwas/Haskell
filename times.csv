@@ -127,11 +127,11 @@ problem,time,notes
 119,,
 120,0.01,
 000000000000000,,pe7.hs
-121,0.03,Retime
+121,0.07,
 122,,
 123,,
-124,3.37,Retime
-125,1.60,Clean up code/comments and retime.
+124,16.13
+125,8.11,Clean up code/comments.
 126,,
 127,,
 128,,
