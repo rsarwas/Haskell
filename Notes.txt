@@ -27,9 +27,19 @@ By Regan Sarwas (rsarwas@gmail.com) August 2013 to ...
   foldr1 f acc [a1, ... an-2, an-1, an] = f a1 (... (f an-2 (f an-1 an)) ...)
   scan[l|r|l1|r1] are similar to the fold functions, except they return a list with the value of the accumulator at each step
 
+* RE-SOLVED:
+  14, implemented the same algorithm as pe14'' in swift, and got a solution in
+      less than 1 second, compared to 420 seconds in Haskell.
+      It is interesting that Haskell was faster at building the lists and then
+      taking the length, than just calculating a length.  The problem seems to be
+      with memory, checking sequences below 20,000 took over 1GB of memory.
+      Compiling the code instead of running in ghci, yielded results that were
+      <24 seconds for the chain calculation and <30 seconds to just calculate the
+      length.
+      Swift was much faster at just calculating the list length; building the
+      lists involved a lot of array allocation and copying (which slowed things down).
 
 * RE-SOLVE:
-  14, I found a shortcut, try to optimize brute force solution
   23, look for faster solution
   72, too slow
   76, I stumbled onto some help with this problem, but I would like to resolve it myself.
