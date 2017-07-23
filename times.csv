@@ -14,7 +14,7 @@ problem,time,notes
 11,0.01,
 12,3.34,
 13,0.00,
-14,0.10,took a short cut - see problem for details
+14,0.45,unix time for swift solution; 24 seconds for compiled Haskell solution without OEIS lookup
 15,0.01,
 16,0.00,
 17,0.03,
@@ -24,7 +24,7 @@ problem,time,notes
 000000000000000,,pe2.hs
 21,2.17,
 22,0.07,unix time
-23,29.37,Look for a faster solution
+23,29.37,compiled (ghc -O) solution ran in 9.20 seconds (good enough)
 24,0.00,
 25,0.00,
 26,0.07,
