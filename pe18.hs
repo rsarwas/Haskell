@@ -37,3 +37,26 @@ repunitsum power = 1 + (sum (unique_strong_repunits power))
 
 test346 = repunitsum 3
 pe346 = repunitsum 12
+
+
+-- 357
+-- Prime generating integers:
+-- Find the sum of all positive integers n not exceeding 100 000 000 such that for every divisor d of n, d+n/d is prime.
+-- Answer:
+-- Analysis
+--   1) Try Brute Force:
+--     I only need to look at the first half of the divisors, due to symmetry:
+--       for divisors of m {1, d2 ... dn-1, m}; 1 + m/1 == m + m/m; similarly for d2 and dn-1 etc.
+--     If there is an odd number of divisors, then the middle divisor is a square root and this number can be ignored
+--       because n/s = s and s + n/s = 2s which is not prime
+--     I can ignore all odd numbers (except 1) 1 + n/1 is even and therefore not prime
+--     Similarly I can ignore all multiples of 4, 9, 16, ....
+--     Unfortunately, initial testing revealed that this approach is not nearly fast enough
+--       10 000 < .5sec, while 100 000 > 10sec at best this implies 100 000 000 > 80000sec
+
+halve' xs = take n xs where n = length xs `div` 2
+halve xs = take n xs where n = (1 + length xs) `div` 2
+divisor357s n = [d + n `div` d | d <- halve (divisors n)]
+hasOnlyPrime357Divisors n = all isPrime (divisor357s n)
+primeDivisorsBelow n = [x | x <- [1..n], even x, x `mod` 4 /= 0, x `mod` 9 /= 0, hasOnlyPrime357Divisors x]
+pe357 = sum $ primeDivisorsBelow 10000
