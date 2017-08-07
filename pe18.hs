@@ -4,6 +4,9 @@ import ProjectEuler
 
 import qualified Data.Set as Set -- for problem 346
 
+-- 345
+-- See pe18_345.hs
+
 -- 346
 -- Strong Repunits: Find the sum of all strong repunits below 10^12
 -- Answer: 336108797689259276 (11.43 secs, 6,465,907,200 bytes)
