@@ -96,7 +96,7 @@ problem,time,notes
 89,0.02,unix time
 90,0.12,
 91,0.01,
-92,22.82,kinda slow
+92,10.07,unix time with ghc -O; interpreted time was 22 to 32sec 
 93,10.03,
 94,0.00,
 95,,

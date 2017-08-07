@@ -231,6 +231,7 @@ pe91 = pe91' 50
 -- 92
 -- Square digit chains: How many starting numbers below ten million will arrive at 89?
 -- Answer: 8581146 (32.57 secs, 6717408512 bytes)
+-- Answer: 8581146 (10.066 secs - real time for version compiled with ghc -O)
 -- From testing, it appears that most of the time is spent in sum $ map (^2) (digits n)
 -- The new solution involves using obvious solution for all the numbers below 567 = 7 * 9^2,
 -- then building the sum of the squares of all the permutations of a 7 digit number, and checking for
