@@ -96,7 +96,7 @@ problem,time,notes
 89,0.02,unix time
 90,0.12,
 91,0.01,
-92,10.07,unix time with ghc -O; interpreted time was 22 to 32sec 
+92,10.07,unix time with ghc -O; interpreted time was 22 to 32sec
 93,10.03,
 94,0.00,
 95,,
@@ -220,7 +220,7 @@ problem,time,notes
 207,,
 208,,
 209,,
-210,150.86,needs work
+210,3.551,unix real time when compiled with ghc -O; interpreted time was 150.86
 211,,
 212,,
 213,,

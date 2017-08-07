@@ -67,6 +67,7 @@ pe206 = head $ filter match trys
 --                          where O is the point (0,0) and C is the point (r/4,r/4)
 --                          and S(r) is the set of points (x,y) with integer coordinates satisfying |x| + |y| ≤ r
 -- Answer: 1598174770174689458 (150.86 secs, 129714794848 bytes)
+-- Answer: 1598174770174689458 (real 0m3.551s when compiled with ghc -O) 
 -- Analysis: The math is easy to verify by drawing the simple cases on grid paper.
 -- totals are easiest to obtain by counting along the diagonal  S(r) is a square rotated 45 degrees
 -- the tricky ones are those within the circle of radius N*sqrt(2) and center N/8,N/8.  this is broken
