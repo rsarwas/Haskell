@@ -39,9 +39,9 @@ By Regan Sarwas (rsarwas@gmail.com) August 2013 to ...
       Swift was much faster at just calculating the list length; building the
       lists involved a lot of array allocation and copying (which slowed things down).
   23, compiled with ghc -O, and it was fast enough < 10s
+  72, compiled with ghc -O, and it was fast enough < 1s
 
 * RE-SOLVE:
-  72, too slow
   76, I stumbled onto some help with this problem, but I would like to resolve it myself.
   79, solved manually, find computer solution
   86, last step is manual, find complete computer solution

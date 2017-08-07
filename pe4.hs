@@ -250,6 +250,7 @@ pe71 = fst $ snd $ maximum $ take 10 $ map (\(n,d) -> ((fromIntegral n)/(fromInt
 -- 72
 -- Counting Fractions:  How many elements would be contained in the set of reduced proper fractions for d <= 1,000,000?
 -- Answer: 303963552391 (929.59 secs, 19658268356 bytes)  15.5 minutes
+-- Answer: 303963552391 (0.954 secs when compiled with ghc -O)
 -- Analysis: The number of fractions for each denominator is the Euler phi function,
 t :: (Integral a) => a -> [a] -> a
 t 1 _ = 1
