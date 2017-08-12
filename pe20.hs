@@ -8,7 +8,8 @@ import ProjectEuler
 
 -- There is a lot of duplicate work in this algorithm: harshad' 11 takes < 2 sec, but
 -- shs $ harshad' 11 takes ~ 40 sec; and they do much the same; except the prime check
--- Maybe there is a way to implicitly determine primeness by the
+-- Maybe there is a way to implicitly determine primeness by the structure.
+-- Note replacing the isPrime with odd runs in 5.67 seconds.  A faster prime check would help
 
 -- harshad - Generates the list of larger Harshad numbers that are right truncatable to
 -- the given Harshad numbers. This is done by appending 0..9 to each number in the list
