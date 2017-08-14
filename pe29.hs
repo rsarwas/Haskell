@@ -16,4 +16,18 @@ parallelHexagon :: Int -> [Int]
 parallelHexagon n = [(n+2-t)*(n+1-t) `div` 2 | t <- [3,6..n]]
 totalParallelHexagons :: Int -> Int
 totalParallelHexagons n = sum [sum (parallelHexagon i) | i <- [3..n]]
--- totalParallelHexagons 12345 takes over 30 seconds to run, so we need to improve
+-- totalParallelHexagons 12345 => 322628122094565 takes over 30 seconds to run, so we need to improve
+sumParallelHexagons :: Int -> Int
+sumParallelHexagons n = parallelHexagons n 1
+-- n is the length of the bottom row,
+-- m is the multiplier. we multiply the bottom row
+-- by 1 and the row above by m+1; therefore we calculates the sum
+-- of h(3) + h(4) + ... h(n)
+parallelHexagons :: Int -> Int -> Int
+parallelHexagons n m
+  | n < 3 = 0
+  | otherwise = m * sum (bottomHexagons n) + parallelHexagons (n-1) (m+1)
+    where
+      bottomHexagons n = takeWhile (>0) [n+1 - 3*i | i <- [1..]]
+    -- list of hexagons of size 1, 2, 3, ... in the bottom of a triangle of size n
+-- sumParallelHexagons 12345 => 322628122094565 also This also takes 30 seconds to run
