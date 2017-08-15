@@ -8,13 +8,22 @@ import qualified Data.Set (fromList, member) -- for problem 504
 -- 504
 -- Square on the Inside: How many quadrilaterals ABCD strictly contain a square number of lattice points for m = 100?
 -- Maximum number of lattice points is 2m*m = 20,000  = sqrt(2)*m*m < (1.42m)^2
--- Answer:
--- performance: qc:  20,30,40,100 = 0.06,0.26,0.78,30;  csl = 1.9,10.2,33.5,?40min? (32x,39x,43x,?80x?
+-- Answer: 694687 2m55s unix time when compiled with ghc -O
+-- performance:
+--   ghci: qc:  20,30,40,100 = 0.06,0.26,0.78,30;
+--         csl = 1.9,10.2,33.5,?40min? (32x,39x,43x,?80x?
+--  ghc -O: length qc 100 and squares takes 0.435s unix time
+
 -- tc is the triangle count; the number of lattice points strictly within the triangle
 -- tc' assumes that the short leg (h=height) is provided before the long leg (l = length).
 -- This should aid in memoizing the results
+-- This is done by calculating the integral height at each lattice point along the axis
+-- by using the slope of the hypotenuse: c/step = rise/run = h/l => c = h*step/l;
+-- we count back from the X intercept to the y axis.
+-- The two axis are ignored, as are points along the hypotenuse (where h*step is
+-- evenly divisible by l, i.e remainder ==0, we subtract the point on the hypotenuse)
 tc' :: Int -> Int -> Int
-tc' h l  = (sum [1..(h-2)]) + (h-1) * ((l-1) `div` h)
+tc' h l = sum [ if r == 0 then q-1 else q | step <- [1..(l-1)], let (q,r) = (h*step) `quotRem` l]
 
 -- symmetry is used to calculate tc a b from tc b a
 tc :: Int -> Int -> Int
@@ -45,3 +54,9 @@ csl n = length $ filter (\x -> x `Data.Set.member` squares) (qc n)
 
 test504 = csl 4
 pe504 = csl 100
+{-
+main :: IO ()
+main = do
+  let pe504 = csl 100
+  print pe504
+-}

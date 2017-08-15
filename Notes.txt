@@ -49,6 +49,7 @@ By Regan Sarwas (rsarwas@gmail.com) August 2013 to ...
   86, last step is manual, find complete computer solution
  112, lots of manual work; find complete computer solution
  387, WAAAAAAY too slow
+ 504, waaaay too slow in ghci, almost 3 minutes with ghc -O 
  587, manually converged to solution; write a converger
 
 * IN-PROGRESS
@@ -64,5 +65,4 @@ By Regan Sarwas (rsarwas@gmail.com) August 2013 to ...
  345
  357
  493
- 504
  577

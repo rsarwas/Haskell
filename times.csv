@@ -529,7 +529,7 @@ problem,time,notes
 501,,
 502,,
 503,,
-504,,In Progress
+504,175.6,unix time with ghc -O; should try to improve speed
 505,,
 506,,
 507,,
