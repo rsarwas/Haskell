@@ -2,7 +2,7 @@
 
 -- 162
 -- How many hexadecimal numbers containing at most sixteen hexadecimal digits exist with all of the digits 0,1, and A present at least once?
--- Answer: 6377292 (in Hex = 0x614F4C)
+-- Wrong Answer: 6377292 (in Hex = 0x614F4C)
 hexCount :: Int -> Int
 hexCount 3 = 4
 hexCount n = 3 * (hexCount (n-1))
