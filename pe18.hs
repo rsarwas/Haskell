@@ -56,10 +56,14 @@ pe346 = repunitsum 12
 --     Similarly I can ignore all multiples of 4, 9, 16, ....
 --     Unfortunately, initial testing revealed that this approach is not nearly fast enough
 --       10 000 < .5sec, while 100 000 > 10sec at best this implies 100 000 000 > 80000sec
+--       even compiled, the code takes 22s for 10^6
 
 halve' xs = take n xs where n = length xs `div` 2
 halve xs = take n xs where n = (1 + length xs) `div` 2
 divisor357s n = [d + n `div` d | d <- halve (divisors n)]
 hasOnlyPrime357Divisors n = all isPrime (divisor357s n)
 primeDivisorsBelow n = [x | x <- [1..n], even x, x `mod` 4 /= 0, x `mod` 9 /= 0, hasOnlyPrime357Divisors x]
-pe357 = sum $ primeDivisorsBelow 10000
+pe357 = sum $ primeDivisorsBelow 1000000
+
+--main :: IO ()
+--main = print pe357
