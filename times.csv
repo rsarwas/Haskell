@@ -62,7 +62,7 @@ problem,time,notes
 57,0.27,
 58,13.93,
 59,0.00,
-60,,In Progress
+60,110.874,ghc -O, can i find a faster solution?
 000000000000000,,pe4.hs
 61,0.02,
 62,9.46,

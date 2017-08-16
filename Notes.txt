@@ -44,6 +44,7 @@ By Regan Sarwas (rsarwas@gmail.com) August 2013 to ...
  210, compiled with ghc -O, and it was fast enough ~ 3.5s
 
 * RE-SOLVE:
+  60, solution is too slow
   76, I stumbled onto some help with this problem, but I would like to resolve it myself.
   79, solved manually, find computer solution
   86, last step is manual, find complete computer solution
@@ -53,7 +54,6 @@ By Regan Sarwas (rsarwas@gmail.com) August 2013 to ...
  587, manually converged to solution; write a converger
 
 * IN-PROGRESS
-  60 Prime Pair sets (20% #1, 8)
   78 Coin partitions (30% #1, 34)
   83 Path sum: four ways (25% #1; 17)
   88 Product-sum numbers (40% #1: 93)

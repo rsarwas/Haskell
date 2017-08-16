@@ -275,7 +275,7 @@ pe58 = snd $ head $ filter (\(p,s) -> (p < 10)) $ drop 1 percents
 
 -- 60
 -- Prime pair sets: Find the lowest sum for a set of five primes for which any two primes concatenate to produce another prime.
--- Answer:
+-- Answer: 26033  110.874s unix real time, compiled w/ ghc -O
 -- Analysis: The primes in the set must be unique. proof: let p = prime with n digits.  let p' = p concatenated with p
 -- p' = 10^n * p + p = (10^n + 1) * p.  since p is a factor of p', p' is not prime.
 -- Analysis: Given that the set [3,7,109,673] is the lowest sum of 4 primes where all concatenated pairs are prime.
@@ -286,7 +286,6 @@ pe58 = snd $ head $ filter (\(p,s) -> (p < 10)) $ drop 1 percents
 --   This approach turned out to be fruitless.
 --   pe60 = (sum low4) + (head $ filter isPrimePair (dropWhile (<999) (primesTo 9999)))
 
-
 mag n
   | n < 10      = 10
   | n < 100     = 100
@@ -296,7 +295,7 @@ mag n
   | n < 1000000 = 1000000
   | otherwise   = 10 * (mag (n `div` 10))
 
-pe60primes = drop 1 (primesTo 9999999)  -- drop 2 it will never be in the set
+pe60primes = drop 1 (primesTo 999999)  -- drop 2 it will never be in the set
 pe60primes' = fromList pe60primes
 
 pp2 n
@@ -307,7 +306,7 @@ pp2 n
 primePairsTo n = [[a,b] | let p = takeWhile (<n) pe60primes,  a <- p, b <- dropWhile (<= a) p, isPrimePair a b]
 isPrimePair p1 p2 = let m1 = mag p1
                         m2 = mag p2
-                        small = m1*m2 <= 10^7
+                        small = m1*m2 <= 10^6
                     in if small
                        then (member (p1*m2 + p2) pe60primes') && (member (p2*m1 + p1) pe60primes')
                        else (isPrime (p1*m2 + p2)) && (isPrime (p2*m1 + p1))
@@ -321,11 +320,10 @@ primeQuintsTo n = [p1:b | let pt = primeQuadsTo n,
                          [p1,p2,p3,p4] <- pt,
                          b <- filter (\[a,b,c,d] -> p2 == a && p3 == b && p4 == c && (isPrimePair p1 d)) pt]
 
-primeQuadsTo' 4000 = [[3,7,109,673],[3,11,2069,2297],[3,17,449,2069],[3,17,2069,2297],[3,37,67,2377],[7,19,97,3727],[7,19,1249,3727],[7,61,1693,3181],[7,433,1471,3613],[7,829,2671,3361],[7,1237,1549,3019],[7,2089,2953,3181],[11,23,743,1871],[11,239,1049,1847],[11,239,1091,1847],[23,311,677,827],[23,677,827,1871],[31,1123,2029,2281],[37,991,2269,3613],[37,1549,2707,3463],[79,967,1117,3511],[79,1801,3253,3547],[269,617,887,2741],[809,1361,2141,3947],[1451,2699,3413,3761],[1753,1951,3547,3643]]
--- (340.16 secs, 140199718280 bytes) with no quints
+pe60 = sum (head (primeQuintsTo 8500))
 
-test = map (q3To 1000) $ primeTriplesTo 110
-test' = map (q3To 100000) $ primeTriplesTo 200
-pe60 = map (q4To 100000) $ primeQuadsTo' 4000
-q3To n l@[a,b,c] = [p:l | p <- dropWhile (<c) $ primesTo n, isPrimePair a p && isPrimePair b p && isPrimePair c p]
-q4To n l@[a,b,c,d] = [p:l | p <- dropWhile (<d) $ primesTo n, isPrimePair a p && isPrimePair b p && isPrimePair c p && isPrimePair d p]
+{-
+main :: IO ()
+main = do
+  print pe60
+--}
