@@ -259,13 +259,13 @@ pe57 = length $ filter test (terms 1000)
 -- 58
 -- Spiral primes: What is the side length of the square spiral for which the ratio of primes along both diagonals first falls below 10%?
 -- Answer: 26241 (13.62 new laptop secs, 48832942872 bytes) -- improvements due to better primeFactors routine in isPrime
-counts =  scanl addPrimes (0,1,1) [3,5..] where
+counts' =  scanl addPrimes (0,1,1) [3,5..] where
   addPrimes (n,d,_) side =
     let side2 = side^2
         corners = [ side2 - (x*(side-1)) | x <- [1,2,3]]
         p = length $ filter isPrime corners
     in (p+n,d+4,side)
-percents = map (\(n,d,s) -> ((n*100) `div` d, s)) counts
+percents = map (\(n,d,s) -> ((n*100) `div` d, s)) counts'
 pe58 = snd $ head $ filter (\(p,s) -> (p < 10)) $ drop 1 percents
 
 
