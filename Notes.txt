@@ -50,6 +50,7 @@ By Regan Sarwas (rsarwas@gmail.com) August 2013 to ...
   86, last step is manual, find complete computer solution
  112, lots of manual work; find complete computer solution
  387, Harshad Numbers: WAAAAAAY too slow: 2173.39 in ghci, rewrite in swift
+ 500, solved in python, find haskell solution
  504, Square on the Inside: Waaaay too slow in ghci, almost 3 minutes with ghc -O (see tc2 for possible faster solution)
  587, manually converged to solution; write a converger (See 607)
 
