@@ -25,6 +25,12 @@ import qualified Data.Set (fromList, member) -- for problem 504
 tc' :: Int -> Int -> Int
 tc' h l = sum [ if r == 0 then q-1 else q | step <- [1..(l-1)], let (q,r) = (h*step) `quotRem` l]
 
+-- find a faster way to find the lattice points inside the h l triangle
+-- it really should be about h*l/2,  with a little experimenting, I found this
+-- to hold
+tc2 h l = ((h-1)*(l-1) - pointsOnDiagonal h l) `div` 2
+  where pointsOnDiagonal h l = 1 -- TODO: figure this part out
+
 -- symmetry is used to calculate tc a b from tc b a
 tc :: Int -> Int -> Int
 tc h l
