@@ -44,14 +44,14 @@ By Regan Sarwas (rsarwas@gmail.com) August 2013 to ...
  210, compiled with ghc -O, and it was fast enough ~ 3.5s
 
 * RE-SOLVE:
-  60, solution is too slow
+  60, Prime pairs: solution is too slow, unsolved in ghci, 110.874 with ghc -O
   76, I stumbled onto some help with this problem, but I would like to resolve it myself.
   79, solved manually, find computer solution
   86, last step is manual, find complete computer solution
  112, lots of manual work; find complete computer solution
- 387, WAAAAAAY too slow
- 504, waaaay too slow in ghci, almost 3 minutes with ghc -O
- 587, manually converged to solution; write a converger
+ 387, Harshad Numbers: WAAAAAAY too slow: 2173.39 in ghci, rewrite in swift
+ 504, Square on the Inside: Waaaay too slow in ghci, almost 3 minutes with ghc -O
+ 587, manually converged to solution; write a converger (See 607)
 
 * IN-PROGRESS
   78 Coin partitions (30% #1, 34)
