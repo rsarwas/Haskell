@@ -81,7 +81,7 @@ problem,time,notes
 75,3.12,
 76,0.00,
 77,0.44,
-78,,In Progress
+78,30.464,unix real time with ghc -O2
 79,0.00,solved with paper and pencil; find computer solution
 80,0.33,
 000000000000000,,pe5.hs
