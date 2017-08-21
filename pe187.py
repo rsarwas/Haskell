@@ -2,8 +2,8 @@
 # $ pip3 install primesieve
 # Answer: 17427258 in 0m1.190s unix time (time python3 pe187.py)
 import primesieve
-n = 10**6
-sqrt_n = 10**3
+n = 10**8
+sqrt_n = 10**4
 primes = primesieve.primes(n/2)
 end = len(primes) - 1
 start = 0
