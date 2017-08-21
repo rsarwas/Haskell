@@ -288,11 +288,11 @@ pe72 = sumTot2 (10^6) - 1
 -- Counting fractions in a range: How many fractions lie between 1/3 and 1/2 in the sorted set of reduced proper fractions for d ≤ 12,000?
 -- Answer: 7295372 (22.21 secs, 11606982560 bytes)
 -- Analysis: similar to 71, We figure the min and max numerator for a denominator, then find which of those are proper reduced fractions
-count d (n1,d1) (n2,d2) =
+count' d (n1,d1) (n2,d2) =
   let n'  = 1 + n1*d `div` d1
       n'' =     n2*d `div` d2
   in sum [1 | n <- [n'..n''], gcd n d == 1]
-pe73 = sum $ map (\x -> count x (1,3) (1,2)) [5..12000]
+pe73 = sum $ map (\x -> count' x (1,3) (1,2)) [5..12000]
 
 
 -- 74
@@ -338,10 +338,10 @@ maxPerm = digitsToInt . reverse . sort . digits
 myInsert n m =
   case Map.lookup n m of
     Nothing  -> let n' = maxPerm n
-  				 in case Map.lookup n' m of {
-  				      Nothing  -> let (m',l) = myInsert (digitFactorial n) m
-  				                      l'     = l + 1
-  				                      m''    = Map.insert n' l' (Map.insert n l' m')
+                in case Map.lookup n' m of {
+                Nothing  -> let (m',l) = myInsert (digitFactorial n) m
+                                l'     = l + 1
+                                m''    = Map.insert n' l' (Map.insert n l' m')
                                    in (m'',l');
                       (Just l) -> (Map.insert n l m,l) }
     (Just l) -> (m,l)
