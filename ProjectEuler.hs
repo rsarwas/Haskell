@@ -19,6 +19,7 @@ module ProjectEuler
 , primeFactors
 , primeFactors'
 , primesTo
+, pythagoreanTriples
 , quicksort
 , replace
 , transpose
@@ -166,6 +167,10 @@ primesTo m
                EQ ->     minus  xs     ys
                GT ->     minus (x:xs)  ys
     minus xs      _     = xs
+
+-- an infinite list of primitive pythagorean triples
+pythagoreanTriples :: [(Integer,Integer,Integer)]
+pythagoreanTriples = [(m*m - n*n, 2*m*n, m*m + n*n) | m <- [2..], n <- [1..(m-1)], odd (m-n), gcd m n == 1]
 
 -- uses the quicksort algorithm to sort a list of sortable items
 quicksort :: (Ord a) => [a] -> [a]

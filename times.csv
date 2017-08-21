@@ -145,7 +145,7 @@ problem,time,notes
 136,,
 137,,
 138,,
-139,,
+139,15.191,unix real time with ghc -O2
 140,,
 000000000000000,,pe8.hs
 141,,

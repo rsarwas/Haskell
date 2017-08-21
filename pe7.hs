@@ -109,3 +109,37 @@ sums' n = map (takeWhile (<n) . (drop 1)) $ sums n
 sums n = map (scanl1 (+)) $ squares n
 squares n =  [[x^2 | x <- [firstTerm..m]] | firstTerm <- [1..(m-1)]]
   where m = floor $ sqrt ((fromIntegral n)/2)
+
+-- 139
+-- Pythagorean tiles:
+-- given 4 equal pythagorean triangles arranged inside a square of size
+-- equal to the hypotenuse, that leaves a square void in the middle.  Find the
+-- the number of triangles with perimeter < 10^8, such the inner square can evenly
+-- tile the bigger square:
+-- Answer: 10057761  unix real	0m15.191s (ghc -O2);
+-- Analysis, This is trivial if you have a pythagoreanTriples generator.
+-- filter by those with c being multiple of b-a, since this is a primitive, also
+-- count all the multiples i.e 2*(3,4,5) = (6,8,10) upto the max perimeter
+-- The biggest problem, is that my triple generator yields an infinte list and
+-- does not guarantee monotonically increasing perimeters, so finding a suitable
+-- stopping point is a problem.  Turns out that there are few enough triangles,
+-- and the ordering is close enough that stopping at the first one that exceeds
+-- the perimeter is good enough.  (I also tested with a slightly larger upper
+-- bound)
+-- Also, while this problem is able to solve smaller problems eficiently
+-- pe139' (10^5) = 0.17s,  pe139' (10^6) = 0.82s, pe139' (10^7) = 4.71s,
+-- it runs into a memory problem at the full size and comes to a screeching halt.
+-- Compiling clears up this problem.
+pe139' perim =
+  sum $ map (div perim) $ takeWhile (<=perim)
+    [a+b+c | (a,b,c) <- pythagoreanTriples, c `rem` (b-a) == 0]
+-- with a 10% extra to ensure we look at all triangles with perim.
+--  sum $ map (div perim) $ filter (<=perim) $ takeWhile (<=limit)
+--  [a+b+c | (a,b,c) <- pythagoreanTriples, c `rem` (b-a) == 0]
+--    where limit = perim + (perim `div` 10)
+pe139 = pe139' (10^8)
+{-
+main :: IO ()
+main = do
+  print pe139
+-}
