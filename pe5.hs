@@ -183,15 +183,44 @@ pe87 = size $ fromList $ primePowerTriples 50000000
 -- 88
 -- Product-sum numbers: What is the sum of all the minimal product-sum numbers for 2≤k≤12000?
 -- Answer:
-mps2 k = [ (n1, n2, n1*n2) | n1 <- [2..k], n2 <- [n1..(2*k `div` n1)], (n1*n2 - n1 - n2) == (k-2)]
-minimalProductSum x = minimum (f' x) --[f n x | n <- [2..((x `div` 2)+ 1)]]
-  where f 2 k = 2*k
-        f n k = if (k-1) `mod` (n-1) == 0 then k + n + ((k-n) `div` (n-1)) else f 2 k
-        f' k = [ n1*n2 | n1 <- [2..k], n2 <- [n1..(2*k `div` n1)], (n1*n2 - n1 - n2) == (k-2)]
-pe88test = nub [minimalProductSum k | k <- [2..12]]
--- pe88test = [4,6,8,9,12,16,15,18,24] should be [4, 6, 8, 12, 15, 16]
---pe88 = sum $ nub [minimalProductSum k | k <- [2..12000]]
--- yields 43345950 in 0m33.042s (with ghc -O2) unfortunately it is WRONG
+--Analysis:
+{-
+There is always a solution for k at 2*k*1^(k-2) = 2k = 2 + k + (k-2)*1, but this
+might not be minimal, but at least if provides an upper bound.
+We need to look at 3x[3,4..] < 2k, 4x[4,5,...] < 2k ... n*n < 2k; n = sqrt(2k)
+as well as 2x2x[2,3,..] < 2k, 2x3x[3,4...], upto nxnxn < 2k where n = cuberoot(2k)
+upto n terms where 2^n < 2k
+-}
+f2' k a = [t | x <- [3..(a `div` 3)], y <- [x..(a `div` x)], let t=x*y, t == x+y+k-2]
+f2 k a = minimum (a:[t | x <- [3..(a `div` 3)], y <- [x..(a `div` x)], let t=x*y, t == x+y+k-2])
+f3' k a = [t | x <- [2..(a `div` 4)], y <- [x..(a `div` (2*x))], z <- [y..(a `div` (x*y))], let t=x*y*z, t == x+y+z+k-3]
+f3 k a = minimum (a:[t | x <- [2..(a `div` 4)], y <- [x..(a `div` (2*x))], z <- [y..(a `div` (x*y))], let t=x*y*z, t == x+y+z+k-3])
+
+f1 k = f3 k (f2 k (2*k))
+-- I now have a solution for a list of 3 divisors or less, but this strategy
+-- does not scale well.  I can use this to create an uppoer bound to use on a more
+-- general solution.
+
+-- If I can make a list of divisor lists as follows
+dLists _ = [
+  (4,[[2,2,2,2],[2,2,2,3],[2,2,2,4],[2,2,2,5],[2,2,2,6],[2,2,3,3],[2,2,3,4]]),
+  (5,[[2,2,2,2,2],[2,2,2,2,3],[2,2,2,2,4],[2,2,2,2,5],[2,2,2,3,3]])]
+--, where fst element of the tuple is the number of divisors, upto 2^n < 12000
+-- Then the general solution is expressed as:
+pe88 k = minSolution k (f1 k) (dLists k)
+
+minSolution k limit ds = minimum [checklists k limit n l | (n,l) <- ds]
+  where
+    checklists k limit n l = min' limit
+       [p | ds <- l, let p = product ds, let s = sum ds, p == s+k-n, p < limit]
+    min' :: (Integral a) => a -> [a] -> a
+    min' x [] = x
+    min' x (y:ys) = min x (min' y ys)
+
+-- Now I just need to figure out how to make the dlists
+-- the solution considered so far is a recursive datatype without a base case
+--makeDivisorList _ 0 = [[]]
+--makeDivisorList limit n = map (x:) [(makeDivisorList limit' (n-1)) | x <- [2..(limit `div` (2^(n-1)))], let limit' = limit `div` x]
 
 
 -- 89
