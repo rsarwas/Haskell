@@ -189,7 +189,9 @@ minimalProductSum x = minimum (f' x) --[f n x | n <- [2..((x `div` 2)+ 1)]]
         f n k = if (k-1) `mod` (n-1) == 0 then k + n + ((k-n) `div` (n-1)) else f 2 k
         f' k = [ n1*n2 | n1 <- [2..k], n2 <- [n1..(2*k `div` n1)], (n1*n2 - n1 - n2) == (k-2)]
 pe88test = nub [minimalProductSum k | k <- [2..12]]
-pe88 = sum $ nub [minimalProductSum k | k <- [2..12000]]
+-- pe88test = [4,6,8,9,12,16,15,18,24] should be [4, 6, 8, 12, 15, 16]
+--pe88 = sum $ nub [minimalProductSum k | k <- [2..12000]]
+-- yields 43345950 in 0m33.042s (with ghc -O2) unfortunately it is WRONG
 
 
 -- 89
@@ -370,3 +372,8 @@ blues = 1 : scanl (\b a -> 6*b-a-2) 3 blues
 -- using the quadratic formula to solve  t(t-1) = 2b(b-1) for t(b) we have:
 total blue = (1+isqrt(1+8*blue*(blue-1))) `div` 2
 pe100 = fst $ head $ dropWhile (\(_,t) -> t < 10^12) [(blue, total blue) | blue <- blues]
+
+
+main :: IO ()
+main = do
+  print pe88
