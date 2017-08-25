@@ -5,7 +5,7 @@ import Data.Set (fromList, size)  -- for uniquing in 87
 import Data.Ratio -- for 93
 import Data.List -- 88, 93
 import System.Random -- 84
-import qualified Data.Map as Map -- 84
+import qualified Data.Map.Strict as Map -- 84, 95
 
 -- 81
 -- See pe5_81.hs
@@ -352,6 +352,35 @@ hyp94 = let r = 1:1:5: zip3With (\a b c -> 3*(a+b) - c) (drop 2 r) (drop 1 r) r
 pe94 = sum $ takeWhile (<10^9) [s+s+b | s <- (drop 2 hyp94), b <- [(s-1),(s+1)], isIntArea s b]
 
 
+-- 95
+-- Amicable chains
+-- Find the smallest member of the longest amicable chain with no element exceeding one million.
+-- Answer:
+{- Analysis:
+First step is to create a map between the first 1 000 000 numbers and the sum of
+thier properDivisors.  I have a divisor function in the ProjectEuler library, and
+properDivisors = init . divisors, however, it is really slow.  Liam suggested, I
+just do a brute force divisor check on each number and that is much faster.  It
+still needs to be compiled, but at least I can get the divisors in under 30 sec.
+Next step:
+-}
+
+divisorMap n = Map.fromList [(k,v) |
+   k <- [2..n], let v = sum $ properDivisors k, k /= v, v <= n, v /= 1]
+
+properDivisors n = 1:firstHalf ++ secondHalf
+  where
+    divs = [(q,q1) | q <- [2..(isqrt n)], let (q1,r) = n `quotRem` q, r == 0]
+    firstHalf = map fst divs
+    -- get the quotients, but ignore the square roots (do not double count)
+    -- reverse it so divisors are in order (not really required)
+    secondHalf = map snd $ reverse $ filter (uncurry (/=)) divs
+
+pdTest n = [(k,properDivisors k) | k <- [2..n]]
+
+pe95' = Map.lookup 84565 (divisorMap 999999)
+
+
 -- 96
 -- See pe5_96.hs
 
@@ -405,4 +434,4 @@ pe100 = fst $ head $ dropWhile (\(_,t) -> t < 10^12) [(blue, total blue) | blue 
 
 main :: IO ()
 main = do
-  print pe88
+  print pe95'
