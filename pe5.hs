@@ -363,6 +363,11 @@ properDivisors = init . divisors, however, it is really slow.  Liam suggested, I
 just do a brute force divisor check on each number and that is much faster.  It
 still needs to be compiled, but at least I can get the divisors in under 30 sec.
 Next step:
+recursively lookup the values from the map.  Since not all numbers are in the map
+i.e. primes and sums greater than 10^6, I am hoping that most chains will fail
+before too long.
+The following works for finding 220 -> 284 -> 220, find hits a stack overflow
+with 1600, meaning that it probably hit a loop  i.e.  x -> ... -> 220
 -}
 
 divisorMap n = Map.fromList [(k,v) |
@@ -378,7 +383,22 @@ properDivisors n = 1:firstHalf ++ secondHalf
 
 pdTest n = [(k,properDivisors k) | k <- [2..n]]
 
-pe95' = Map.lookup 84565 (divisorMap 999999)
+smallestNumberInLongestChain ds n = findLongest $ allChainsWithLength ds n
+
+-- given a list of [(firstN, len), (firstN, len)] returns the tuple with largest len
+findLongest = foldl (\(a,b) (f,s) -> if b < s then (f,s) else (a,b)) (0,0)
+-- generates a list of [(firstN, len), (firstN, len)] for all chains.  It uses a
+-- really large negative number when it hits the wall, so the len will still be
+-- negative as it unwinds
+allChainsWithLength xs m = [(x,chainLength x x) | x <- [1..m]]
+  where
+    chainLength start x =
+      case Map.lookup x xs of
+        Nothing -> -1000000
+        Just v -> if start == v then 1 else 1 + chainLength start v
+
+pe95' n = fst $ smallestNumberInLongestChain (divisorMap (n-1)) (n-1)
+pe95 = pe95' (10^6)
 
 
 -- 96
@@ -434,4 +454,4 @@ pe100 = fst $ head $ dropWhile (\(_,t) -> t < 10^12) [(blue, total blue) | blue 
 
 main :: IO ()
 main = do
-  print pe95'
+  print pe95
