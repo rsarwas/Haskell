@@ -355,7 +355,7 @@ pe94 = sum $ takeWhile (<10^9) [s+s+b | s <- (drop 2 hyp94), b <- [(s-1),(s+1)],
 -- 95
 -- Amicable chains
 -- Find the smallest member of the longest amicable chain with no element exceeding one million.
--- Answer:
+-- Answer: 14316  in 13.150s unix real time compiles with ghc -O2
 {- Analysis:
 First step is to create a map between the first 1 000 000 numbers and the sum of
 thier properDivisors.  I have a divisor function in the ProjectEuler library, and
@@ -364,15 +364,19 @@ just do a brute force divisor check on each number and that is much faster.  It
 still needs to be compiled, but at least I can get the divisors in under 30 sec.
 Next step:
 recursively lookup the values from the map.  Since not all numbers are in the map
-i.e. primes and sums greater than 10^6, I am hoping that most chains will fail
-before too long.
+i.e. primes and sums greater than 10^6, I am hoping that most chains will terminate
+quickly.
 The following works for finding 220 -> 284 -> 220, find hits a stack overflow
 with 1600, meaning that it probably hit a loop  i.e.  x -> ... -> 220
+I have to remove all items from the map after I have check them.  This will speed
+up the later lookups (causing many chains to terminate more quickly, since we know
+how they will terminate), and it prevents falling into an endless loop.
 -}
-
+divisorMap :: Int -> Map.Map Int Int
 divisorMap n = Map.fromList [(k,v) |
    k <- [2..n], let v = sum $ properDivisors k, k /= v, v <= n, v /= 1]
 
+properDivisors :: Int -> [Int]
 properDivisors n = 1:firstHalf ++ secondHalf
   where
     divs = [(q,q1) | q <- [2..(isqrt n)], let (q1,r) = n `quotRem` q, r == 0]
@@ -381,24 +385,68 @@ properDivisors n = 1:firstHalf ++ secondHalf
     -- reverse it so divisors are in order (not really required)
     secondHalf = map snd $ reverse $ filter (uncurry (/=)) divs
 
+pdTest :: Int -> [(Int,[Int])]
 pdTest n = [(k,properDivisors k) | k <- [2..n]]
 
-smallestNumberInLongestChain ds n = findLongest $ allChainsWithLength ds n
+-- The elements must be searched smalest to largest to ensure the smallest
+-- number in the loop is returned
+-- input and return tuple is (length, smallest, map)
+maxLoopLength :: (Ord a) => (Int, a, Map.Map a a) -> a -> (Int, a, Map.Map a a)
+maxLoopLength (lo, xo, mx) x
+  | lo < l' = (l',x',mx')
+  | otherwise = (lo,xo,mx')
+  where (l',x',mx') = findLoopLength x mx
 
--- given a list of [(firstN, len), (firstN, len)] returns the tuple with largest len
-findLongest = foldl (\(a,b) (f,s) -> if b < s then (f,s) else (a,b)) (0,0)
--- generates a list of [(firstN, len), (firstN, len)] for all chains.  It uses a
--- really large negative number when it hits the wall, so the len will still be
--- negative as it unwinds
-allChainsWithLength xs m = [(x,chainLength x x) | x <- [1..m]]
+-- returns the length of the loop starting at x if found in map mx,
+-- and the smallest number in the loop, as well as the revised map
+findLoopLength :: (Ord a) => a -> Map.Map a a -> (Int, a, Map.Map a a)
+findLoopLength x mx = (l, x', mx')
   where
-    chainLength start x =
-      case Map.lookup x xs of
-        Nothing -> -1000000
-        Just v -> if start == v then 1 else 1 + chainLength start v
+    l = lastLoopLength (x:c)
+    x' = if l == 0 then x else smallestInLoop
+    (c, mx') = findChain x mx
+    smallestInLoop = minimum $ take l (reverse c) -- omit x, since it is a dup
 
-pe95' n = fst $ smallestNumberInLongestChain (divisorMap (n-1)) (n-1)
-pe95 = pe95' (10^6)
+findChain :: (Ord a) => a -> Map.Map a a -> ([a], Map.Map a a)
+findChain x mx =
+  case x' of {Nothing -> ([],mx'); Just v -> (v:c,mx'') where (c,mx'') = findChain v mx'}
+  where (x',mx') = popMap x mx
+
+-- lookup an element in a map, and return the map without that element
+-- since the element may not be in the map, a Maybe is returned
+popMap :: (Ord a) => a -> Map.Map a a -> (Maybe a, Map.Map a a)
+popMap x mx = (v,mx')
+  where
+    v = Map.lookup x mx
+    mx' = Map.delete x mx
+
+-- The remainder can be done faster with Data.Maybe, and or Data.List
+
+-- finds the distance (in indices) between the last element and it earlier dup
+-- i.e. [1,2,3,1] == 3; [2,1,2,3,4,2] == 3; [1,2,3,4] == 0
+lastLoopLength :: (Eq a) => [a] -> Int
+lastLoopLength xs = case reverse xs of {[] -> 0; h:xs' -> firstIndexOrZero h xs'}
+
+firstIndexOrZero :: (Eq a) => a -> [a] -> Int
+firstIndexOrZero x xs = firstOrDef 0 $ elemIndices x xs
+
+firstOrDef :: a -> [a] -> a
+firstOrDef d xs = case xs of {[] -> d; i:_ -> i}
+
+-- In Data.List
+--elemIndices :: (Eq a) => a -> [a] -> [Int]
+--elemIndices x = findIndices (x==)
+
+--findIndices :: (a -> Bool) -> [a] -> [Int]
+--findIndices p xs = [i | (x,i) <- zip xs [1..], p x]
+
+pe95' :: Int -> Int
+pe95' n = smallest
+  where
+    (_,smallest,_) = foldl maxLoopLength (0,0,ds) [1..n]
+    ds = divisorMap n
+pe95 :: Int
+pe95 = pe95' (1000000-1)
 
 
 -- 96
