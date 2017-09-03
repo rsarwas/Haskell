@@ -182,7 +182,7 @@ pe87 = size $ fromList $ primePowerTriples 50000000
 
 -- 88
 -- Product-sum numbers: What is the sum of all the minimal product-sum numbers for 2≤k≤12000?
--- Answer:
+-- Answer: 7587457; time 0m0.046s unix real time with swiftc pe88.swift
 --Analysis:
 {-
 There is always a solution for k at 2*k*1^(k-2) = 2k = 2 + k + (k-2)*1, but this
