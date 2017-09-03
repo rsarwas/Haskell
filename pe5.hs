@@ -191,36 +191,63 @@ We need to look at 3x[3,4..] < 2k, 4x[4,5,...] < 2k ... n*n < 2k; n = sqrt(2k)
 as well as 2x2x[2,3,..] < 2k, 2x3x[3,4...], upto nxnxn < 2k where n = cuberoot(2k)
 upto n terms where 2^n < 2k
 -}
-f2' k a = [t | x <- [3..(a `div` 3)], y <- [x..(a `div` x)], let t=x*y, t == x+y+k-2]
-f2 k a = minimum (a:[t | x <- [3..(a `div` 3)], y <- [x..(a `div` x)], let t=x*y, t == x+y+k-2])
-f3' k a = [t | x <- [2..(a `div` 4)], y <- [x..(a `div` (2*x))], z <- [y..(a `div` (x*y))], let t=x*y*z, t == x+y+z+k-3]
-f3 k a = minimum (a:[t | x <- [2..(a `div` 4)], y <- [x..(a `div` (2*x))], z <- [y..(a `div` (x*y))], let t=x*y*z, t == x+y+z+k-3])
-
-f1 k = f3 k (f2 k (2*k))
--- I now have a solution for a list of 3 divisors or less, but this strategy
--- does not scale well.  I can use this to create an uppoer bound to use on a more
--- general solution.
-
--- If I can make a list of divisor lists as follows
-dLists _ = [
-  (4,[[2,2,2,2],[2,2,2,3],[2,2,2,4],[2,2,2,5],[2,2,2,6],[2,2,3,3],[2,2,3,4]]),
-  (5,[[2,2,2,2,2],[2,2,2,2,3],[2,2,2,2,4],[2,2,2,2,5],[2,2,2,3,3]])]
---, where fst element of the tuple is the number of divisors, upto 2^n < 12000
--- Then the general solution is expressed as:
-pe88 k = minSolution k (f1 k) (dLists k)
-
-minSolution k limit ds = minimum [checklists k limit n l | (n,l) <- ds]
+-- a new faster solution to the 2 term problem.  it will always yield at least
+-- the solution 2 and k (when n == 0)
+ps2 k = x*y -- (x,y,x*y,x+y+k-2)
   where
-    checklists k limit n l = min' limit
-       [p | ds <- l, let p = product ds, let s = sum ds, p == s+k-n, p < limit]
-    min' :: (Integral a) => a -> [a] -> a
-    min' x [] = x
-    min' x (y:ys) = min x (min' y ys)
+    x = n+2
+    y = (k+n) `div` (n+1)
+    n = ps2' k
+-- A list of integers tthat will generate integral solutions to the 2 item problem
+-- we start with the sqrt of k and work down (working up gives the inverse solution)
+-- by experimentation, we noted that the solution closest to sqrt k yields the minimum
+ps2' k = head [n | let nMax = isqrt k, n <- [nMax,(nMax-1)..0], (k+n) `rem` (n+1) == 0]
 
--- Now I just need to figure out how to make the dlists
--- the solution considered so far is a recursive datatype without a base case
---makeDivisorList _ 0 = [[]]
---makeDivisorList limit n = map (x:) [(makeDivisorList limit' (n-1)) | x <- [2..(limit `div` (2^(n-1)))], let limit' = limit `div` x]
+--trunc :: Int -> Int -> Int -> Int
+trunc :: (Integral a) => a -> a -> a -> a
+trunc l d n = truncate (b ** e)
+   where b = fromIntegral l * fromIntegral d
+         e = 1 / fromIntegral n
+
+-- search all possible divisors from 2^n < limit
+-- I can limit to 14 terms because 2^14 > 2*k
+minPSn :: Int -> Int -> [Int] --[(Int,Int,Int,Int,Int,Int,Int,Int,Int)]
+minPSn k' limit = [ p |
+               a <- [1..(trunc limit 1 14)],
+               b <- [a..(trunc limit a 13)],
+               c <- [b..(trunc limit (a*b) 12)],
+               d <- [c..(trunc limit (a*b*c) 11)],
+               e <- [d..(trunc limit (a*b*c*d) 10)],
+               f <- [e..(trunc limit (a*b*c*d*e) 9)],
+               g <- [f..(trunc limit (a*b*c*d*e*f) 8)],
+               h <- [g..(trunc limit (a*b*c*d*e*f*g) 7)],
+               i <- [h..(trunc limit (a*b*c*d*e*f*g*h) 6)],
+               j <- [i..(trunc limit (a*b*c*d*e*f*g*h*i) 5)],
+               k <- [(max 2 j)..(trunc limit (a*b*c*d*e*f*g*h*i*j) 4)],
+               l <- [k..(trunc limit (a*b*c*d*e*f*g*h*i*j*k) 3)],
+               m <- [l..(trunc limit (a*b*c*d*e*f*g*h*i*j*k*l) 2)],
+               let p'=a*b*c*d*e*f*g*h*i*j*k*l*m,
+               let s'=a+b+c+d+e+f+g+h+i+j+k+l+m,
+               let (n,r) = (s' + k' - 14) `quotRem` (p' - 1),
+               r == 0, n >= m,
+               let p = p'*n,
+               let s = s'+n + (k'-14)
+               --let t=(k,i,j,k,l,m,n,p)
+              ]
+
+-- This generates a real solution, but it is equite slow, even when compiled.
+-- It is also very redundant.  for each large k, it will do a large nested
+-- loop looking at all combinations of terms.
+minPS k = minimum (m:(minPSn k m))
+   where m = ps2 k
+
+-- A much more efficient solution would be to generate a list of all possible
+-- terms, and the product-sum and k produced for that list of terms.  Since
+-- different sets of terms may yield a differnet product-sum for the same k,
+-- we need to create a mutable map of k values to smallest product-sum found
+-- we are done when we look at all sets of terms that can produce k values
+-- under 12000.  Since I need amutable data structure, I will finish this problem
+-- in Swift
 
 
 -- 89
