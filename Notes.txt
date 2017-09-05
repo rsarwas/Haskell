@@ -55,7 +55,6 @@ By Regan Sarwas (rsarwas@gmail.com) August 2013 to ...
  587, manually converged to solution; write a converger (See 607)
 
 * IN-PROGRESS
-  83 Path sum: four ways (25% #1; 17)
  107 Minimal network (35% #1, 63)
  162 Hexadecimal numbers (45% #12,138)
  169 Exploring the number of different ways a number can be expressed as a sum of powers of 2 (50% ,~175, Last Unlucky Squares Problem)
