@@ -24,3 +24,61 @@ nap x n
 allnap :: Int -> Int
 allnap n = sum [nap x n | x <- [1..((n +1) `div` 2)]]
 pe301 = 1 + allnap 30 -- +1 for the = part of the <=
+
+
+-- 315
+-- Digital Root Clocks: difference between number of transitions for Max and Sams Clocks
+-- They are both fed all the prime numbers between 10^7 and 2*10^7
+-- root clock means continually summing digits, i.e 137 -> 11 -> 2
+
+countSam :: Int -> Int
+countSam x
+  | x == 0 = 6
+  | x == 1 = 2
+  | x == 2 = 5
+  | x == 3 = 5
+  | x == 4 = 4
+  | x == 5 = 5
+  | x == 6 = 6
+  | x == 7 = 4
+  | x == 8 = 7
+  | x == 9 = 6
+
+-- Represent a digital digit as a binary number
+-- bit 0 is top Horizontal
+-- bit 1 is left top vertical
+-- bit 2 is right top vertical
+-- bit 3 is middle horizontal
+-- bit 1 is left bottom vertical
+-- bit 1 is right bottom vertical
+-- bit 6 is bottom horizontal
+-- bit 7 is always 0
+  bitRep :: Int -> Int
+  bitRep x
+    | x == 0 = 119 -- 0b01110111 (skip 3)
+    | x == 1 =  36 -- 0b00100100 (skip 0,1,3,4,6)
+    | x == 2 =  93 -- 0b01011101 (skip 1,5)
+    | x == 3 = 109 -- 0b01101101 (skip 1,4)
+    | x == 4 =  46 -- 0b00101110 (skip 0,4,6)
+    | x == 5 = 107 -- 0b01101011 (skip 2,4)
+    | x == 6 = 123 -- 0b01111011 (skip 2)
+    | x == 7 =  39 -- 0b00100111 (skip 3,4,6)
+    | x == 8 = 127 -- 0b01111111 (skip none)
+    | x == 9 = 111 -- 0b01101111 (skip 4)
+
+countMax :: Int -> Int
+countMax popCount $ xor (bitRep x) (bitRep y)
+
+transitionsSam :: Int -> Int
+transitionsSam x
+  | x < 10 = 2 * countSam x
+  | otherwise = 2 * sum (map countSam (digits x)) + transitionsSam (sum $ digits x)
+
+transitionsMax :: Int -> Int
+transitionsMax x = 0
+
+transitionsDelta :: [Int] -> Int
+transitionsDelta xs = sum $ map (\x -> transitionsSam x - transitionsMax x) xs
+
+pe315 :: Int
+pe315 = transitionsDelta [137]
