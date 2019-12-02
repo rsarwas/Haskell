@@ -4,6 +4,46 @@ import ProjectEuler
 import Data.Ratio
 import Data.List
 
+-- 204
+-- Generalised Hamming Numbers: How many generalised Hamming numbers of type 100 are there which don't exceed 10^9?
+-- Answer: 2944730 (47.51 secs, 16,828,030,440 bytes)
+-- A Hamming number is a positive number which has no prime factor larger than 5.
+-- We will call a positive number a generalised Hamming number of type n, if it has no prime factor larger than n.
+-- There are 1105 Hamming numbers of type 5 not exceeding 10^8.
+-- Analysis: Hamming numbers of type 5 not exceeding 100
+--           = [1,2,3,4,5,6,8,9,10,12,15,16,18,20,24,25,27,30,32,36,40,45,48,50,54,60,64,72,75,80,81,90,96,100]
+--           = [1,5,25, 3,15,75,9,45,27,81, 2,10,50,6,30,18,90,54,4,20,100,12,60,36,8,40,24,72,16,80,48,32,96,64]
+--           = [1,5,25] x [1,3,9,27,81] x [1,2,4,8,16,32,64]
+
+-- The powers of a number x not exceeding 10^n
+-- powers 3 2 -> [1,3,9,27,81]
+powers x n = takeWhile (<=(10^n)) (map (x^) [0..])
+
+-- cross multiply two vectors
+-- cross [1,2,7] [6,7] -> [6,7,12,14,42,49]
+cross xs ys = [x*y | x <- xs, y <- ys]
+
+-- cross multiply two vectors, but filter to only those not exceeding 10^n.
+cross' xs ys n = filter (<=(10^n)) (cross xs ys)
+
+-- Hamming numbers of type n not exceeding 10^e.
+-- The empty list is the Hamming numbers found so far (for recursion)
+hamming n e = hamming' (primesTo n) [] e
+
+-- Number of Hamming numbers of type n not exceeding 10^e.
+numHamming n e = length (hamming n e)
+
+-- If there are no more primes, then we are done
+hamming' []     rs _ = rs
+-- if we have no intermediate results yet, then it is just a list of the first primes powers
+hamming' (p:ps) [] n = hamming' ps (powers p n) n
+-- otherwise cross multiply the hamming numbers so far with the next primes powers
+hamming' (p:ps) rs n = hamming' ps (cross' rs (powers p n) n) n
+
+test204 = numHamming 5 8
+pe204 = numHamming 100 9
+
+
 -- 205
 -- Dice Game: What is the probability that Pete 9 4-sided dice beats Colin (6 6-sided dice)? Give your answer rounded to seven decimal places in the form 0.abcdefg
 -- Answer: 5731441 (0.01 secs, 3127216 bytes)
